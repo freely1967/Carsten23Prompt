@@ -1,0 +1,14 @@
+C:\Users\profc\OneDrive\Desktop\rider_workspace\ApocalypticFastFood\ApocalypticFastFood\bin\Debug\net9.0\ApocalypticFastFood.exe
+C:\Users\profc\OneDrive\Desktop\rider_workspace\ApocalypticFastFood\ApocalypticFastFood\bin\Debug\net9.0\ApocalypticFastFood.deps.json
+C:\Users\profc\OneDrive\Desktop\rider_workspace\ApocalypticFastFood\ApocalypticFastFood\bin\Debug\net9.0\ApocalypticFastFood.runtimeconfig.json
+C:\Users\profc\OneDrive\Desktop\rider_workspace\ApocalypticFastFood\ApocalypticFastFood\bin\Debug\net9.0\ApocalypticFastFood.dll
+C:\Users\profc\OneDrive\Desktop\rider_workspace\ApocalypticFastFood\ApocalypticFastFood\bin\Debug\net9.0\ApocalypticFastFood.pdb
+C:\Users\profc\OneDrive\Desktop\rider_workspace\ApocalypticFastFood\ApocalypticFastFood\obj\Debug\net9.0\ApocalypticFastFood.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\profc\OneDrive\Desktop\rider_workspace\ApocalypticFastFood\ApocalypticFastFood\obj\Debug\net9.0\ApocalypticFastFood.AssemblyInfoInputs.cache
+C:\Users\profc\OneDrive\Desktop\rider_workspace\ApocalypticFastFood\ApocalypticFastFood\obj\Debug\net9.0\ApocalypticFastFood.AssemblyInfo.cs
+C:\Users\profc\OneDrive\Desktop\rider_workspace\ApocalypticFastFood\ApocalypticFastFood\obj\Debug\net9.0\ApocalypticFastFood.csproj.CoreCompileInputs.cache
+C:\Users\profc\OneDrive\Desktop\rider_workspace\ApocalypticFastFood\ApocalypticFastFood\obj\Debug\net9.0\ApocalypticFastFood.dll
+C:\Users\profc\OneDrive\Desktop\rider_workspace\ApocalypticFastFood\ApocalypticFastFood\obj\Debug\net9.0\refint\ApocalypticFastFood.dll
+C:\Users\profc\OneDrive\Desktop\rider_workspace\ApocalypticFastFood\ApocalypticFastFood\obj\Debug\net9.0\ApocalypticFastFood.pdb
+C:\Users\profc\OneDrive\Desktop\rider_workspace\ApocalypticFastFood\ApocalypticFastFood\obj\Debug\net9.0\ApocalypticFastFood.genruntimeconfig.cache
+C:\Users\profc\OneDrive\Desktop\rider_workspace\ApocalypticFastFood\ApocalypticFastFood\obj\Debug\net9.0\ref\ApocalypticFastFood.dll
