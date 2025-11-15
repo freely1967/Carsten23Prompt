@@ -247,3 +247,63 @@ public class FamilyRule : IDiscountRule
         return 8.0;
     }
 }
+
+// Multiplier-aware birthday rule: returns both a discount and a multiplier
+public class BirthdayRule : IDiscountRuleV2
+{
+    public bool IsApplicable(DiscountManager ctx)
+    {
+        return ctx.IsBirthday;
+    }
+
+    public DiscountResult CalculateResult(DiscountManager ctx)
+    {
+        double discount = 0.0;
+        double multiplier = 1.0;
+
+        if (ctx.CustomerType == 2)
+        {
+            if (ctx.MembershipLevel == "Diamond")
+            {
+                if (ctx.VisitCount > 100)
+                {
+                    if (ctx.TotalAmount > 100)
+                    {
+                        if (ctx.FamilyMembers > 2)
+                        {
+                            discount = 70.0;
+                            multiplier *= 1.6;
+                        }
+                        else
+                        {
+                            discount = 60.0;
+                            multiplier *= 1.5;
+                        }
+                    }
+                    else
+                    {
+                        discount = 50.0;
+                        multiplier *= 1.4;
+                    }
+                }
+                else
+                {
+                    discount = 40.0;
+                    multiplier *= 1.3;
+                }
+            }
+            else
+            {
+                discount = 30.0;
+                multiplier *= 1.2;
+            }
+        }
+        else
+        {
+            discount = 25.0;
+            multiplier *= 1.15;
+        }
+
+        return new DiscountResult(discount, multiplier);
+    }
+}
