@@ -4,11 +4,13 @@ public class MinorCustomer : Customer
 {
     public override bool CanOrderAlcohol()
     {
-        throw new InvalidOperationException("Minors can't order alcohol!");
+        // Use policy-based check rather than throwing
+        return base.CanOrderAlcohol();
     }
 
     public override void MakePurchase()
     {
-        throw new Exception("Need parent approval!");
+        // Delegate to policy; if not approved, the base implementation logs and returns
+        base.MakePurchase();
     }
 }

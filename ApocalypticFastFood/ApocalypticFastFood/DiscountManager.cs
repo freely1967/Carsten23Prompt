@@ -90,6 +90,9 @@ public class DiscountManager
             s19 = 0,
             s20 = 0;
 
+        // Compute promo-related discounts via the new DiscountEngine (PromoCodeRule)
+        var promoDiscount = new DiscountEngine(new IDiscountRule[] { new PromoCodeRule() }).Calculate(this);
+
         ItemPrices["burger"] = 8.99;
         ItemPrices["fries"] = 3.49;
         ItemPrices["shake"] = 4.99;
@@ -225,7 +228,11 @@ public class DiscountManager
                 break;
             }
         }
-
+        // Time-of-day logic is being migrated to TimeOfDayRule in DiscountEngine.
+        var timeDiscount = new DiscountEngine(new IDiscountRule[] { new TimeOfDayRule() }).Calculate(this);
+        // Zero out legacy slots covered by the TimeOfDayRule to avoid double-counting
+        s2 = 0.0;
+        s8 = 0.0;
         if (ItemQuantities.ContainsKey("burger"))
         {
             var bc = ItemQuantities["burger"];
@@ -337,6 +344,15 @@ public class DiscountManager
             }
         }
 
+        // Family/kids discounts are being migrated to FamilyRule in DiscountEngine.
+        var familyDiscount = 0.0;
+        if (FamilyMembers >= 4)
+        {
+            familyDiscount = new DiscountEngine(new IDiscountRule[] { new FamilyRule() }).Calculate(this);
+            // zero out legacy s4 to avoid double-counting when we migrate this rule
+            s4 = 0.0;
+        }
+
         if (VisitCount > 0)
             switch (VisitCount)
             {
@@ -413,6 +429,15 @@ public class DiscountManager
                     s5 = 3.0;
                     break;
             }
+
+        // Visit-count based discounts are being migrated to VisitCountRule in DiscountEngine.
+        // Compute visitDiscount via the engine and zero-out legacy s5 to avoid double-counting.
+        var visitDiscount = 0.0;
+        if (VisitCount > 0)
+        {
+            visitDiscount = new DiscountEngine(new IDiscountRule[] { new VisitCountRule() }).Calculate(this);
+            s5 = 0.0;
+        }
 
         if (CustomerType == 5)
             switch (Day)
@@ -744,42 +769,50 @@ public class DiscountManager
                     break;
             }
 
-        switch (PromoCode)
+        if (string.IsNullOrEmpty(PromoCode))
         {
-            case "SAVE10":
-                if (TotalAmount > 50)
-                {
-                    s13 = CustomerType == 2 ? 15.0 : 10.0;
-                }
-                else
-                {
-                    s13 = 5.0;
-                }
-
-                break;
-            case "SAVE20":
-                s13 = 20.0;
-                break;
-            case "VIP50":
-                if (CustomerType == 2)
-                    s13 = MembershipLevel switch
+            switch (PromoCode)
+            {
+                case "SAVE10":
+                    if (TotalAmount > 50)
                     {
-                        "Diamond" => VisitCount > 100 ? 70.0 : 60.0,
-                        "Platinum" => 55.0,
-                        "Gold" => 50.0,
-                        _ => 45.0
-                    };
-                else
-                    s13 = 10.0;
+                        s13 = CustomerType == 2 ? 15.0 : 10.0;
+                    }
+                    else
+                    {
+                        s13 = 5.0;
+                    }
 
-                break;
-            case "STUDENT25":
-                if (CustomerType == 5) s13 = Age < 22 ? 25.0 : 15.0;
+                    break;
+                case "SAVE20":
+                    s13 = 20.0;
+                    break;
+                case "VIP50":
+                    if (CustomerType == 2)
+                        s13 = MembershipLevel switch
+                        {
+                            "Diamond" => VisitCount > 100 ? 70.0 : 60.0,
+                            "Platinum" => 55.0,
+                            "Gold" => 50.0,
+                            _ => 45.0
+                        };
+                    else
+                        s13 = 10.0;
 
-                break;
-            case "FREEFRIES":
-                if (Items.Contains("fries")) s13 = 3.49 * ItemQuantities["fries"];
-                break;
+                    break;
+                case "STUDENT25":
+                    if (CustomerType == 5) s13 = Age < 22 ? 25.0 : 15.0;
+
+                    break;
+                case "FREEFRIES":
+                    if (Items.Contains("fries")) s13 = 3.49 * ItemQuantities["fries"];
+                    break;
+            }
+        }
+        else
+        {
+            // Promo handling migrated to DiscountEngine (promoDiscount)
+            s13 = 0.0;
         }
         
         if (SocialMediaFollow is not "" and not null)
@@ -1061,7 +1094,10 @@ public class DiscountManager
             }
 
         discount = s1 + s2 + s3 + s4 + s5 + s6 + s7 + s8 + s9 + s10 + s11 + s12 + s13 + s14 + s15 + s16 + s17 + s18 +
-                   s19 + s20;
+               s19 + s20;
+
+        // Add promoDiscount, visitDiscount, timeDiscount and familyDiscount computed by the DiscountEngine to avoid duplicating logic
+        discount += promoDiscount + (visitDiscount) + timeDiscount + familyDiscount;
 
         discount *= multiplier;
 
@@ -1180,48 +1216,56 @@ public class DiscountManager
 
     public string GenerateReceipt()
     {
+        return new ReceiptFormatter().Format(this);
+    }
+
+// Responsibility: format a receipt string for a given DiscountManager state
+public class ReceiptFormatter
+{
+    public string Format(DiscountManager dm)
+    {
         var receipt = "====================================\n";
         receipt += "    FAST FOOD MEGA CHAIN\n";
         receipt += "====================================\n";
 
         // Customer type display - magic numbers!
         receipt += "Customer: ";
-        switch (CustomerType)
+        switch (dm.CustomerType)
         {
             case 1: receipt += "Regular\n"; break;
             case 2:
-                receipt += "VIP - " + MembershipLevel + "\n";
-                if (MembershipLevel == "Diamond") receipt += "*** PREMIUM CUSTOMER ***\n";
+                receipt += "VIP - " + dm.MembershipLevel + "\n";
+                if (dm.MembershipLevel == "Diamond") receipt += "*** PREMIUM CUSTOMER ***\n";
                 break;
             case 3: receipt += "Employee\n"; break;
-            case 4: receipt += "Senior (Age: " + Age + ")\n"; break;
+            case 4: receipt += "Senior (Age: " + dm.Age + ")\n"; break;
             case 5: receipt += "Student\n"; break;
             case 6: receipt += "Minor - NEEDS APPROVAL\n"; break;
             case 7: receipt += "BANNED CUSTOMER\n"; break;
             default: receipt += "Unknown\n"; break;
         }
 
-        receipt += "Order #: " + OrderNumber + "\n";
-        receipt += "Date: " + Day + "\n";
-        receipt += "Time: " + Hour + ":" + Minute + "\n";
-        receipt += "Location: Restaurant #" + RestaurantId + "\n";
+        receipt += "Order #: " + dm.OrderNumber + "\n";
+        receipt += "Date: " + dm.Day + "\n";
+        receipt += "Time: " + dm.Hour + ":" + dm.Minute + "\n";
+        receipt += "Location: Restaurant #" + dm.RestaurantId + "\n";
 
-        if (IsDineIn)
+        if (dm.IsDineIn)
             receipt += "Service: Dine-In\n";
-        else if (IsDriveThru)
+        else if (dm.IsDriveThru)
             receipt += "Service: Drive-Thru\n";
-        else if (IsCurbside)
+        else if (dm.IsCurbside)
             receipt += "Service: Curbside\n";
-        else if (IsDelivery)
+        else if (dm.IsDelivery)
             receipt += "Service: Delivery\n";
 
         receipt += "------------------------------------\n";
         receipt += "ITEMS:\n";
 
-        // Display items with hardcoded prices
-        foreach (var item in ItemQuantities)
+        // Display items using price catalog lookup if available, otherwise fallback to common prices
+        foreach (var item in dm.ItemQuantities)
         {
-            var price = item.Key switch
+            double price = item.Key switch
             {
                 "burger" => 8.99,
                 "fries" => 3.49,
@@ -1231,31 +1275,35 @@ public class DiscountManager
                 _ => 0
             };
 
+            // prefer price catalog if present via OrderProcessor usage
+            if (dm.ItemPrices != null && dm.ItemPrices.TryGetValue(item.Key, out var p)) price = p;
+
             receipt += "  " + item.Value + "x " + item.Key.ToUpper() + " @ $" + price + " = $" +
                        (item.Value * price).ToString("F2") + "\n";
         }
 
         receipt += "------------------------------------\n";
-        receipt += "Subtotal: $" + TotalAmount.ToString("F2") + "\n";
+        receipt += "Subtotal: $" + dm.TotalAmount.ToString("F2") + "\n";
 
-        var discount = CalculateDiscount();
+        var discount = dm.CalculateDiscount();
         receipt += "Discount: -$" + discount.ToString("F2") + "\n";
-        
-        var tax = (TotalAmount - discount) * 0.08;
+
+        var tax = (dm.TotalAmount - discount) * 0.08;
         receipt += "Tax (8%): $" + tax.ToString("F2") + "\n";
 
-        var total = TotalAmount - discount + tax;
+        var total = dm.TotalAmount - discount + tax;
         receipt += "------------------------------------\n";
         receipt += "TOTAL: $" + total.ToString("F2") + "\n";
         receipt += "====================================\n";
-        
-        var points = CalculateLoyaltyPoints();
+
+        var points = dm.CalculateLoyaltyPoints();
         receipt += "Loyalty Points Earned: " + points + "\n";
 
-        if (IsBirthday) receipt += "\n*** HAPPY BIRTHDAY! ***\n";
+        if (dm.IsBirthday) receipt += "\n*** HAPPY BIRTHDAY! ***\n";
 
         return receipt;
     }
+}
 
     private int CalculateLoyaltyPoints()
     {
@@ -1341,44 +1389,97 @@ public class DiscountManager
     }
 }
 
+// Price catalog abstractions to centralize item pricing
+public interface IPriceCatalog
+{
+    double GetPrice(string item);
+}
+
+public class InMemoryPriceCatalog : IPriceCatalog
+{
+    private readonly Dictionary<string, double> _prices = new()
+    {
+        ["burger"] = 8.99,
+        ["fries"] = 3.49,
+        ["shake"] = 4.99,
+        ["nuggets"] = 6.49,
+        ["salad"] = 7.99
+    };
+
+    public double GetPrice(string item)
+    {
+        if (item is null) return 0.0;
+        return _prices.TryGetValue(item, out var p) ? p : 0.0;
+    }
+}
+
 public class OrderProcessor
 {
-    public DatabaseService DbSvc = new();
-    public DiscountManager Dm = new();
-    public EmailService EmailSvc = new();
-    public SmsService SmsSvc = new();
+    private readonly IOrderRepository _orderRepo;
+    private readonly DiscountManager _dm;
+    private readonly IEmailSender _emailSender;
+    private readonly ISmsSender _smsSender;
+    private readonly IPriceCatalog _priceCatalog;
+    private readonly IPaymentProcessor _paymentProcessor;
+
+    public OrderProcessor(IPriceCatalog? priceCatalog = null,
+                          IOrderRepository? orderRepo = null,
+                          DiscountManager? dm = null,
+                          IEmailSender? emailSender = null,
+                          ISmsSender? smsSender = null,
+                          IPaymentProcessor? paymentProcessor = null)
+    {
+        _priceCatalog = priceCatalog ?? new InMemoryPriceCatalog();
+        _orderRepo = orderRepo ?? new DatabaseRepositoryAdapter(new DatabaseService());
+        _dm = dm ?? new DiscountManager();
+        _emailSender = emailSender ?? new ConsoleEmailSender();
+        _smsSender = smsSender ?? new ConsoleSmsSender();
+        // Default facade composes basic processors
+        _paymentProcessor = paymentProcessor ?? new PaymentProcessorFacade(new CashPaymentProcessor(), new CardPaymentProcessor());
+    }
     
     public void ProcessOrder(int custType, string day, int hr, List<string> items)
     {
-        Dm.CustomerType = custType;
-        Dm.Day = day;
-        Dm.Hour = hr;
-        Dm.Items = items;
+        _dm.CustomerType = custType;
+        _dm.Day = day;
+        _dm.Hour = hr;
+        _dm.Items = items;
 
-        // Calculate total with magic numbers - violates DRY!
-        Dm.TotalAmount = 0;
+        // Calculate total using price catalog
+        _dm.TotalAmount = 0;
         foreach (var item in items)
-            if (item == "burger")
-            {
-                Dm.TotalAmount += 8.99;
-            }
-            else if (item == "fries")
-                Dm.TotalAmount += 3.49;
-            else if (item == "shake")
-                Dm.TotalAmount += 4.99;
-            else if (item == "nuggets")
-                Dm.TotalAmount += 6.49;
-            else if (item == "salad")
-                Dm.TotalAmount += 7.99;
+        {
+            _dm.TotalAmount += _priceCatalog.GetPrice(item);
+        }
 
-        var disc = Dm.CalculateDiscount();
+        var disc = _dm.CalculateDiscount();
 
-        Console.WriteLine(Dm.GenerateReceipt());
+        Console.WriteLine(_dm.GenerateReceipt());
 
-        // Hardcoded database save
-        DbSvc.SaveOrder(Dm.OrderNumber, Dm.TotalAmount, disc);
+        // Save order using repository
+        _orderRepo.SaveOrder(_dm.OrderNumber, _dm.TotalAmount, disc);
 
-        if (Dm.EmailSubscribed) EmailSvc.Send("customer@email.com", "Receipt");
+        // Process payment according to selected method (simplified)
+        switch (_dm.PaymentMethod)
+        {
+            case "cash":
+                _paymentProcessor.ProcessCash(_dm.TotalAmount);
+                break;
+            case "credit":
+                _paymentProcessor.ProcessCreditCard("4111111111111111", "123", "12/29");
+                break;
+            case "debit":
+                _paymentProcessor.ProcessDebitCard("4111111111111111", "0000");
+                break;
+            case "paypal":
+                _paymentProcessor.ProcessPaypal("customer@paypal", "password");
+                break;
+            default:
+                // unsupported/no-op
+                break;
+        }
+
+        if (_dm.EmailSubscribed) _emailSender.Send("customer@email.com", "Receipt");
     }
 }
 
@@ -1394,7 +1495,45 @@ public interface IPaymentProcessor
     void ProcessBankTransfer(string routing, string account);
 }
 
-public class CashPaymentProcessor : IPaymentProcessor
+// Segregated payment interfaces (Interface Segregation Principle)
+public interface ICashPaymentProcessor
+{
+    void ProcessCash(double amount);
+}
+
+public interface ICardPaymentProcessor
+{
+    void ProcessCreditCard(string cardNum, string cvv, string exp);
+    void ProcessDebitCard(string cardNum, string pin);
+}
+
+public interface IPaypalProcessor
+{
+    void ProcessPaypal(string email, string password);
+}
+
+public interface ICryptoProcessor
+{
+    void ProcessCrypto(string wallet, string coin);
+}
+
+public interface IGiftCardProcessor
+{
+    void ProcessGiftCard(string code);
+}
+
+public interface ICheckProcessor
+{
+    void ProcessCheck(string checkNum);
+}
+
+public interface IBankTransferProcessor
+{
+    void ProcessBankTransfer(string routing, string account);
+}
+
+// Backwards-compatible concrete that still implements the legacy interface
+public class CashPaymentProcessor : IPaymentProcessor, ICashPaymentProcessor
 {
     public void ProcessCash(double amount)
     {
@@ -1437,6 +1576,97 @@ public class CashPaymentProcessor : IPaymentProcessor
     }
 }
 
+// Simple card payment processor (stub implementation)
+public class CardPaymentProcessor : ICardPaymentProcessor
+{
+    public void ProcessCreditCard(string cardNum, string cvv, string exp)
+    {
+        Console.WriteLine($"Processing credit card {cardNum} exp {exp}");
+    }
+
+    public void ProcessDebitCard(string cardNum, string pin)
+    {
+        Console.WriteLine($"Processing debit card {cardNum}");
+    }
+}
+
+// Facade that composes segregated processors and exposes the legacy large interface
+public class PaymentProcessorFacade : IPaymentProcessor
+{
+    private readonly ICashPaymentProcessor? _cash;
+    private readonly ICardPaymentProcessor? _card;
+    private readonly IPaypalProcessor? _paypal;
+    private readonly ICryptoProcessor? _crypto;
+    private readonly IGiftCardProcessor? _gift;
+    private readonly ICheckProcessor? _check;
+    private readonly IBankTransferProcessor? _bank;
+
+    public PaymentProcessorFacade(ICashPaymentProcessor? cash = null,
+                                  ICardPaymentProcessor? card = null,
+                                  IPaypalProcessor? paypal = null,
+                                  ICryptoProcessor? crypto = null,
+                                  IGiftCardProcessor? gift = null,
+                                  ICheckProcessor? check = null,
+                                  IBankTransferProcessor? bank = null)
+    {
+        _cash = cash;
+        _card = card;
+        _paypal = paypal;
+        _crypto = crypto;
+        _gift = gift;
+        _check = check;
+        _bank = bank;
+    }
+
+    public void ProcessCreditCard(string cardNum, string cvv, string exp)
+    {
+        if (_card is null) throw new NotSupportedException("Card processing not configured");
+        _card.ProcessCreditCard(cardNum, cvv, exp);
+    }
+
+    public void ProcessDebitCard(string cardNum, string pin)
+    {
+        if (_card is null) throw new NotSupportedException("Card processing not configured");
+        _card.ProcessDebitCard(cardNum, pin);
+    }
+
+    public void ProcessPaypal(string email, string password)
+    {
+        if (_paypal is null) throw new NotSupportedException("Paypal not configured");
+        _paypal.ProcessPaypal(email, password);
+    }
+
+    public void ProcessCrypto(string wallet, string coin)
+    {
+        if (_crypto is null) throw new NotSupportedException("Crypto not configured");
+        _crypto.ProcessCrypto(wallet, coin);
+    }
+
+    public void ProcessGiftCard(string code)
+    {
+        if (_gift is null) throw new NotSupportedException("Gift card processing not configured");
+        _gift.ProcessGiftCard(code);
+    }
+
+    public void ProcessCash(double amount)
+    {
+        if (_cash is null) throw new NotSupportedException("Cash processing not configured");
+        _cash.ProcessCash(amount);
+    }
+
+    public void ProcessCheck(string checkNum)
+    {
+        if (_check is null) throw new NotSupportedException("Check processing not configured");
+        _check.ProcessCheck(checkNum);
+    }
+
+    public void ProcessBankTransfer(string routing, string account)
+    {
+        if (_bank is null) throw new NotSupportedException("Bank transfer not configured");
+        _bank.ProcessBankTransfer(routing, account);
+    }
+}
+
 public class EmailService
 {
     public void Send(string to, string subject)
@@ -1451,6 +1681,47 @@ public class SmsService
     {
         Console.WriteLine("SMS sent to " + phone);
     }
+}
+
+// Abstractions for external integrations (Dependency Inversion)
+public interface IEmailSender
+{
+    void Send(string to, string subject, string body = "");
+}
+
+public interface ISmsSender
+{
+    void Send(string phone, string message = "");
+}
+
+public interface IOrderRepository
+{
+    void SaveOrder(int orderId, double total, double discount);
+}
+
+// Console adapters to preserve current dev behavior
+public class ConsoleEmailSender : IEmailSender
+{
+    public void Send(string to, string subject, string body = "")
+    {
+        Console.WriteLine($"Connecting to smtp.example.com:587");
+        Console.WriteLine($"Sending to: {to} - {subject}");
+    }
+}
+
+public class ConsoleSmsSender : ISmsSender
+{
+    public void Send(string phone, string message = "")
+    {
+        Console.WriteLine($"Sending SMS to: {phone} - {message}");
+    }
+}
+
+public class DatabaseRepositoryAdapter : IOrderRepository
+{
+    private readonly DatabaseService _db;
+    public DatabaseRepositoryAdapter(DatabaseService db) => _db = db;
+    public void SaveOrder(int orderId, double total, double discount) => _db.SaveOrder(orderId, total, discount);
 }
 
 public class DatabaseService

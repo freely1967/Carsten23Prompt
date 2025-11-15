@@ -1,0 +1,211 @@
+[
+  {
+    "file": "ApocalypticFastFood/ApocalypticFastFood/VIPCustomer.cs",
+    "strategy": "Extract Discount behavior to an IDiscountStrategy and use composition (Strategy Pattern). Remove behavior-throwing overrides in VIPCustomer.",
+    "steps": [
+      "1) Introduce interface `IDiscountStrategy` with `double GetDiscount(CustomerContext ctx)`.",
+      "2) Implement `VipDiscountStrategy` that contains VIP-specific discount logic previously (or a thin adapter to new DiscountManager).",
+      "3) Change `Customer` to hold an `IDiscountStrategy` (default strategy) and delegate discount calculation to it; mark `GetDiscount()` non-virtual or delegate implementation.",
+      "4) Modify `VipCustomer` to compose `IDiscountStrategy` instead of overriding `GetDiscount()` (assign VipDiscountStrategy via ctor).",
+      "5) Update call sites to use `customer.GetDiscount()` unchanged — behavior preserved via strategy delegation.",
+      "6) Add unit tests ensuring VIP discount path uses VipDiscountStrategy and does not throw.",
+      "7) Remove obsolete override in `VipCustomer` once tests pass.",
+      "8) Document the new extension point for future VIP-like customers.
+"
+    ],
+    "diff": "--- a/ApocalypticFastFood/ApocalypticFastFood/Customer.cs\n+++ b/ApocalypticFastFood/ApocalypticFastFood/Customer.cs\n@@\n-public class Customer\n-{\n-    public virtual double GetDiscount()\n-    {\n-        return 0;\n-    }\n+public interface IDiscountStrategy\n+{\n+    double GetDiscount(CustomerContext ctx);\n+}\n+\n+public class Customer\n+{\n+    private readonly IDiscountStrategy _discountStrategy;\n+    public Customer(IDiscountStrategy? discountStrategy = null)\n+    {\n+        _discountStrategy = discountStrategy ?? new DefaultDiscountStrategy();\n+    }\n+    public double GetDiscount(CustomerContext ctx) => _discountStrategy.GetDiscount(ctx);\n@@\n }\n\n--- a/ApocalypticFastFood/ApocalypticFastFood/VIPCustomer.cs\n+++ b/ApocalypticFastFood/ApocalypticFastFood/VIPCustomer.cs\n@@\n-public class VipCustomer : Customer\n-{\n-    public override double GetDiscount()\n-    {\n-        throw new Exception("VIP customers use different discount system!");\n-    }\n-\n-    public override int GetLoyaltyMultiplier()\n-    {\n-        return -1;\n-    } // Negative? What?\n-}
++public class VipCustomer : Customer\n+{\n+    public VipCustomer() : base(new VipDiscountStrategy()) { }\n+}\n",
+    "tests": [
+      "// xUnit example\nusing Xunit;\n\npublic class VipDiscountTests\n{\n    [Fact]\n    public void VipCustomer_GetDiscount_UsesVipStrategy()\n    {\n        var ctx = new CustomerContext { /* fill relevant properties for VIP path */ };\n        var vip = new VipCustomer();\n        var d = vip.GetDiscount(ctx);\n        Assert.True(d >= 0); // ensure not throwing and returns expected domain value\n    }\n}\n"
+    ,
+    "risk": "Medium - touches public API (Customer ctor/behavior) and requires updating any custom subclasses that relied on virtual overrides. Mitigation: keep default virtual wrapper for transition and run unit tests."
+  },
+  {
+    "file": "ApocalypticFastFood/ApocalypticFastFood/MinorCustomer.cs",
+    "strategy": "Replace behavioral exceptions with role-based capabilities (Interface Segregation + Null Object/Policy). Implement separate IOrderApprovalPolicy and IAlcoholPolicy injected into customers.",
+    "steps": [
+      "1) Define `IOrderApprovalPolicy` with `bool CanMakePurchase(CustomerContext ctx)` and `void RequestApproval(...)`.",
+      "2) Define `IAlcoholPolicy` with `bool CanOrderAlcohol(CustomerContext ctx)`.",
+      "3) Provide `MinorApprovalPolicy` and `MinorAlcoholPolicy` implementations that return false for minors and optionally provide a RequestApproval flow (no exceptions).",
+      "4) Make `Customer` accept these policy interfaces via ctor (with defaults for adults).",
+      "5) Modify `MinorCustomer` to supply minor-specific policies instead of throwing in overrides.",
+      "6) Update any callers of MakePurchase()/CanOrderAlcohol() to check policy results rather than catching exceptions.",
+      "7) Add unit tests verifying minors are blocked but no exceptions bubble up and that approval flow triggers correctly.",
+      "8) Deprecate and remove exception-throwing overrides after validation."]
+    ,
+    "diff": "--- a/ApocalypticFastFood/ApocalypticFastFood/MinorCustomer.cs\n+++ b/ApocalypticFastFood/ApocalypticFastFood/MinorCustomer.cs\n@@\n-public class MinorCustomer : Customer\n-{\n-    public override bool CanOrderAlcohol()\n-    {\n-        throw new InvalidOperationException(\"Minors can't order alcohol!\");\n-    }\n-\n-    public override void MakePurchase()\n-    {\n-        throw new Exception(\"Need parent approval!\");\n-    }\n-}
++public class MinorCustomer : Customer\n+{\n+    public MinorCustomer() : base(discountStrategy: null,\n+                                approvalPolicy: new MinorApprovalPolicy(),\n+                                alcoholPolicy: new MinorAlcoholPolicy())\n+    { }\n+}\n",
+    "tests": [
+      "// xUnit example\nusing Xunit;\n\npublic class MinorPolicyTests\n{\n    [Fact]\n    public void Minor_CannotOrderAlcohol_ReturnsFalse_NoException()\n    {\n        var minor = new MinorCustomer();\n        var ctx = new CustomerContext { Age = 15 };\n        Assert.False(minor.CanOrderAlcohol(ctx));\n    }\n\n    [Fact]\n    public void Minor_MakePurchase_RequiresApprovalFlow()\n    {\n        var minor = new MinorCustomer();\n        var ctx = new CustomerContext { Age = 15 };\n        var approved = minor.ApprovalPolicy.CanMakePurchase(ctx);\n        Assert.False(approved);\n    }\n}\n"
+    ,
+    "risk": "Low-Medium - replaces exceptions with policied behavior; callers that relied on exception handling must be updated. Add adapter wrappers during migration."
+  },
+  {
+    "file": "ApocalypticFastFood/ApocalypticFastFood/Customer.cs",
+    "strategy": "Split responsibilities: keep `Customer` as a thin data holder and move behaviors into small focused interfaces (IDiscountProvider, IPurchaseService, IAlcoholPolicy, ILoyaltyCalculator). (Single Responsibility + Interface Segregation)",
+    "steps": [
+      "1) Create lightweight DTO `CustomerContext` with properties used by behavior logic (Age, VisitCount, MembershipLevel, etc.).",
+      "2) Extract `IDiscountProvider`, `IPurchaseService`, `IAlcoholPolicy`, `ILoyaltyCalculator` interfaces and implement default production classes.",
+      "3) Refactor `Customer` to be a simple holder for identity and references to these services or to get them passed when needed (prefer composition over inheritance).",
+      "4) Replace existing virtual methods with delegating calls to injected services (constructor injection or method args).",
+      "5) Update `MinorCustomer`/`VipCustomer` to supply different service implementations instead of overriding many methods.",
+      "6) Add unit tests per service to cover behaviors (discounts, purchase flow, alcohol policy, loyalty multipliers).",
+      "7) Run integration tests to confirm no functional regressions."]
+    ,
+    "diff": "--- a/ApocalypticFastFood/ApocalypticFastFood/Customer.cs\n+++ b/ApocalypticFastFood/ApocalypticFastFood/Customer.cs\n@@\n-public class Customer\n-{\n-    public virtual double GetDiscount()\n-    {\n-        return 0;\n-    }\n-\n-    public virtual void MakePurchase()\n-    {\n-    }\n-\n-    public virtual bool CanOrderAlcohol()\n-    {\n-        return true;\n-    }\n-\n-    public virtual int GetLoyaltyMultiplier()\n-    {\n-        return 1;\n-    }\n-}\n+public class Customer\n+{\n+    public int Id { get; init; }\n+    public string Name { get; set; }\n+    // keep as data only; behavior is provided by services operating on CustomerContext\n+}\n+\n+public record CustomerContext(int Id, int Age, int VisitCount, string MembershipLevel /* etc. */);
+",
+    "tests": [
+      "// xUnit example for ILoyaltyCalculator\nusing Xunit;\n\npublic class LoyaltyCalculatorTests\n{\n    [Fact]\n    public void DefaultLoyalty_ReturnsExpectedMultiplier()\n    {\n        var calc = new DefaultLoyaltyCalculator();\n        var ctx = new CustomerContext(1, 30, 5, \"Bronze\");\n        Assert.Equal(1, calc.GetMultiplier(ctx));\n    }\n}\n"
+    ,
+    "risk": "High - API reshaping that changes how callers obtain behavior. Mitigation: provide adapter shims that forward to old virtual methods while migrating. Keep changes incremental."
+  },
+  {
+    "file": "ApocalypticFastFood/ApocalypticFastFood/Customer.cs",
+    "strategy": "Introduce focused role interfaces (IOrderable, IAlcoholConsumer) and have `Customer` implement small interfaces or be composed with capability objects. (Interface Segregation)",
+    "steps": [
+      "1) Define `IOrderable` with `MakePurchase(CustomerContext ctx)` and `IAlcoholConsumer` with `bool CanOrderAlcohol(CustomerContext ctx)`.",
+      "2) Refactor `Customer` to expose capabilities via composition: `IOrderable Orderable { get; }`, etc.",
+      "3) Provide default implementations and specialized ones for `MinorCustomer`/`EmployeeCustomer` etc.",
+      "4) Update callers to depend on specific interfaces rather than the whole `Customer` type.",
+      "5) Add tests for each capability to ensure behavior preserved."]
+    ,
+    "diff": "--- a/ApocalypticFastFood/ApocalypticFastFood/Customer.cs\n+++ b/ApocalypticFastFood/ApocalypticFastFood/Customer.cs\n@@\n-public class Customer\n-{\n-    public virtual void MakePurchase() { }\n-    public virtual bool CanOrderAlcohol() => true;\n-}\n+public interface IOrderable { void MakePurchase(CustomerContext ctx); }\n+public interface IAlcoholConsumer { bool CanOrderAlcohol(CustomerContext ctx); }\n+public class Customer : IOrderable, IAlcoholConsumer\n+{\n+    public void MakePurchase(CustomerContext ctx) { /* default behavior */ }\n+    public bool CanOrderAlcohol(CustomerContext ctx) => true;\n+}\n",
+    "tests": [
+      "// xUnit: ensure interface-based calls behave the same\n[Fact]\npublic void OrderableInvocation_PreservesBehavior() { var c = new Customer(); c.MakePurchase(new CustomerContext(1,25,0,\"\")); /* assert no exception */ }"
+    ],
+    "risk": "Medium - improves design but requires adjusting callers to use interfaces. Use adapter methods for backwards compatibility."
+  },
+  {
+    "file": "ApocalypticFastFood/ApocalypticFastFood/DiscountManager.cs",
+    "strategy": "Decompose `DiscountManager` into smaller components: Rule objects (Strategy/Specification), PriceCatalog, ReceiptFormatter, LoyaltyCalculator, and Notification services. (Single Responsibility + Open/Closed)",
+    "steps": [
+      "1) Extract a `PriceCatalog` service that owns item prices (dictionary) and lookup methods.",
+      "2) Extract `IDiscountRule` interface and move each large conditional block into discrete rule classes implementing `bool IsApplicable(CustomerContext)` and `double Calculate(CustomerContext)`.",
+      "3) Create `DiscountEngine` that composes a list of `IDiscountRule` and computes total discount by iterating rules — rules can be registered/added without changing engine.",
+      "4) Move `GenerateReceipt()` responsibilities into `ReceiptFormatter` class which takes computed values and formats strings.",
+      "5) Move `CalculateLoyaltyPoints()` into `LoyaltyCalculator` interface implementation.",
+      "6) Add constructor injection and remove public mutable fields in favor of an immutable `CustomerContext` parameter passed to engine/formatter.",
+      "7) Add tests for each rule, the engine aggregation, price lookups and receipt formatting.",
+      "8) Run integration tests and replace the big `CalculateDiscount()` with `new DiscountEngine(rules).Calculate(ctx)`."]
+    ,
+    "diff": "--- a/ApocalypticFastFood/ApocalypticFastFood/DiscountManager.cs\n+++ b/ApocalypticFastFood/ApocalypticFastFood/DiscountManager.cs\n@@\n-public class DiscountManager\n-{\n-    public Dictionary<string, double> ItemPrices = new();\n-    public List<string> Items = new();\n-    public double CalculateDiscount()\n-    {\n-        // massive nested logic\n-    }\n-    public string GenerateReceipt() { /* formats and calls CalculateDiscount() */ }\n-    private int CalculateLoyaltyPoints() { /* logic */ }\n-}\n+public class DiscountManager\n+{\n+    private readonly IPriceCatalog _priceCatalog;\n+    private readonly DiscountEngine _engine;\n+    private readonly ReceiptFormatter _formatter;\n+\n+    public DiscountManager(IPriceCatalog priceCatalog, DiscountEngine engine, ReceiptFormatter formatter)\n+    {\n+        _priceCatalog = priceCatalog;\n+        _engine = engine;\n+        _formatter = formatter;\n+    }\n+\n+    public string GenerateReceipt(CustomerContext ctx)\n+    {\n+        var discount = _engine.Calculate(ctx);\n+        return _formatter.Format(ctx, discount);\n+    }\n+}\n",
+    "tests": [
+      "// xUnit: test that DiscountEngine aggregates rule results\n[Fact]\npublic void DiscountEngine_AppliesRules_CorrectTotal()\n{\n    var rules = new List<IDiscountRule> { new FixedRule(5.0), new ConditionalRule(...) };\n    var engine = new DiscountEngine(rules);\n    var ctx = new CustomerContext(...);\n    var total = engine.Calculate(ctx);\n    Assert.Equal(5.0 + /* conditional */ , total);\n}\n"
+    ,
+    "risk": "Medium-High - large decomposition but low behavioral-change risk if rules are ported carefully and covered by tests. Start by creating thin adapters that call original methods until migrated."
+  },
+  {
+    "file": "ApocalypticFastFood/ApocalypticFastFood/DiscountManager.cs",
+    "strategy": "Make discount rules pluggable by implementing `IDiscountRule` and register rules using configuration or factories (Open/Closed).",
+    "steps": [
+      "1) Extract major switch/if blocks into classes implementing `IDiscountRule` (e.g., `BurgerComboRule`, `VIPMembershipRule`, `PromoCodeRule`).",
+      "2) Implement a `DiscountRuleFactory` that provides rule instances from config or DI container.",
+      "3) Replace the monolithic switch logic with `foreach (var r in rules) if (r.IsApplicable(ctx)) total += r.Calculate(ctx);`.",
+      "4) Provide unit tests for each rule class and an integration test for the rule set order/interaction.",
+      "5) Document how to add new rules without modifying engine code."]
+    ,
+    "diff": "--- a/ApocalypticFastFood/ApocalypticFastFood/DiscountManager.cs\n+++ b/ApocalypticFastFood/ApocalypticFastFood/DiscountManager.cs\n@@\n-        // massive switch(CustomerType) / switch(PromoCode) blocks\n-        if (CustomerType == 2) { /* vip logic */ }\n+        // delegated to rule engine\n+        var total = 0.0;\n+        foreach (var rule in _rules)\n+        {\n+            if (rule.IsApplicable(ctx)) total += rule.Calculate(ctx);\n+        }\n",
+    "tests": [
+      "[Fact]\npublic void PromoRule_Save10_AppliesWhenTotalOverThreshold()\n{\n    var rule = new Save10Rule();\n    var ctx = new CustomerContext { TotalAmount = 60, PromoCode = \"SAVE10\" };\n    Assert.True(rule.IsApplicable(ctx));\n    Assert.Equal(15.0, rule.Calculate(ctx));\n}\n"
+    ,
+    "risk": "Low-Medium - porting complexity concentrated in rule implementations; mitigated by one-to-one mapping tests."
+  },
+  {
+    "file": "ApocalypticFastFood/ApocalypticFastFood/DiscountManager.cs",
+    "strategy": "Centralize pricing in a `PriceCatalog` and remove magic numbers across codebase; use catalog lookups in engine, formatter and order processor (Single Responsibility + Open/Closed).",
+    "steps": [
+      "1) Add `IPriceCatalog` with `double GetPrice(string item)` and an implementation `InMemoryPriceCatalog` seeded from a single source.",
+      "2) Replace ItemPrices initializations and hardcoded price switches with calls to `_priceCatalog.GetPrice(item)` in `GenerateReceipt()` and `OrderProcessor`.",
+      "3) Add unit tests ensuring price lookups match expected constants and that adding an item only requires updating the catalog.",
+      "4) Optionally move price data to config/JSON to allow editing without code changes.",
+      "5) Remove duplicated magic literals after tests pass."]
+    ,
+    "diff": "--- a/ApocalypticFastFood/ApocalypticFastFood/OrderProcessor.cs\n+++ b/ApocalypticFastFood/ApocalypticFastFood/OrderProcessor.cs\n@@\n-        foreach (var item in items)\n-            if (item == \"burger\")\n-            {\n-                Dm.TotalAmount += 8.99;\n-            }\n+        foreach (var item in items)\n+            Dm.TotalAmount += _priceCatalog.GetPrice(item);\n",
+    "tests": [
+      "[Fact]\npublic void PriceCatalog_ReturnsKnownPrices()\n{\n    var c = new InMemoryPriceCatalog();\n    Assert.Equal(8.99, c.GetPrice(\"burger\"));\n}\n"
+    ,
+    "risk": "Low - straightforward refactor; main risk is missing a place where a magic number was used in a different semantic way. Comprehensive search and tests mitigate."
+  },
+  {
+    "file": "ApocalypticFastFood/ApocalypticFastFood/DiscountManager.cs",
+    "strategy": "Introduce abstractions for external communication (IEmailSender, ISmsSender, IDatabase) and inject via DI (Dependency Inversion).",
+    "steps": [
+      "1) Define `IEmailSender.Send(to, subject, body)` and `ISmsSender.Send(phone, message)` and `IOrderRepository.Save(order)` interfaces.",
+      "2) Implement `ConsoleEmailSender`/`ConsoleSmsSender` for local/dev usage and production adapters for real providers.",
+      "3) Replace `SendEmailReceipt`/`SendSmsReceipt` bodies with calls to injected interfaces and remove hardcoded SMTP strings.",
+      "4) Update `OrderProcessor` to accept interfaces via ctor instead of `new`ing concrete services.",
+      "5) Add unit tests using mocks (e.g., Moq) to verify interactions without touching external systems."]
+    ,
+    "diff": "--- a/ApocalypticFastFood/ApocalypticFastFood/DiscountManager.cs\n+++ b/ApocalypticFastFood/ApocalypticFastFood/DiscountManager.cs\n@@\n-    public void SendEmailReceipt(string email)\n-    {\n-        // Hardcoded SMTP logic\n-        Console.WriteLine(\"Connecting to smtp.example.com:587\");\n-        Console.WriteLine(\"Sending to: \" + email);\n-    }\n+    private readonly IEmailSender _emailSender;\n+    public void SendEmailReceipt(string email) => _emailSender.Send(email, \"Receipt\", \"...\");\n\n--- a/ApocalypticFastFood/ApocalypticFastFood/OrderProcessor.cs\n+++ b/ApocalypticFastFood/ApocalypticFastFood/OrderProcessor.cs\n@@\n-public DatabaseService DbSvc = new();\n-public DiscountManager Dm = new();\n-public EmailService EmailSvc = new();\n-public SmsService SmsSvc = new();\n+private readonly IOrderRepository _repo;\n+private readonly DiscountManager _dm;\n+private readonly IEmailSender _emailSender;\n+private readonly ISmsSender _smsSender;\n",
+    "tests": [
+      "[Fact]\npublic void ProcessOrder_SendsEmail_WhenSubscribed()\n{\n    var emailMock = new Mock<IEmailSender>();\n    var repoMock = new Mock<IOrderRepository>();\n    var processor = new OrderProcessor(repoMock.Object, /*...*/ , emailMock.Object, /*...*/ );\n    // set up Dm.EmailSubscribed = true on ctx\n    processor.ProcessOrder(...);\n    emailMock.Verify(x => x.Send(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>()), Times.Once);\n}\n"
+    ,
+    "risk": "Low-Medium - adds abstraction layer; must ensure adapters for existing behavior and configuration for production endpoints. Using Console adapters preserves current behavior during migration."
+  },
+  {
+    "file": "ApocalypticFastFood/ApocalypticFastFood/DiscountManager.cs",
+    "strategy": "Split `IPaymentProcessor` into multiple focused interfaces (IHandlesCash, IHandlesCard, IHandlesPaypal...) and apply Interface Segregation, then adapt implementations.",
+    "steps": [
+      "1) Create small interfaces: `ICashProcessor { void ProcessCash(double) }`, `ICardProcessor { void ProcessCreditCard(...); void ProcessDebitCard(...); }`, `IPaypalProcessor { void ProcessPaypal(...); }`, etc.",
+      "2) Update existing `CashPaymentProcessor` to implement `ICashProcessor` only.",
+      "3) Update any callers to depend on the specific interface they need (e.g., use ICashProcessor when cash processing is required).",
+      "4) Provide an adapter `CompositePaymentProcessor` if any code expects a single entrypoint; adapter delegates to specific processors.",
+      "5) Add tests verifying a CashProcessor does not require unimplemented methods and that CompositePaymentProcessor correctly routes calls.",
+      "6) Deprecate `IPaymentProcessor` gradually or keep as facade implemented by CompositePaymentProcessor."]
+    ,
+    "diff": "--- a/ApocalypticFastFood/ApocalypticFastFood/DiscountManager.cs\n+++ b/ApocalypticFastFood/ApocalypticFastFood/DiscountManager.cs\n@@\n-public interface IPaymentProcessor\n-{\n-    void ProcessCreditCard(string cardNum, string cvv, string exp);\n-    void ProcessDebitCard(string cardNum, string pin);\n-    void ProcessPaypal(string email, string password);\n-    void ProcessCrypto(string wallet, string coin);\n-    void ProcessGiftCard(string code);\n-    void ProcessCash(double amount);\n-    void ProcessCheck(string checkNum);\n-    void ProcessBankTransfer(string routing, string account);\n-}\n+public interface ICashProcessor { void ProcessCash(double amount); }\n+public interface ICardProcessor { void ProcessCreditCard(string cardNum, string cvv, string exp); void ProcessDebitCard(string cardNum, string pin); }\n+public interface IPaypalProcessor { void ProcessPaypal(string email, string password); }\n@@\n-public class CashPaymentProcessor : IPaymentProcessor\n+public class CashPaymentProcessor : ICashProcessor\n {\n     public void ProcessCash(double amount)\n     {\n         Console.WriteLine("Processing cash: $" + amount);\n     }\n-    public void ProcessCreditCard(...) { throw new NotImplementedException(); }\n+    // removed irrelevant unimplemented methods\n }
+",
+    "tests": [
+      "[Fact]\npublic void CashProcessor_OnlyImplementsCash()\n{\n    var p = new CashPaymentProcessor();\n    p.ProcessCash(10);\n    // no NotImplementedException should be present\n}",
+      "[Fact]\npublic void CompositePayment_DelegatesToCashProcessor() { /* use mocks */ }"
+    ],
+    "risk": "Low - interface segregation isolates changes; main risk is updating all callers. Provide Composite facade for backward compatibility."
+  },
+  {
+    "file": "ApocalypticFastFood/ApocalypticFastFood/DiscountManager.cs",
+    "strategy": "Make CashPaymentProcessor adhere to its (now segregated) interface or provide an adapter; ensure no NotImplementedException escapes (Liskov).",
+    "steps": [
+      "1) After Interface Segregation, ensure `CashPaymentProcessor` only implements `ICashProcessor` and remove unimplemented members.",
+      "2) If code needs a full-featured processor, add `CompositePaymentProcessor` that aggregates specialized processors and implements the legacy facade.",
+      "3) Add unit tests ensuring `CashPaymentProcessor` does not throw for its documented contract and that `CompositePaymentProcessor` routes calls appropriately.",
+      "4) Replace any `new CashPaymentProcessor()` usages where a full facade is needed with `CompositePaymentProcessor` constructed from specific processors."]
+    ,
+    "diff": "--- a/ApocalypticFastFood/ApocalypticFastFood/DiscountManager.cs\n+++ b/ApocalypticFastFood/ApocalypticFastFood/DiscountManager.cs\n@@\n-public class CashPaymentProcessor : IPaymentProcessor\n+public class CashPaymentProcessor : ICashProcessor\n {\n     public void ProcessCash(double amount)\n     {\n         Console.WriteLine("Processing cash: $" + amount);\n     }\n-    public void ProcessCreditCard(string c, string v, string e) { throw new NotImplementedException(); }\n+    // other methods removed; use CompositePaymentProcessor if full API required\n }
+",
+    "tests": [
+      "[Fact]\npublic void CashProcessor_DoesNotThrow()\n{\n    var p = new CashPaymentProcessor();\n    p.ProcessCash(5.0); // should complete without exceptions\n}\n"
+    ],
+    "risk": "Low - straightforward; ensure backward compatibility with Composite facade."
+  },
+  {
+    "file": "ApocalypticFastFood/ApocalypticFastFood/DiscountManager.cs",
+    "strategy": "Extract receipt formatting to `ReceiptFormatter` and separate calculation from presentation (Single Responsibility).",
+    "steps": [
+      "1) Create `ReceiptFormatter.Format(CustomerContext ctx, double discount, double tax, double total)` returning string.",
+      "2) Move string-building code from `GenerateReceipt()` into `ReceiptFormatter` implementation.",
+      "3) Make `DiscountManager.GenerateReceipt()` call the engine to compute values and pass them to the formatter.",
+      "4) Add unit tests comparing formatted output lines (or using substring matches) to ensure formatting unchanged.",
+      "5) Optionally add templating support for easier changes."]
+    ,
+    "diff": "--- a/ApocalypticFastFood/ApocalypticFastFood/DiscountManager.cs\n+++ b/ApocalypticFastFood/ApocalypticFastFood/DiscountManager.cs\n@@\n-    public string GenerateReceipt()\n-    {\n-        var receipt = \"====================================\\n\";\n-        // many lines of string concatenation\n-        return receipt;\n-    }\n+    public string GenerateReceipt(CustomerContext ctx)\n+    {\n+        var discount = _engine.Calculate(ctx);\n+        var tax = (ctx.TotalAmount - discount) * 0.08;\n+        var total = ctx.TotalAmount - discount + tax;\n+        return _formatter.Format(ctx, discount, tax, total);\n+    }\n",
+    "tests": [
+      "[Fact]\npublic void ReceiptFormatter_ProducesHeaderAndTotals()\n{\n    var fmt = new ReceiptFormatter(new InMemoryPriceCatalog());\n    var ctx = new CustomerContext(...);\n    var s = fmt.Format(ctx, 5.0, 1.6, 20.6);\n    Assert.Contains(\"FAST FOOD MEGA CHAIN\", s);\n    Assert.Contains(\"TOTAL:\", s);\n}\n"
+    ],
+    "risk": "Low - separates format from logic; verify formatting unit tests to keep outputs identical."
+  },
+  {
+    "file": "ApocalypticFastFood/ApocalypticFastFood/Program.cs",
+    "strategy": "Move demo/test code out of production `Program.cs` into a test harness or separate sample app; keep Program focused on application startup (Single Responsibility).",
+    "steps": [
+      "1) Create `samples/` or `examples/` folder and move demo usage (dm1..dm4) into `Samples.cs` or a test project under `tests/`.",
+      "2) Reduce `Program.cs` to minimal bootstrap code calling into application services or launching samples via a debug flag.",
+      "3) Add unit/integration tests that replicate the scenarios formerly in `Program.cs` so behavior is preserved.",
+      "4) Ensure CI does not execute demo scenarios as part of normal test runs (use a separate test category)."]
+    ,
+    "diff": "--- a/ApocalypticFastFood/ApocalypticFastFood/Program.cs\n+++ b/ApocalypticFastFood/ApocalypticFastFood/Program.cs\n@@\n-// demo scenarios and tests in Main\n-Console.WriteLine("=== APOCALYPTIC DISCOUNT SYSTEM ===\n");\n-// many dm* demo instances\n+// Program now only bootstraps application; demo scenarios moved to Samples/SampleRunner.cs\n+Console.WriteLine("App started. Run samples via Samples.SampleRunner for demos.");\n",
+    "tests": [
+      "// Move the demo assertions into unit tests; sample:\n[Fact]\npublic void Sample_VipDiamond_ProducesReceiptContainsPremium() { var dm = new DiscountManager(...); /* set up */ var r = dm.GenerateReceipt(ctx); Assert.Contains(\"PREMIUM CUSTOMER\", r); }"
+    ],
+    "risk": "Low - cosmetic and organizational; minimal runtime risk. Ensure demo scenarios moved to tests to preserve validation."
+  }
+]

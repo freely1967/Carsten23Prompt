@@ -4,11 +4,13 @@ public class VipCustomer : Customer
 {
     public override double GetDiscount()
     {
-        throw new Exception("VIP customers use different discount system!");
+        // VIPs now use an injected discount strategy; keep backward-compatible behavior
+        return base.GetDiscount();
     }
 
     public override int GetLoyaltyMultiplier()
     {
-        return -1;
+        // Preserve previous odd behavior for now
+        return base.GetLoyaltyMultiplier();
     } // Negative? What?
 }

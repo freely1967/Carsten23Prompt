@@ -1,0 +1,132 @@
+[
+  {
+    "file": "ApocalypticFastFood/ApocalypticFastFood/VIPCustomer.cs",
+    "type": "Liskov",
+    "violation_summary": "Die abgeleitete Klasse verändert das erwartete Verhalten: Statt einen Rabatt zurückzugeben wirft sie eine Exception und liefert ungültige Werte für Loyalitätsmultiplikatoren, wodurch sie nicht mehr durch die Basisklasse ersetzbar ist.",
+    "root_cause": "Methodenüberschreibungen verletzen die von der Basisklasse implizierten Nachbedingungen und Rückgabeannahmen.",
+    "evidence": ["GetDiscount(): throw new Exception(\"VIP customers use different discount system!\")", "GetLoyaltyMultiplier(): return -1"],
+    "severity": "High",
+    "priority": 1,
+    "confidence": "high"
+  },
+  {
+    "file": "ApocalypticFastFood/ApocalypticFastFood/MinorCustomer.cs",
+    "type": "Liskov",
+    "violation_summary": "Die Spezialisierung wirft Exceptions für Operationen, die die Basisklasse ohne Fehler erlaubt, sodass Clients, die `Customer` erwarten, unerwartet Exceptions bekommen.",
+    "root_cause": "Überschreibung von Methoden mit Ausnahmeverhalten statt konformer Implementierung der Basissignatur.",
+    "evidence": ["CanOrderAlcohol(): throw new InvalidOperationException(\"Minors can't order alcohol!\")", "MakePurchase(): throw new Exception(\"Need parent approval!\")"],
+    "severity": "High",
+    "priority": 1,
+    "confidence": "high"
+  },
+  {
+    "file": "ApocalypticFastFood/ApocalypticFastFood/Customer.cs",
+    "type": "SingleResponsibility",
+    "violation_summary": "Die Klasse vereinigt mehrere Verantwortlichkeiten (Rabattberechnung/Policy, Kaufoperationen, Alkoholberechtigung, Loyalitätslogik), was zu vielen Gründen für Änderungen führt.",
+    "root_cause": "Monolithisches Domänenmodell mit heterogenen Methoden in einem Typ statt feinkörniger Verantwortlichkeiten.",
+    "evidence": ["GetDiscount()", "MakePurchase()", "CanOrderAlcohol()", "GetLoyaltyMultiplier()"],
+    "severity": "Medium",
+    "priority": 3,
+    "confidence": "high"
+  },
+  {
+    "file": "ApocalypticFastFood/ApocalypticFastFood/Customer.cs",
+    "type": "InterfaceSeg",
+    "violation_summary": "Der grobkörnige Vertrag zwingt Subtypen, Methoden zu 'unterstützen', die für ihre Rolle nicht sinnvoll sind (z.B. Minderjährige und Alkohol-Policy).",
+    "root_cause": "Fehlende aufgabenspezifische Abstraktionen; eine Klasse deckt mehrere Rollen ab.",
+    "evidence": ["MakePurchase()", "CanOrderAlcohol()"],
+    "severity": "Medium",
+    "priority": 3,
+    "confidence": "medium"
+  },
+  {
+    "file": "ApocalypticFastFood/ApocalypticFastFood/DiscountManager.cs",
+    "type": "SingleResponsibility",
+    "violation_summary": "Die Klasse ist ein 'God object': sie verwaltet Zustand, berechnet komplexe Discounts, erzeugt Belege, berechnet Treuepunkte und sendet Mitteilungen — mehrere Verantwortlichkeiten in einem Typ.",
+    "root_cause": "Viele öffentliche Felder und kombinierte Workflows statt klarer Trennung (Pricing, Rules, Presentation, IO).",
+    "evidence": ["öffentliche Felder (z.B. CustomerType, Items, TotalAmount, ...)", "CalculateDiscount()", "GenerateReceipt()", "CalculateLoyaltyPoints()", "SendEmailReceipt()", "SendSmsReceipt()"],
+    "severity": "High",
+    "priority": 1,
+    "confidence": "high"
+  },
+  {
+    "file": "ApocalypticFastFood/ApocalypticFastFood/DiscountManager.cs",
+    "type": "OpenClosed",
+    "violation_summary": "Die Rabattlogik ist in großen, verschachtelten if-/switch-Konstrukten implementiert; jede neue Regel erfordert Änderungen an der Methode.",
+    "root_cause": "Monolithische, hardcodierte Entscheidungsbäume statt konfigurierbarer/erweiterbarer Strategien oder Rule-Objekte.",
+    "evidence": ["CalculateDiscount(): tiefe verschachtelte switch/if-Strukturen (z.B. switch(CustomerType), switch(PromoCode), zahlreiche nested ifs)"],
+    "severity": "High",
+    "priority": 2,
+    "confidence": "high"
+  },
+  {
+    "file": "ApocalypticFastFood/ApocalypticFastFood/DiscountManager.cs",
+    "type": "OpenClosed",
+    "violation_summary": "Preise und Artikellogik sind mehrfach hartkodiert (in CalculateDiscount, GenerateReceipt, OrderProcessor), wodurch Erweiterungen Änderungen an mehreren Stellen erzwingen.",
+    "root_cause": "Duplizierte Preislogik und Magic Numbers an mehreren Orten statt einer einzigen Preis-/Katalog-Abstraktion.",
+    "evidence": ["ItemPrices[...] = ... in CalculateDiscount()", "GenerateReceipt(): switch auf item -> Preis", "OrderProcessor.ProcessOrder(): if/else chain addiert hardcodierte Preise"],
+    "severity": "Medium",
+    "priority": 3,
+    "confidence": "high"
+  },
+  {
+    "file": "ApocalypticFastFood/ApocalypticFastFood/DiscountManager.cs",
+    "type": "DependencyInversion",
+    "violation_summary": "IO- und Integrationsdetails sind fest in Domänenklassen verankert (SMTP-String, Console-Aufrufe), statt über Abstraktionen injizierbar zu sein.",
+    "root_cause": "Direkte Abhängigkeit von konkreten Implementierungen und Umgebungsdetails in Methoden (kein IoC/DI, keine Interfaces für Kommunikation).",
+    "evidence": ["SendEmailReceipt(): Console.WriteLine(\"Connecting to smtp.example.com:587\")", "SendSmsReceipt(): Console.WriteLine(\"Sending SMS to: \" + phone)"],
+    "severity": "Medium",
+    "priority": 4,
+    "confidence": "high"
+  },
+  {
+    "file": "ApocalypticFastFood/ApocalypticFastFood/DiscountManager.cs",
+    "type": "DependencyInversion",
+    "violation_summary": "`OrderProcessor` instanziiert konkrete Services (`DatabaseService`, `EmailService`, `SmsService`) und ist somit stark an Implementierungen gebunden.",
+    "root_cause": "Keine Inversion of Control; fehlende Abstraktionen/Interfaces und Konstruktorinjektion verhindern Testbarkeit und flexible Ersetzung.",
+    "evidence": ["public DatabaseService DbSvc = new();", "public EmailService EmailSvc = new();", "DbSvc.SaveOrder(...)", "EmailSvc.Send(...)"],
+    "severity": "High",
+    "priority": 2,
+    "confidence": "high"
+  },
+  {
+    "file": "ApocalypticFastFood/ApocalypticFastFood/DiscountManager.cs",
+    "type": "InterfaceSeg",
+    "violation_summary": "Das `IPaymentProcessor` ist ein sehr großes Interface, das viele unterschiedliche Zahlungsarten erzwingt; Implementierungen (z.B. Cash) müssen nicht anwendbare Methoden mit NotImplementedException füllen.",
+    "root_cause": "Aufgabenbezogene Schnittstellen wurden nicht zergliedert; ein Interface deckt zu viele Verantwortlichkeiten ab.",
+    "evidence": ["interface IPaymentProcessor { void ProcessCreditCard(...); void ProcessDebitCard(...); void ProcessPaypal(...); void ProcessCrypto(...); void ProcessGiftCard(...); void ProcessCash(...); void ProcessCheck(...); void ProcessBankTransfer(...); }", "CashPaymentProcessor: NotImplementedException in allen nicht-bargeld Methoden"],
+    "severity": "High",
+    "priority": 2,
+    "confidence": "high"
+  },
+  {
+    "file": "ApocalypticFastFood/ApocalypticFastFood/DiscountManager.cs",
+    "type": "Liskov",
+    "violation_summary": "`CashPaymentProcessor` erfüllt das Interface nicht vollständig (wirft NotImplemented für viele Methoden), wodurch es nicht als vollwertiger Austausch für `IPaymentProcessor` fungiert.",
+    "root_cause": "Implementierung kann Vertragsbedingungen des Interfaces nicht einhalten; Teilimplementierung verletzt Substitutionsprinzip.",
+    "evidence": ["CashPaymentProcessor.ProcessCreditCard(...): throw new NotImplementedException()", "CashPaymentProcessor.ProcessPaypal(...): throw new NotImplementedException()"],
+    "severity": "Medium",
+    "priority": 3,
+    "confidence": "high"
+  },
+  {
+    "file": "ApocalypticFastFood/ApocalypticFastFood/DiscountManager.cs",
+    "type": "SingleResponsibility",
+    "violation_summary": "Die Methode `GenerateReceipt` mischt Business-Logik (Preisberechnung, Rabattanwendung) mit Präsentations-/Formatierungslogik, was Änderungen an der Darstellung oder Berechnung schwierig macht.",
+    "root_cause": "Fehlende Trennung zwischen Domänenlogik und Darstellung; Formatierung ist in Domänenklasse hart eingebettet.",
+    "evidence": ["GenerateReceipt(): Formatiert Beleg und ruft CalculateDiscount() auf; enthält switch für Item-Preise und direkte String-Konkatenation"],
+    "severity": "Medium",
+    "priority": 3,
+    "confidence": "high"
+  },
+  {
+    "file": "ApocalypticFastFood/ApocalypticFastFood/Program.cs",
+    "type": "SingleResponsibility",
+    "violation_summary": "Die `Program.cs` enthält sowohl Test-/Democode als auch Beispielausführung; Bootstrapping, Tests und Demonstrationen sind vermischt.",
+    "root_cause": "Keine klare Trennung zwischen Anwendungseinstieg und Test-/Demo-Szenarien in Produktionsdatei.",
+    "evidence": ["Program.cs: mehrere vorbereitete `dmX`-Instanzen, Testausgaben, und LSP-Demonstrationen im selben Main-Skript"],
+    "severity": "Low",
+    "priority": 4,
+    "confidence": "medium"
+  }
+]
