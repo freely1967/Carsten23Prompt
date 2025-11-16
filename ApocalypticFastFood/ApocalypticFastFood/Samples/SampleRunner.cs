@@ -114,10 +114,12 @@ public static class SampleRunner
         try
         {
             var regular = new Customer();
-            Console.WriteLine("Regular customer discount: $" + regular.GetDiscount());
+            var regularProvider = new ApocalypticFastFood.CustomerDiscountProvider(regular);
+            Console.WriteLine("Regular customer discount: $" + regularProvider.GetDiscount(new ApocalypticFastFood.CustomerContext()));
 
             Customer vip = new VipCustomer();
-            Console.WriteLine("VIP customer discount: $" + vip.GetDiscount());
+            var vipProvider = new ApocalypticFastFood.CustomerDiscountProvider((Customer)vip);
+            Console.WriteLine("VIP customer discount: $" + vipProvider.GetDiscount(new ApocalypticFastFood.CustomerContext()));
         }
         catch (Exception ex)
         {

@@ -125,6 +125,35 @@ public class Customer : IOrderable, IAlcoholConsumer
     }
 }
 
+    // Adapter/service interface for staged migration: obtains discounts for a given CustomerContext
+    public interface IDiscountProvider
+    {
+        double GetDiscount(CustomerContext ctx);
+    }
+
+    // Default adapter that bridges existing Customer instance behavior to IDiscountProvider
+    public class CustomerDiscountProvider : IDiscountProvider
+    {
+        private readonly Customer _customer;
+
+        public CustomerDiscountProvider(Customer customer)
+        {
+            _customer = customer ?? throw new ArgumentNullException(nameof(customer));
+        }
+
+        public double GetDiscount(CustomerContext ctx)
+        {
+            // Apply context to the wrapped customer instance to preserve existing behavior
+            _customer.Id = ctx.Id;
+            _customer.Age = ctx.Age;
+            _customer.VisitCount = ctx.VisitCount;
+            _customer.MembershipLevel = ctx.MembershipLevel ?? string.Empty;
+            _customer.HasParentApproval = ctx.HasParentApproval;
+
+            return _customer.GetDiscount();
+        }
+    }
+
 // Minor-specific policies
 public class MinorAlcoholPolicy : IAlcoholPolicy
 {
