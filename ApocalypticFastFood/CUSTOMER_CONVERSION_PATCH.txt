@@ -1,0 +1,195 @@
+*** Begin Patch
+*** Update File: ApocalypticFastFood/ApocalypticFastFood/Customer.cs
+@@
+-namespace ApocalypticFastFood;
+-
+-// Small data holder used to pass customer-related state into policies/strategies
+-public record CustomerContext(int Id = 0, int Age = 0, int VisitCount = 0, string MembershipLevel = "", bool HasParentApproval = false);
+-
+-public interface IDiscountStrategy
+-{
+-    double GetDiscount(CustomerContext ctx);
+-}
+-
+-public interface IAlcoholPolicy
+-{
+-    bool CanOrderAlcohol(CustomerContext ctx);
+-}
+-
+-public interface IPurchaseApprovalPolicy
+-{
+-    bool CanMakePurchase(CustomerContext ctx);
+-}
+-
+-// Narrow capability interfaces (Interface Segregation)
+-public interface IOrderable
+-{
+-    void MakePurchase();
+-}
+-
+-public interface IAlcoholConsumer
+-{
+-    bool CanOrderAlcohol();
+-}
+-
+-public interface ILoyaltyCalculator
+-{
+-    int GetMultiplier(CustomerContext ctx);
+-}
+-
+-// Default implementations that preserve original behaviors
+-public class DefaultDiscountStrategy : IDiscountStrategy
+-{
+-    public double GetDiscount(CustomerContext ctx) => 0.0;
+-}
+-
+-// VIP-specific discount strategy (kept conservative to avoid changing business behaviour)
+-public class VipDiscountStrategy : IDiscountStrategy
+-{
+-    public double GetDiscount(CustomerContext ctx)
+-    {
+-        // Keep behavior conservative: no invented discounts here; return default zero discount.
+-        // This class exists so VIPs can be composed with a dedicated strategy and later extended.
+-        return 0.0;
+-    }
+-}
+-
+-public class DefaultAlcoholPolicy : IAlcoholPolicy
+-{
+-    // Original Customer.CanOrderAlcohol returned true by default
+-    public bool CanOrderAlcohol(CustomerContext ctx) => true;
+-}
+-
+-public class DefaultPurchaseApprovalPolicy : IPurchaseApprovalPolicy
+-{
+-    public bool CanMakePurchase(CustomerContext ctx) => true;
+-}
+-
+-public class DefaultLoyaltyCalculator : ILoyaltyCalculator
+-{
+-    public int GetMultiplier(CustomerContext ctx) => 1;
+-}
+-
+-public class Customer : IOrderable, IAlcoholConsumer
+-{
+-    // lightweight state kept for backwards compatibility
+-    public int Id { get; set; }
+-    public int Age { get; set; }
+-    public int VisitCount { get; set; }
+-    public string MembershipLevel { get; set; } = string.Empty;
+-    public bool HasParentApproval { get; set; }
+-
+-    private readonly IDiscountStrategy _discountStrategy;
+-    private readonly IAlcoholPolicy _alcoholPolicy;
+-    private readonly IPurchaseApprovalPolicy _purchaseApprovalPolicy;
+-    private readonly ILoyaltyCalculator _loyaltyCalculator;
+-
+-    public Customer(IDiscountStrategy? discountStrategy = null,
+-                    IAlcoholPolicy? alcoholPolicy = null,
+-                    IPurchaseApprovalPolicy? purchaseApprovalPolicy = null,
+-                    ILoyaltyCalculator? loyaltyCalculator = null)
+-    {
+-        _discountStrategy = discountStrategy ?? new DefaultDiscountStrategy();
+-        _alcoholPolicy = alcoholPolicy ?? new DefaultAlcoholPolicy();
+-        _purchaseApprovalPolicy = purchaseApprovalPolicy ?? new DefaultPurchaseApprovalPolicy();
+-        _loyaltyCalculator = loyaltyCalculator ?? new DefaultLoyaltyCalculator();
+-    }
+-
+-    // Backwards-compatible method signatures: delegate to injected policies using current state
+-    public virtual double GetDiscount()
+-    {
+-        var ctx = new CustomerContext(Id, Age, VisitCount, MembershipLevel, HasParentApproval);
+-        return _discountStrategy.GetDiscount(ctx);
+-    }
+-
+-    public virtual void MakePurchase()
+-    {
+-        var ctx = new CustomerContext(Id, Age, VisitCount, MembershipLevel, HasParentApproval);
+-        if (!_purchaseApprovalPolicy.CanMakePurchase(ctx))
+-        {
+-            // Previously this threw in some subclasses; new pattern uses policy checks instead of exceptions
+-            Console.WriteLine("Purchase not approved for customer " + Id);
+-            return;
+-        }
+-
+-        // purchase side-effects would happen here in real implementation
+-    }
+-
+-    public virtual bool CanOrderAlcohol()
+-    {
+-        var ctx = new CustomerContext(Id, Age, VisitCount, MembershipLevel, HasParentApproval);
+-        return _alcoholPolicy.CanOrderAlcohol(ctx);
+-    }
+-
+-    public virtual int GetLoyaltyMultiplier()
+-    {
+-        var ctx = new CustomerContext(Id, Age, VisitCount, MembershipLevel, HasParentApproval);
+-        return _loyaltyCalculator.GetMultiplier(ctx);
+-    }
+-}
+-
+-    // Adapter/service interface for staged migration: obtains discounts for a given CustomerContext
+-    public interface IDiscountProvider
+-    {
+-        double GetDiscount(CustomerContext ctx);
+-    }
+-
+-    // Default adapter that bridges existing Customer instance behavior to IDiscountProvider
+-    public class CustomerDiscountProvider : IDiscountProvider
+-    {
+-        private readonly Customer _customer;
+-
+-        public CustomerDiscountProvider(Customer customer)
+-        {
+-            _customer = customer ?? throw new ArgumentNullException(nameof(customer));
+-        }
+-
+-        public double GetDiscount(CustomerContext ctx)
+-        {
+-            // Apply context to the wrapped customer instance to preserve existing behavior
+-            _customer.Id = ctx.Id;
+-            _customer.Age = ctx.Age;
+-            _customer.VisitCount = ctx.VisitCount;
+-            _customer.MembershipLevel = ctx.MembershipLevel ?? string.Empty;
+-            _customer.HasParentApproval = ctx.HasParentApproval;
+-
+-            return _customer.GetDiscount();
+-        }
+-    }
+-
+-// Minor-specific policies
+-public class MinorAlcoholPolicy : IAlcoholPolicy
+-{
+-    public bool CanOrderAlcohol(CustomerContext ctx)
+-    {
+-        // Deny alcohol if under 18 or no parent approval
+-        if (ctx.Age < 18) return false;
+-        if (!ctx.HasParentApproval) return false;
+-        return true;
+-    }
+-}
+-
+-public class MinorApprovalPolicy : IPurchaseApprovalPolicy
+-{
+-    public bool CanMakePurchase(CustomerContext ctx)
+-    {
+-        // Allow purchase if parent approval present or customer is 18+
+-        if (ctx.Age >= 18) return true;
+-        return ctx.HasParentApproval;
+-    }
+-}
++namespace ApocalypticFastFood;
++
++// Small data holder used to pass customer-related state into policies/strategies
++public record CustomerContext(int Id = 0, int Age = 0, int VisitCount = 0, string MembershipLevel = "", bool HasParentApproval = false);
++
++// Customer is now a pure data holder. All behavior has been moved to services/adapters.
++public class Customer
++{
++    public int Id { get; set; }
++    public int Age { get; set; }
++    public int VisitCount { get; set; }
++    public string MembershipLevel { get; set; } = string.Empty;
++    public bool HasParentApproval { get; set; }
++}
+*** End Patch
