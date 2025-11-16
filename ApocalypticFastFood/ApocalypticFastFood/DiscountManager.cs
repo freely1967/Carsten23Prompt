@@ -1004,64 +1004,12 @@ public class DiscountManager
                     break;
             }
         
-        if (PreviousOrder is not "" and not null)
-        {
-            var currentOrder = string.Join(",", Items.OrderBy(x => x));
-            if (currentOrder == PreviousOrder)
-            {
-                if (DaysLastVisit <= 7)
-                {
-                    if (DaysLastVisit <= 3)
-                    {
-                        if (ConsecutiveVisits >= 5)
-                        {
-                            if (CustomerType == 2)
-                            {
-                                if (MembershipLevel is "Diamond" or "Platinum")
-                                {
-                                    if (AverageSpend > 80)
-                                    {
-                                        if (HasApp && EmailSubscribed)
-                                        {
-                                            s19 = 35.0;
-                                            multiplier *= 1.25;
-                                        }
-                                        else
-                                        {
-                                            s19 = 28.0;
-                                        }
-                                    }
-                                    else
-                                    {
-                                        s19 = 22.0;
-                                    }
-                                }
-                                else
-                                {
-                                    s19 = 18.0;
-                                }
-                            }
-                            else
-                            {
-                                s19 = 15.0;
-                            }
-                        }
-                        else
-                        {
-                            s19 = 10.0;
-                        }
-                    }
-                    else
-                    {
-                        s19 = 8.0;
-                    }
-                }
-                else
-                {
-                    s19 = 5.0;
-                }
-            }
-        }
+        // Previous-order based discounts migrated to PreviousOrderRule via DiscountEngineV2
+        var previousOrderResult = new DiscountEngineV2(new IDiscountRuleV2[] { new PreviousOrderRule() }).Calculate(this);
+        // zero out legacy s19 to avoid double-counting
+        s19 = 0.0;
+        discount += previousOrderResult.Discount;
+        multiplier *= previousOrderResult.Multiplier;
 
         if (ManagerApproval > 0)
             switch (ManagerApproval)

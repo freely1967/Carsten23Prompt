@@ -370,3 +370,76 @@ public class StreakRule : IDiscountRuleV2
         return new DiscountResult(discount, multiplier);
     }
 }
+
+public class PreviousOrderRule : IDiscountRuleV2
+{
+    public bool IsApplicable(DiscountManager ctx)
+    {
+        if (string.IsNullOrEmpty(ctx.PreviousOrder)) return false;
+        var currentOrder = string.Join(",", ctx.Items.OrderBy(x => x));
+        return currentOrder == ctx.PreviousOrder;
+    }
+
+    public DiscountResult CalculateResult(DiscountManager ctx)
+    {
+        double discount = 0.0;
+        double multiplier = 1.0;
+
+        var currentOrder = string.Join(",", ctx.Items.OrderBy(x => x));
+        if (currentOrder != ctx.PreviousOrder) return new DiscountResult(0.0, 1.0);
+
+        if (ctx.DaysLastVisit <= 7)
+        {
+            if (ctx.DaysLastVisit <= 3)
+            {
+                if (ctx.ConsecutiveVisits >= 5)
+                {
+                    if (ctx.CustomerType == 2)
+                    {
+                        if (ctx.MembershipLevel is "Diamond" or "Platinum")
+                        {
+                            if (ctx.AverageSpend > 80)
+                            {
+                                if (ctx.HasApp && ctx.EmailSubscribed)
+                                {
+                                    discount = 35.0;
+                                    multiplier *= 1.25;
+                                }
+                                else
+                                {
+                                    discount = 28.0;
+                                }
+                            }
+                            else
+                            {
+                                discount = 22.0;
+                            }
+                        }
+                        else
+                        {
+                            discount = 18.0;
+                        }
+                    }
+                    else
+                    {
+                        discount = 15.0;
+                    }
+                }
+                else
+                {
+                    discount = 10.0;
+                }
+            }
+            else
+            {
+                discount = 8.0;
+            }
+        }
+        else
+        {
+            discount = 5.0;
+        }
+
+        return new DiscountResult(discount, multiplier);
+    }
+}
