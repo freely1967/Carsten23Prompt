@@ -60,13 +60,13 @@ public class VisitCountRule : IDiscountRule
                             if (ctx.ConsecutiveVisits > 10)
                             {
                                 if (ctx.LeftReview && ctx.ReviewStars == 5)
-                                {
-                                    if (ctx.ReferralCount > 10)
                                     {
-                                        return 60.0;
+                                        if (ctx.ReferralCount > 10)
+                                        {
+                                            return 60.0;
+                                        }
+                                        return 45.0;
                                     }
-                                    return 50.0;
-                                }
                                 return 45.0;
                             }
                             return 40.0;

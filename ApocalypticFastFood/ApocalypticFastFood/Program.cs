@@ -8,5 +8,6 @@ Console.WriteLine("App started. Use 'samples' argument to run demo scenarios.");
 
 if (runSamples)
 {
-    Samples.SampleRunner.RunDemos();
+    // Fully-qualified call to the sample runner
+    ApocalypticFastFood.Samples.SampleRunner.RunDemos();
 }

@@ -1,18 +1,17 @@
-namespace ApocalypticFastFood;
+namespace ApocalypticFastFood.Adapters;
 
-public class DiscountManagerDiscountProvider : IDiscountProvider
+public class DiscountManagerDiscountProvider : ApocalypticFastFood.IDiscountProvider
 {
-    private readonly DiscountManager _dm;
+    private readonly ApocalypticFastFood.DiscountManager _dm;
 
-    public DiscountManagerDiscountProvider(DiscountManager dm)
+    public DiscountManagerDiscountProvider(ApocalypticFastFood.DiscountManager dm)
     {
         _dm = dm ?? throw new ArgumentNullException(nameof(dm));
     }
 
-    public double GetDiscount(CustomerContext ctx)
+    public double GetDiscount(ApocalypticFastFood.CustomerContext ctx)
     {
         // Map available context fields into the existing DiscountManager instance
-        _dm.Id = ctx.Id;
         _dm.Age = ctx.Age;
         _dm.VisitCount = ctx.VisitCount;
         _dm.MembershipLevel = ctx.MembershipLevel ?? string.Empty;

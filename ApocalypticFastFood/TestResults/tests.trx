@@ -1,0 +1,408 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TestRun id="4d10a733-4cc4-454e-928a-0314353d9d35" name="elydu@DESKTOP-9N7GO08 2025-11-16 18:24:06" runUser="DESKTOP-9N7GO08\elydu" xmlns="http://microsoft.com/schemas/VisualStudio/TeamTest/2010">
+  <Times creation="2025-11-16T18:24:06.8990584+01:00" queuing="2025-11-16T18:24:06.8990585+01:00" start="2025-11-16T18:24:06.5194710+01:00" finish="2025-11-16T18:24:06.9170195+01:00" />
+  <TestSettings name="default" id="5468c725-c65a-4187-bc48-8dc976ed32ae">
+    <Deployment runDeploymentRoot="elydu_DESKTOP-9N7GO08_2025-11-16_18_24_06" />
+  </TestSettings>
+  <Results>
+    <UnitTestResult executionId="9a5a6589-5b50-4d9f-8f8e-5cbffdf87902" testId="575586fe-cf52-f1a9-07f2-afea0700d986" testName="ApocalypticFastFood.Tests.PreviousOrderRuleTests.PreviousOrderRule_NoRecentMatch_ReturnsZero" computerName="DESKTOP-9N7GO08" duration="00:00:00.0027991" startTime="2025-11-16T18:24:06.8837393+01:00" endTime="2025-11-16T18:24:06.8837394+01:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="9a5a6589-5b50-4d9f-8f8e-5cbffdf87902" />
+    <UnitTestResult executionId="d7662635-5ef9-42cc-8c49-cc111508039e" testId="8b5e30e4-044b-373b-16c0-1b5a85a5a0fa" testName="ApocalypticFastFood.Tests.BirthdayRuleTests.BirthdayRule_NonVip_ReturnsExpected" computerName="DESKTOP-9N7GO08" duration="00:00:00.0000976" startTime="2025-11-16T18:24:06.8885786+01:00" endTime="2025-11-16T18:24:06.8885786+01:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="d7662635-5ef9-42cc-8c49-cc111508039e" />
+    <UnitTestResult executionId="8d2b0967-3581-4cc5-9d50-8fcb40523771" testId="6ad3bd5c-916d-9294-82ce-feb0a19f7195" testName="ApocalypticFastFood.Tests.ReferralRuleV2Tests.ReferralRuleV2_Referral20_VipDiamond_LongMembership_HighAverageSpend" computerName="DESKTOP-9N7GO08" duration="00:00:00.0000549" startTime="2025-11-16T18:24:06.8891618+01:00" endTime="2025-11-16T18:24:06.8891618+01:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="8d2b0967-3581-4cc5-9d50-8fcb40523771" />
+    <UnitTestResult executionId="633544df-0a7a-4169-aec9-af805d0d155a" testId="9444d6d1-7f45-ff11-52e5-e5a4c115c27d" testName="ApocalypticFastFood.Tests.PriceCatalogTests.InMemoryPriceCatalog_ReturnsExpectedPrices" computerName="DESKTOP-9N7GO08" duration="00:00:00.0028584" startTime="2025-11-16T18:24:06.8837367+01:00" endTime="2025-11-16T18:24:06.8837367+01:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="633544df-0a7a-4169-aec9-af805d0d155a" />
+    <UnitTestResult executionId="4e039148-b688-4124-9820-1ae26a827a6b" testId="495f0e36-3317-2483-70e9-4f7a85847861" testName="ApocalypticFastFood.Tests.PreviousOrderRuleTests.PreviousOrderRule_MatchesRecentOrder_VipDiamond_AppAndEmail_ProducesMultiplier" computerName="DESKTOP-9N7GO08" duration="00:00:00.0001619" startTime="2025-11-16T18:24:06.8885855+01:00" endTime="2025-11-16T18:24:06.8885855+01:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="4e039148-b688-4124-9820-1ae26a827a6b" />
+    <UnitTestResult executionId="87b43da1-c7bc-4d8c-adea-7b79c795ab49" testId="039440e2-af58-e9cf-0141-61030843d1c4" testName="ApocalypticFastFood.Tests.DiscountManagerTimeIntegrationTests.CalculateDiscount_Uses_TimeEngine_ForAfternoonCase" computerName="DESKTOP-9N7GO08" duration="00:00:00.0001373" startTime="2025-11-16T18:24:06.8889410+01:00" endTime="2025-11-16T18:24:06.8889411+01:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="87b43da1-c7bc-4d8c-adea-7b79c795ab49" />
+    <UnitTestResult executionId="96932b18-9afa-4a66-a685-20e08f46369f" testId="9ee8de60-726c-b2e5-8fd2-43ba9c5f2e1e" testName="ApocalypticFastFood.Tests.SampleRunnerTests.RunDemos_DoesNotThrow" computerName="DESKTOP-9N7GO08" duration="00:00:00.0025833" startTime="2025-11-16T18:24:06.8893947+01:00" endTime="2025-11-16T18:24:06.8893947+01:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="96932b18-9afa-4a66-a685-20e08f46369f" />
+    <UnitTestResult executionId="3b785347-f07d-4048-9612-000d98060ea1" testId="c621564b-6904-9d53-a0d6-2256f2fe6c71" testName="ApocalypticFastFood.Tests.DiscountEngineTests.Engine_Applies_PromoCodeRule_SAVE10" computerName="DESKTOP-9N7GO08" duration="00:00:00.0026619" startTime="2025-11-16T18:24:06.8837179+01:00" endTime="2025-11-16T18:24:06.8837179+01:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="3b785347-f07d-4048-9612-000d98060ea1" />
+    <UnitTestResult executionId="3953aa8b-7d6a-4fb7-95f6-97481dabeea2" testId="48b209b2-7a06-8b3e-918c-5302801b129b" testName="ApocalypticFastFood.Tests.DiscountEngineTests.Engine_Applies_VisitCountRule_100plus" computerName="DESKTOP-9N7GO08" duration="00:00:00.0002001" startTime="2025-11-16T18:24:06.8885919+01:00" endTime="2025-11-16T18:24:06.8885920+01:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="3953aa8b-7d6a-4fb7-95f6-97481dabeea2" />
+    <UnitTestResult executionId="b08715ce-f532-4b84-8b4f-e760b1caae80" testId="0141a2c2-e50a-01c9-fe5d-92c1257b0202" testName="ApocalypticFastFood.Tests.DiscountManagerDiscountProviderTests.Adapter_UsesDiscountManagerCalculateDiscount" computerName="DESKTOP-9N7GO08" duration="00:00:00.0002489" startTime="2025-11-16T18:24:06.8889731+01:00" endTime="2025-11-16T18:24:06.8889731+01:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="b08715ce-f532-4b84-8b4f-e760b1caae80" />
+    <UnitTestResult executionId="2f77afe5-09e5-4048-84f8-79a619dc7ec6" testId="56679e54-59a4-77c6-6aa3-e08b7355f1b1" testName="ApocalypticFastFood.Tests.MinorCustomerPolicyTests.MinorCustomer_CannotOrderAlcohol_Under18_NoApproval" computerName="DESKTOP-9N7GO08" duration="00:00:00.0002180" startTime="2025-11-16T18:24:06.8885984+01:00" endTime="2025-11-16T18:24:06.8885984+01:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="2f77afe5-09e5-4048-84f8-79a619dc7ec6" />
+    <UnitTestResult executionId="ec0d0935-be5b-40f8-8353-2f56b2e8a91d" testId="cba4a1c2-8fee-a7ee-8198-66e99a1e5cf5" testName="ApocalypticFastFood.Tests.MinorCustomerPolicyTests.MinorCustomer_CanOrderAlcohol_WithParentApproval" computerName="DESKTOP-9N7GO08" duration="00:00:00.0000363" startTime="2025-11-16T18:24:06.8886135+01:00" endTime="2025-11-16T18:24:06.8886136+01:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="ec0d0935-be5b-40f8-8353-2f56b2e8a91d" />
+    <UnitTestResult executionId="82d10765-4c60-4b85-90d9-d63897616b62" testId="4f4676ac-6a5e-97a5-61de-1f34603f3c4d" testName="ApocalypticFastFood.Tests.CustomerPurchaseServiceTests.CustomerPurchaseService_DelegatesToCustomer" computerName="DESKTOP-9N7GO08" duration="00:00:00.0018288" startTime="2025-11-16T18:24:06.8875915+01:00" endTime="2025-11-16T18:24:06.8875915+01:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="82d10765-4c60-4b85-90d9-d63897616b62" />
+    <UnitTestResult executionId="15082838-f6f0-4c5b-98df-dd55c37844cf" testId="186f7675-c977-dab7-b810-8397f2d147d5" testName="ApocalypticFastFood.Tests.CustomerDiscountProviderTests.CustomerDiscountProvider_ReturnsDouble_AndDoesNotThrow" computerName="DESKTOP-9N7GO08" duration="00:00:00.0019256" startTime="2025-11-16T18:24:06.8837328+01:00" endTime="2025-11-16T18:24:06.8837328+01:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="15082838-f6f0-4c5b-98df-dd55c37844cf" />
+    <UnitTestResult executionId="8da5511a-debe-4947-8d75-49120f54f8cd" testId="871a3a31-4a2c-3577-a52c-43b6913c7989" testName="ApocalypticFastFood.Tests.StreakRuleTests.StreakRule_HighStreaks_VipDiamond_ProducesMultiplier" computerName="DESKTOP-9N7GO08" duration="00:00:00.0000796" startTime="2025-11-16T18:24:06.8885647+01:00" endTime="2025-11-16T18:24:06.8885647+01:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="8da5511a-debe-4947-8d75-49120f54f8cd" />
+    <UnitTestResult executionId="8e577bf4-6d13-4803-b6d1-4e256faed9aa" testId="2308659e-8495-d148-ab12-290cd013506c" testName="ApocalypticFastFood.Tests.BirthdayRuleTests.BirthdayRule_VipDiamondHighVisit_ReturnsExpected" computerName="DESKTOP-9N7GO08" duration="00:00:00.0028951" startTime="2025-11-16T18:24:06.8834089+01:00" endTime="2025-11-16T18:24:06.8834090+01:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="8e577bf4-6d13-4803-b6d1-4e256faed9aa" />
+    <UnitTestResult executionId="e4d7eb9e-f6ff-48e6-b469-4ed7f35c1e1b" testId="02402fac-6388-12a7-930f-31b3eee2bbcf" testName="ApocalypticFastFood.Tests.DiscountManagerPromoIntegrationTests.CalculateDiscount_Uses_PromoEngine_WhenPromoPresent" computerName="DESKTOP-9N7GO08" duration="00:00:00.0001419" startTime="2025-11-16T18:24:06.8889379+01:00" endTime="2025-11-16T18:24:06.8889380+01:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="e4d7eb9e-f6ff-48e6-b469-4ed7f35c1e1b" />
+    <UnitTestResult executionId="8b868a64-bc86-494f-899a-df71ddc6a5a5" testId="43ff12e0-9cd3-fdf9-e511-01467ff1512d" testName="ApocalypticFastFood.Tests.CardPaymentProcessorTests.Facade_Delegates_CreditCard" computerName="DESKTOP-9N7GO08" duration="00:00:00.0018180" startTime="2025-11-16T18:24:06.8875807+01:00" endTime="2025-11-16T18:24:06.8875807+01:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="8b868a64-bc86-494f-899a-df71ddc6a5a5" />
+    <UnitTestResult executionId="fa1fd53d-7d3b-4a19-bc83-ccaabe365eaf" testId="c04692bb-ff56-e88d-ace1-f6cbc9868549" testName="ApocalypticFastFood.Tests.DiscountManagerVisitIntegrationTests.CalculateDiscount_Uses_VisitEngine_WhenVisitCountPresent" computerName="DESKTOP-9N7GO08" duration="00:00:00.0001453" startTime="2025-11-16T18:24:06.8889586+01:00" endTime="2025-11-16T18:24:06.8889586+01:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="fa1fd53d-7d3b-4a19-bc83-ccaabe365eaf" />
+    <UnitTestResult executionId="a73b4c62-0efc-4460-adfd-eafabdb84a4e" testId="11fadeca-a577-b3b3-04d7-1ae7ca9eeb22" testName="ApocalypticFastFood.Tests.CustomerPolicyTests.VipCustomer_LoyaltyMultiplier_PreservesLegacyValue" computerName="DESKTOP-9N7GO08" duration="00:00:00.0014050" startTime="2025-11-16T18:24:06.8891796+01:00" endTime="2025-11-16T18:24:06.8891796+01:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="a73b4c62-0efc-4460-adfd-eafabdb84a4e" />
+    <UnitTestResult executionId="241a7385-edbe-45f6-b5d6-4dbf5c31413d" testId="da10e99f-b654-7171-95f9-5c3255392c7e" testName="ApocalypticFastFood.Tests.OrderProcessorPaymentTests.OrderProcessor_Uses_PaymentProcessor_ForCash" computerName="DESKTOP-9N7GO08" duration="00:00:00.0018897" startTime="2025-11-16T18:24:06.8892286+01:00" endTime="2025-11-16T18:24:06.8892286+01:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="241a7385-edbe-45f6-b5d6-4dbf5c31413d" />
+    <UnitTestResult executionId="7797777b-8f59-49d0-980c-1b4ec6c2c5ea" testId="ad36c8ff-674a-57a3-a063-ccbd913713fd" testName="ApocalypticFastFood.Tests.ReferralRuleV2Tests.ReferralRuleV2_Referral10_NonVip_Uses18" computerName="DESKTOP-9N7GO08" duration="00:00:00.0002456" startTime="2025-11-16T18:24:06.8889756+01:00" endTime="2025-11-16T18:24:06.8889756+01:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="7797777b-8f59-49d0-980c-1b4ec6c2c5ea" />
+    <UnitTestResult executionId="bae68c0d-832b-432c-af12-5583aa8f697f" testId="fff545cc-8086-0c96-49e4-c2e089e5b9af" testName="ApocalypticFastFood.Tests.CustomerPolicyTests.MinorCustomer_MakePurchase_NoException_WhenNoApproval" computerName="DESKTOP-9N7GO08" duration="00:00:00.0000502" startTime="2025-11-16T18:24:06.8891923+01:00" endTime="2025-11-16T18:24:06.8891924+01:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="bae68c0d-832b-432c-af12-5583aa8f697f" />
+    <UnitTestResult executionId="f016ef3c-f3bb-4483-a907-27cfbe672445" testId="099999f9-169e-7252-97ed-7f06b7636054" testName="ApocalypticFastFood.Tests.VisitCountRuleV2Tests.VisitCountRuleV2_HighVisit_WithReferralAndDiamond_Multiplier150" computerName="DESKTOP-9N7GO08" duration="00:00:00.0003102" startTime="2025-11-16T18:24:06.8891321+01:00" endTime="2025-11-16T18:24:06.8891322+01:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="f016ef3c-f3bb-4483-a907-27cfbe672445" />
+    <UnitTestResult executionId="da0d10b7-8c05-40fd-be7f-32b2afd97369" testId="fa1feb35-8568-844e-6c59-b24c41ef0cca" testName="ApocalypticFastFood.Tests.DefaultLoyaltyPointsCalculatorTests.DiamondCustomer_HighVisitCount_CalculatesExpectedPoints" computerName="DESKTOP-9N7GO08" duration="00:00:00.0018017" startTime="2025-11-16T18:24:06.8837288+01:00" endTime="2025-11-16T18:24:06.8837288+01:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="da0d10b7-8c05-40fd-be7f-32b2afd97369" />
+    <UnitTestResult executionId="8e2ec2ef-05c9-4bfc-a534-c147b857ccd2" testId="4d103bd5-f3c6-ee6b-9b04-c8cbf60448f7" testName="ApocalypticFastFood.Tests.OrderProcessorTests.ProcessOrder_UsesProvidedDiscountProvider_WhenPresent" computerName="DESKTOP-9N7GO08" duration="00:00:00.0067741" startTime="2025-11-16T18:24:06.8892116+01:00" endTime="2025-11-16T18:24:06.8892116+01:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="8e2ec2ef-05c9-4bfc-a534-c147b857ccd2" />
+    <UnitTestResult executionId="e73267d8-ade0-401a-b591-9727782550aa" testId="ae70a165-58dd-8129-90a8-d2eff0de6de3" testName="ApocalypticFastFood.Tests.DiscountManagerFamilyIntegrationTests.CalculateDiscount_Uses_FamilyEngine_WhenFamilyPresent" computerName="DESKTOP-9N7GO08" duration="00:00:00.0026693" startTime="2025-11-16T18:24:06.8875845+01:00" endTime="2025-11-16T18:24:06.8875845+01:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="e73267d8-ade0-401a-b591-9727782550aa" />
+    <UnitTestResult executionId="dd589909-7e01-4d51-b466-d5a93e5416b8" testId="edf6edcb-6766-03b2-2da5-3d7c45002c11" testName="ApocalypticFastFood.Tests.ReceiptFormatterTests.Format_IncludesTotalLabel" computerName="DESKTOP-9N7GO08" duration="00:00:00.0063885" startTime="2025-11-16T18:24:06.8894041+01:00" endTime="2025-11-16T18:24:06.8894041+01:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="dd589909-7e01-4d51-b466-d5a93e5416b8" />
+    <UnitTestResult executionId="e30f5116-4a6b-4004-8440-4be159769e0c" testId="6756290f-0572-c9c2-6d96-577367cb626d" testName="ApocalypticFastFood.Tests.PaymentProcessorTests.Facade_Delegates_ProcessCash" computerName="DESKTOP-9N7GO08" duration="00:00:00.0026761" startTime="2025-11-16T18:24:06.8821745+01:00" endTime="2025-11-16T18:24:06.8821833+01:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="e30f5116-4a6b-4004-8440-4be159769e0c" />
+    <UnitTestResult executionId="345c2230-b6b1-460b-b9ab-f65c8e603718" testId="5ac497fe-7997-cfdb-21fa-d162f30723ba" testName="ApocalypticFastFood.Tests.VipCustomerStrategyTests.VipCustomer_DefaultStrategy_IsVipDiscountStrategy" computerName="DESKTOP-9N7GO08" duration="00:00:00.0018160" startTime="2025-11-16T18:24:06.8875891+01:00" endTime="2025-11-16T18:24:06.8875891+01:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="345c2230-b6b1-460b-b9ab-f65c8e603718" />
+    <UnitTestResult executionId="f847284f-2660-486a-bfb0-f71ba1746648" testId="258e2aa2-10da-95b1-3e07-0b8613f2a548" testName="ApocalypticFastFood.Tests.MinorCustomerPolicyTests.MinorCustomer_CanMakePurchase_WithParentApproval" computerName="DESKTOP-9N7GO08" duration="00:00:00.0017871" startTime="2025-11-16T18:24:06.8875942+01:00" endTime="2025-11-16T18:24:06.8875943+01:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="f847284f-2660-486a-bfb0-f71ba1746648" />
+    <UnitTestResult executionId="37c04fee-aa64-4663-939a-50794d9a0fc9" testId="44cf8dc7-c12d-4e37-a741-92665eab16da" testName="ApocalypticFastFood.Tests.CustomerPolicyTests.MinorCustomer_CannotOrderAlcohol_ReturnsFalse" computerName="DESKTOP-9N7GO08" duration="00:00:00.0001225" startTime="2025-11-16T18:24:06.8889265+01:00" endTime="2025-11-16T18:24:06.8889265+01:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="37c04fee-aa64-4663-939a-50794d9a0fc9" />
+    <UnitTestResult executionId="020757ba-1518-4ece-9731-0bb0b715dedb" testId="0a2e36bf-b6bd-c666-a10c-65e00278d252" testName="ApocalypticFastFood.Tests.CashPaymentProcessorTests.ProcessCash_DoesNotThrow" computerName="DESKTOP-9N7GO08" duration="00:00:00.0067032" startTime="2025-11-16T18:24:06.8892010+01:00" endTime="2025-11-16T18:24:06.8892010+01:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="020757ba-1518-4ece-9731-0bb0b715dedb" />
+    <UnitTestResult executionId="23d74600-11f8-49e4-b0be-15278c6a449d" testId="8d3b3592-67e5-33d6-d285-659c1c0d7eb5" testName="ApocalypticFastFood.Tests.OrderProcessorEmailTests.OrderProcessor_SavesOrder_And_SendsEmail_WhenSubscribed" computerName="DESKTOP-9N7GO08" duration="00:00:00.0068301" startTime="2025-11-16T18:24:06.8892201+01:00" endTime="2025-11-16T18:24:06.8892201+01:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="23d74600-11f8-49e4-b0be-15278c6a449d" />
+    <UnitTestResult executionId="f16ca7b9-b3a7-4aa0-81fc-9475e5eb9661" testId="10012d30-98be-46f1-3cd1-124ed9343eb7" testName="ApocalypticFastFood.Tests.StreakRuleTests.StreakRule_SevenDays_ReturnsTen" computerName="DESKTOP-9N7GO08" duration="00:00:00.0027720" startTime="2025-11-16T18:24:06.8875331+01:00" endTime="2025-11-16T18:24:06.8875331+01:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="f16ca7b9-b3a7-4aa0-81fc-9475e5eb9661" />
+    <UnitTestResult executionId="3184ffee-a829-4e02-9e88-689b8b27c9ff" testId="f3dd320c-a66b-2e18-cec7-4ed1a59ff214" testName="ApocalypticFastFood.Tests.VipCustomerStrategyTests.VipCustomer_GetDiscount_ReturnsDoubleAndDoesNotThrow" computerName="DESKTOP-9N7GO08" duration="00:00:00.0000797" startTime="2025-11-16T18:24:06.8885588+01:00" endTime="2025-11-16T18:24:06.8885589+01:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="3184ffee-a829-4e02-9e88-689b8b27c9ff" />
+    <UnitTestResult executionId="928e2c71-b5cd-4594-8643-bc67b1d38b61" testId="ec7e2802-8bc2-716f-d627-c346cbab239c" testName="ApocalypticFastFood.Tests.VisitCountRuleV2Tests.VisitCountRuleV2_HighVisit_NoReferral_Multiplier140" computerName="DESKTOP-9N7GO08" duration="00:00:00.0000826" startTime="2025-11-16T18:24:06.8891684+01:00" endTime="2025-11-16T18:24:06.8891684+01:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="928e2c71-b5cd-4594-8643-bc67b1d38b61" />
+    <UnitTestResult executionId="276cad22-4db1-4c81-9d7c-c86f6bd5a06e" testId="f3572fb2-9f67-a6bc-c5bf-3f87306c550d" testName="ApocalypticFastFood.Tests.ReferralRuleV2Tests.ReferralRuleV2_ReferralLessThan5_Uses6" computerName="DESKTOP-9N7GO08" duration="00:00:00.0000617" startTime="2025-11-16T18:24:06.8891458+01:00" endTime="2025-11-16T18:24:06.8891459+01:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="276cad22-4db1-4c81-9d7c-c86f6bd5a06e" />
+  </Results>
+  <TestDefinitions>
+    <UnitTest name="ApocalypticFastFood.Tests.CashPaymentProcessorTests.ProcessCash_DoesNotThrow" storage="c:\users\elydu\desktop\carsten23prompt\apocalypticfastfood\apocalypticfastfood.tests\bin\debug\net9.0\apocalypticfastfood.tests.dll" id="0a2e36bf-b6bd-c666-a10c-65e00278d252">
+      <Execution id="020757ba-1518-4ece-9731-0bb0b715dedb" />
+      <TestMethod codeBase="C:\Users\elydu\Desktop\Carsten23Prompt\ApocalypticFastFood\ApocalypticFastFood.Tests\bin\Debug\net9.0\ApocalypticFastFood.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ApocalypticFastFood.Tests.CashPaymentProcessorTests" name="ProcessCash_DoesNotThrow" />
+    </UnitTest>
+    <UnitTest name="ApocalypticFastFood.Tests.DiscountManagerFamilyIntegrationTests.CalculateDiscount_Uses_FamilyEngine_WhenFamilyPresent" storage="c:\users\elydu\desktop\carsten23prompt\apocalypticfastfood\apocalypticfastfood.tests\bin\debug\net9.0\apocalypticfastfood.tests.dll" id="ae70a165-58dd-8129-90a8-d2eff0de6de3">
+      <Execution id="e73267d8-ade0-401a-b591-9727782550aa" />
+      <TestMethod codeBase="C:\Users\elydu\Desktop\Carsten23Prompt\ApocalypticFastFood\ApocalypticFastFood.Tests\bin\Debug\net9.0\ApocalypticFastFood.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ApocalypticFastFood.Tests.DiscountManagerFamilyIntegrationTests" name="CalculateDiscount_Uses_FamilyEngine_WhenFamilyPresent" />
+    </UnitTest>
+    <UnitTest name="ApocalypticFastFood.Tests.MinorCustomerPolicyTests.MinorCustomer_CannotOrderAlcohol_Under18_NoApproval" storage="c:\users\elydu\desktop\carsten23prompt\apocalypticfastfood\apocalypticfastfood.tests\bin\debug\net9.0\apocalypticfastfood.tests.dll" id="56679e54-59a4-77c6-6aa3-e08b7355f1b1">
+      <Execution id="2f77afe5-09e5-4048-84f8-79a619dc7ec6" />
+      <TestMethod codeBase="C:\Users\elydu\Desktop\Carsten23Prompt\ApocalypticFastFood\ApocalypticFastFood.Tests\bin\Debug\net9.0\ApocalypticFastFood.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ApocalypticFastFood.Tests.MinorCustomerPolicyTests" name="MinorCustomer_CannotOrderAlcohol_Under18_NoApproval" />
+    </UnitTest>
+    <UnitTest name="ApocalypticFastFood.Tests.CustomerDiscountProviderTests.CustomerDiscountProvider_ReturnsDouble_AndDoesNotThrow" storage="c:\users\elydu\desktop\carsten23prompt\apocalypticfastfood\apocalypticfastfood.tests\bin\debug\net9.0\apocalypticfastfood.tests.dll" id="186f7675-c977-dab7-b810-8397f2d147d5">
+      <Execution id="15082838-f6f0-4c5b-98df-dd55c37844cf" />
+      <TestMethod codeBase="C:\Users\elydu\Desktop\Carsten23Prompt\ApocalypticFastFood\ApocalypticFastFood.Tests\bin\Debug\net9.0\ApocalypticFastFood.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ApocalypticFastFood.Tests.CustomerDiscountProviderTests" name="CustomerDiscountProvider_ReturnsDouble_AndDoesNotThrow" />
+    </UnitTest>
+    <UnitTest name="ApocalypticFastFood.Tests.PriceCatalogTests.InMemoryPriceCatalog_ReturnsExpectedPrices" storage="c:\users\elydu\desktop\carsten23prompt\apocalypticfastfood\apocalypticfastfood.tests\bin\debug\net9.0\apocalypticfastfood.tests.dll" id="9444d6d1-7f45-ff11-52e5-e5a4c115c27d">
+      <Execution id="633544df-0a7a-4169-aec9-af805d0d155a" />
+      <TestMethod codeBase="C:\Users\elydu\Desktop\Carsten23Prompt\ApocalypticFastFood\ApocalypticFastFood.Tests\bin\Debug\net9.0\ApocalypticFastFood.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ApocalypticFastFood.Tests.PriceCatalogTests" name="InMemoryPriceCatalog_ReturnsExpectedPrices" />
+    </UnitTest>
+    <UnitTest name="ApocalypticFastFood.Tests.OrderProcessorTests.ProcessOrder_UsesProvidedDiscountProvider_WhenPresent" storage="c:\users\elydu\desktop\carsten23prompt\apocalypticfastfood\apocalypticfastfood.tests\bin\debug\net9.0\apocalypticfastfood.tests.dll" id="4d103bd5-f3c6-ee6b-9b04-c8cbf60448f7">
+      <Execution id="8e2ec2ef-05c9-4bfc-a534-c147b857ccd2" />
+      <TestMethod codeBase="C:\Users\elydu\Desktop\Carsten23Prompt\ApocalypticFastFood\ApocalypticFastFood.Tests\bin\Debug\net9.0\ApocalypticFastFood.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ApocalypticFastFood.Tests.OrderProcessorTests" name="ProcessOrder_UsesProvidedDiscountProvider_WhenPresent" />
+    </UnitTest>
+    <UnitTest name="ApocalypticFastFood.Tests.DiscountManagerVisitIntegrationTests.CalculateDiscount_Uses_VisitEngine_WhenVisitCountPresent" storage="c:\users\elydu\desktop\carsten23prompt\apocalypticfastfood\apocalypticfastfood.tests\bin\debug\net9.0\apocalypticfastfood.tests.dll" id="c04692bb-ff56-e88d-ace1-f6cbc9868549">
+      <Execution id="fa1fd53d-7d3b-4a19-bc83-ccaabe365eaf" />
+      <TestMethod codeBase="C:\Users\elydu\Desktop\Carsten23Prompt\ApocalypticFastFood\ApocalypticFastFood.Tests\bin\Debug\net9.0\ApocalypticFastFood.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ApocalypticFastFood.Tests.DiscountManagerVisitIntegrationTests" name="CalculateDiscount_Uses_VisitEngine_WhenVisitCountPresent" />
+    </UnitTest>
+    <UnitTest name="ApocalypticFastFood.Tests.DiscountManagerPromoIntegrationTests.CalculateDiscount_Uses_PromoEngine_WhenPromoPresent" storage="c:\users\elydu\desktop\carsten23prompt\apocalypticfastfood\apocalypticfastfood.tests\bin\debug\net9.0\apocalypticfastfood.tests.dll" id="02402fac-6388-12a7-930f-31b3eee2bbcf">
+      <Execution id="e4d7eb9e-f6ff-48e6-b469-4ed7f35c1e1b" />
+      <TestMethod codeBase="C:\Users\elydu\Desktop\Carsten23Prompt\ApocalypticFastFood\ApocalypticFastFood.Tests\bin\Debug\net9.0\ApocalypticFastFood.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ApocalypticFastFood.Tests.DiscountManagerPromoIntegrationTests" name="CalculateDiscount_Uses_PromoEngine_WhenPromoPresent" />
+    </UnitTest>
+    <UnitTest name="ApocalypticFastFood.Tests.MinorCustomerPolicyTests.MinorCustomer_CanOrderAlcohol_WithParentApproval" storage="c:\users\elydu\desktop\carsten23prompt\apocalypticfastfood\apocalypticfastfood.tests\bin\debug\net9.0\apocalypticfastfood.tests.dll" id="cba4a1c2-8fee-a7ee-8198-66e99a1e5cf5">
+      <Execution id="ec0d0935-be5b-40f8-8353-2f56b2e8a91d" />
+      <TestMethod codeBase="C:\Users\elydu\Desktop\Carsten23Prompt\ApocalypticFastFood\ApocalypticFastFood.Tests\bin\Debug\net9.0\ApocalypticFastFood.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ApocalypticFastFood.Tests.MinorCustomerPolicyTests" name="MinorCustomer_CanOrderAlcohol_WithParentApproval" />
+    </UnitTest>
+    <UnitTest name="ApocalypticFastFood.Tests.MinorCustomerPolicyTests.MinorCustomer_CanMakePurchase_WithParentApproval" storage="c:\users\elydu\desktop\carsten23prompt\apocalypticfastfood\apocalypticfastfood.tests\bin\debug\net9.0\apocalypticfastfood.tests.dll" id="258e2aa2-10da-95b1-3e07-0b8613f2a548">
+      <Execution id="f847284f-2660-486a-bfb0-f71ba1746648" />
+      <TestMethod codeBase="C:\Users\elydu\Desktop\Carsten23Prompt\ApocalypticFastFood\ApocalypticFastFood.Tests\bin\Debug\net9.0\ApocalypticFastFood.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ApocalypticFastFood.Tests.MinorCustomerPolicyTests" name="MinorCustomer_CanMakePurchase_WithParentApproval" />
+    </UnitTest>
+    <UnitTest name="ApocalypticFastFood.Tests.PaymentProcessorTests.Facade_Delegates_ProcessCash" storage="c:\users\elydu\desktop\carsten23prompt\apocalypticfastfood\apocalypticfastfood.tests\bin\debug\net9.0\apocalypticfastfood.tests.dll" id="6756290f-0572-c9c2-6d96-577367cb626d">
+      <Execution id="e30f5116-4a6b-4004-8440-4be159769e0c" />
+      <TestMethod codeBase="C:\Users\elydu\Desktop\Carsten23Prompt\ApocalypticFastFood\ApocalypticFastFood.Tests\bin\Debug\net9.0\ApocalypticFastFood.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ApocalypticFastFood.Tests.PaymentProcessorTests" name="Facade_Delegates_ProcessCash" />
+    </UnitTest>
+    <UnitTest name="ApocalypticFastFood.Tests.StreakRuleTests.StreakRule_HighStreaks_VipDiamond_ProducesMultiplier" storage="c:\users\elydu\desktop\carsten23prompt\apocalypticfastfood\apocalypticfastfood.tests\bin\debug\net9.0\apocalypticfastfood.tests.dll" id="871a3a31-4a2c-3577-a52c-43b6913c7989">
+      <Execution id="8da5511a-debe-4947-8d75-49120f54f8cd" />
+      <TestMethod codeBase="C:\Users\elydu\Desktop\Carsten23Prompt\ApocalypticFastFood\ApocalypticFastFood.Tests\bin\Debug\net9.0\ApocalypticFastFood.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ApocalypticFastFood.Tests.StreakRuleTests" name="StreakRule_HighStreaks_VipDiamond_ProducesMultiplier" />
+    </UnitTest>
+    <UnitTest name="ApocalypticFastFood.Tests.DiscountManagerTimeIntegrationTests.CalculateDiscount_Uses_TimeEngine_ForAfternoonCase" storage="c:\users\elydu\desktop\carsten23prompt\apocalypticfastfood\apocalypticfastfood.tests\bin\debug\net9.0\apocalypticfastfood.tests.dll" id="039440e2-af58-e9cf-0141-61030843d1c4">
+      <Execution id="87b43da1-c7bc-4d8c-adea-7b79c795ab49" />
+      <TestMethod codeBase="C:\Users\elydu\Desktop\Carsten23Prompt\ApocalypticFastFood\ApocalypticFastFood.Tests\bin\Debug\net9.0\ApocalypticFastFood.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ApocalypticFastFood.Tests.DiscountManagerTimeIntegrationTests" name="CalculateDiscount_Uses_TimeEngine_ForAfternoonCase" />
+    </UnitTest>
+    <UnitTest name="ApocalypticFastFood.Tests.StreakRuleTests.StreakRule_SevenDays_ReturnsTen" storage="c:\users\elydu\desktop\carsten23prompt\apocalypticfastfood\apocalypticfastfood.tests\bin\debug\net9.0\apocalypticfastfood.tests.dll" id="10012d30-98be-46f1-3cd1-124ed9343eb7">
+      <Execution id="f16ca7b9-b3a7-4aa0-81fc-9475e5eb9661" />
+      <TestMethod codeBase="C:\Users\elydu\Desktop\Carsten23Prompt\ApocalypticFastFood\ApocalypticFastFood.Tests\bin\Debug\net9.0\ApocalypticFastFood.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ApocalypticFastFood.Tests.StreakRuleTests" name="StreakRule_SevenDays_ReturnsTen" />
+    </UnitTest>
+    <UnitTest name="ApocalypticFastFood.Tests.PreviousOrderRuleTests.PreviousOrderRule_MatchesRecentOrder_VipDiamond_AppAndEmail_ProducesMultiplier" storage="c:\users\elydu\desktop\carsten23prompt\apocalypticfastfood\apocalypticfastfood.tests\bin\debug\net9.0\apocalypticfastfood.tests.dll" id="495f0e36-3317-2483-70e9-4f7a85847861">
+      <Execution id="4e039148-b688-4124-9820-1ae26a827a6b" />
+      <TestMethod codeBase="C:\Users\elydu\Desktop\Carsten23Prompt\ApocalypticFastFood\ApocalypticFastFood.Tests\bin\Debug\net9.0\ApocalypticFastFood.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ApocalypticFastFood.Tests.PreviousOrderRuleTests" name="PreviousOrderRule_MatchesRecentOrder_VipDiamond_AppAndEmail_ProducesMultiplier" />
+    </UnitTest>
+    <UnitTest name="ApocalypticFastFood.Tests.OrderProcessorEmailTests.OrderProcessor_SavesOrder_And_SendsEmail_WhenSubscribed" storage="c:\users\elydu\desktop\carsten23prompt\apocalypticfastfood\apocalypticfastfood.tests\bin\debug\net9.0\apocalypticfastfood.tests.dll" id="8d3b3592-67e5-33d6-d285-659c1c0d7eb5">
+      <Execution id="23d74600-11f8-49e4-b0be-15278c6a449d" />
+      <TestMethod codeBase="C:\Users\elydu\Desktop\Carsten23Prompt\ApocalypticFastFood\ApocalypticFastFood.Tests\bin\Debug\net9.0\ApocalypticFastFood.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ApocalypticFastFood.Tests.OrderProcessorEmailTests" name="OrderProcessor_SavesOrder_And_SendsEmail_WhenSubscribed" />
+    </UnitTest>
+    <UnitTest name="ApocalypticFastFood.Tests.CustomerPolicyTests.MinorCustomer_MakePurchase_NoException_WhenNoApproval" storage="c:\users\elydu\desktop\carsten23prompt\apocalypticfastfood\apocalypticfastfood.tests\bin\debug\net9.0\apocalypticfastfood.tests.dll" id="fff545cc-8086-0c96-49e4-c2e089e5b9af">
+      <Execution id="bae68c0d-832b-432c-af12-5583aa8f697f" />
+      <TestMethod codeBase="C:\Users\elydu\Desktop\Carsten23Prompt\ApocalypticFastFood\ApocalypticFastFood.Tests\bin\Debug\net9.0\ApocalypticFastFood.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ApocalypticFastFood.Tests.CustomerPolicyTests" name="MinorCustomer_MakePurchase_NoException_WhenNoApproval" />
+    </UnitTest>
+    <UnitTest name="ApocalypticFastFood.Tests.ReferralRuleV2Tests.ReferralRuleV2_Referral10_NonVip_Uses18" storage="c:\users\elydu\desktop\carsten23prompt\apocalypticfastfood\apocalypticfastfood.tests\bin\debug\net9.0\apocalypticfastfood.tests.dll" id="ad36c8ff-674a-57a3-a063-ccbd913713fd">
+      <Execution id="7797777b-8f59-49d0-980c-1b4ec6c2c5ea" />
+      <TestMethod codeBase="C:\Users\elydu\Desktop\Carsten23Prompt\ApocalypticFastFood\ApocalypticFastFood.Tests\bin\Debug\net9.0\ApocalypticFastFood.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ApocalypticFastFood.Tests.ReferralRuleV2Tests" name="ReferralRuleV2_Referral10_NonVip_Uses18" />
+    </UnitTest>
+    <UnitTest name="ApocalypticFastFood.Tests.DiscountEngineTests.Engine_Applies_VisitCountRule_100plus" storage="c:\users\elydu\desktop\carsten23prompt\apocalypticfastfood\apocalypticfastfood.tests\bin\debug\net9.0\apocalypticfastfood.tests.dll" id="48b209b2-7a06-8b3e-918c-5302801b129b">
+      <Execution id="3953aa8b-7d6a-4fb7-95f6-97481dabeea2" />
+      <TestMethod codeBase="C:\Users\elydu\Desktop\Carsten23Prompt\ApocalypticFastFood\ApocalypticFastFood.Tests\bin\Debug\net9.0\ApocalypticFastFood.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ApocalypticFastFood.Tests.DiscountEngineTests" name="Engine_Applies_VisitCountRule_100plus" />
+    </UnitTest>
+    <UnitTest name="ApocalypticFastFood.Tests.VipCustomerStrategyTests.VipCustomer_DefaultStrategy_IsVipDiscountStrategy" storage="c:\users\elydu\desktop\carsten23prompt\apocalypticfastfood\apocalypticfastfood.tests\bin\debug\net9.0\apocalypticfastfood.tests.dll" id="5ac497fe-7997-cfdb-21fa-d162f30723ba">
+      <Execution id="345c2230-b6b1-460b-b9ab-f65c8e603718" />
+      <TestMethod codeBase="C:\Users\elydu\Desktop\Carsten23Prompt\ApocalypticFastFood\ApocalypticFastFood.Tests\bin\Debug\net9.0\ApocalypticFastFood.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ApocalypticFastFood.Tests.VipCustomerStrategyTests" name="VipCustomer_DefaultStrategy_IsVipDiscountStrategy" />
+    </UnitTest>
+    <UnitTest name="ApocalypticFastFood.Tests.CustomerPolicyTests.MinorCustomer_CannotOrderAlcohol_ReturnsFalse" storage="c:\users\elydu\desktop\carsten23prompt\apocalypticfastfood\apocalypticfastfood.tests\bin\debug\net9.0\apocalypticfastfood.tests.dll" id="44cf8dc7-c12d-4e37-a741-92665eab16da">
+      <Execution id="37c04fee-aa64-4663-939a-50794d9a0fc9" />
+      <TestMethod codeBase="C:\Users\elydu\Desktop\Carsten23Prompt\ApocalypticFastFood\ApocalypticFastFood.Tests\bin\Debug\net9.0\ApocalypticFastFood.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ApocalypticFastFood.Tests.CustomerPolicyTests" name="MinorCustomer_CannotOrderAlcohol_ReturnsFalse" />
+    </UnitTest>
+    <UnitTest name="ApocalypticFastFood.Tests.VipCustomerStrategyTests.VipCustomer_GetDiscount_ReturnsDoubleAndDoesNotThrow" storage="c:\users\elydu\desktop\carsten23prompt\apocalypticfastfood\apocalypticfastfood.tests\bin\debug\net9.0\apocalypticfastfood.tests.dll" id="f3dd320c-a66b-2e18-cec7-4ed1a59ff214">
+      <Execution id="3184ffee-a829-4e02-9e88-689b8b27c9ff" />
+      <TestMethod codeBase="C:\Users\elydu\Desktop\Carsten23Prompt\ApocalypticFastFood\ApocalypticFastFood.Tests\bin\Debug\net9.0\ApocalypticFastFood.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ApocalypticFastFood.Tests.VipCustomerStrategyTests" name="VipCustomer_GetDiscount_ReturnsDoubleAndDoesNotThrow" />
+    </UnitTest>
+    <UnitTest name="ApocalypticFastFood.Tests.VisitCountRuleV2Tests.VisitCountRuleV2_HighVisit_NoReferral_Multiplier140" storage="c:\users\elydu\desktop\carsten23prompt\apocalypticfastfood\apocalypticfastfood.tests\bin\debug\net9.0\apocalypticfastfood.tests.dll" id="ec7e2802-8bc2-716f-d627-c346cbab239c">
+      <Execution id="928e2c71-b5cd-4594-8643-bc67b1d38b61" />
+      <TestMethod codeBase="C:\Users\elydu\Desktop\Carsten23Prompt\ApocalypticFastFood\ApocalypticFastFood.Tests\bin\Debug\net9.0\ApocalypticFastFood.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ApocalypticFastFood.Tests.VisitCountRuleV2Tests" name="VisitCountRuleV2_HighVisit_NoReferral_Multiplier140" />
+    </UnitTest>
+    <UnitTest name="ApocalypticFastFood.Tests.PreviousOrderRuleTests.PreviousOrderRule_NoRecentMatch_ReturnsZero" storage="c:\users\elydu\desktop\carsten23prompt\apocalypticfastfood\apocalypticfastfood.tests\bin\debug\net9.0\apocalypticfastfood.tests.dll" id="575586fe-cf52-f1a9-07f2-afea0700d986">
+      <Execution id="9a5a6589-5b50-4d9f-8f8e-5cbffdf87902" />
+      <TestMethod codeBase="C:\Users\elydu\Desktop\Carsten23Prompt\ApocalypticFastFood\ApocalypticFastFood.Tests\bin\Debug\net9.0\ApocalypticFastFood.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ApocalypticFastFood.Tests.PreviousOrderRuleTests" name="PreviousOrderRule_NoRecentMatch_ReturnsZero" />
+    </UnitTest>
+    <UnitTest name="ApocalypticFastFood.Tests.ReferralRuleV2Tests.ReferralRuleV2_ReferralLessThan5_Uses6" storage="c:\users\elydu\desktop\carsten23prompt\apocalypticfastfood\apocalypticfastfood.tests\bin\debug\net9.0\apocalypticfastfood.tests.dll" id="f3572fb2-9f67-a6bc-c5bf-3f87306c550d">
+      <Execution id="276cad22-4db1-4c81-9d7c-c86f6bd5a06e" />
+      <TestMethod codeBase="C:\Users\elydu\Desktop\Carsten23Prompt\ApocalypticFastFood\ApocalypticFastFood.Tests\bin\Debug\net9.0\ApocalypticFastFood.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ApocalypticFastFood.Tests.ReferralRuleV2Tests" name="ReferralRuleV2_ReferralLessThan5_Uses6" />
+    </UnitTest>
+    <UnitTest name="ApocalypticFastFood.Tests.ReferralRuleV2Tests.ReferralRuleV2_Referral20_VipDiamond_LongMembership_HighAverageSpend" storage="c:\users\elydu\desktop\carsten23prompt\apocalypticfastfood\apocalypticfastfood.tests\bin\debug\net9.0\apocalypticfastfood.tests.dll" id="6ad3bd5c-916d-9294-82ce-feb0a19f7195">
+      <Execution id="8d2b0967-3581-4cc5-9d50-8fcb40523771" />
+      <TestMethod codeBase="C:\Users\elydu\Desktop\Carsten23Prompt\ApocalypticFastFood\ApocalypticFastFood.Tests\bin\Debug\net9.0\ApocalypticFastFood.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ApocalypticFastFood.Tests.ReferralRuleV2Tests" name="ReferralRuleV2_Referral20_VipDiamond_LongMembership_HighAverageSpend" />
+    </UnitTest>
+    <UnitTest name="ApocalypticFastFood.Tests.DiscountManagerDiscountProviderTests.Adapter_UsesDiscountManagerCalculateDiscount" storage="c:\users\elydu\desktop\carsten23prompt\apocalypticfastfood\apocalypticfastfood.tests\bin\debug\net9.0\apocalypticfastfood.tests.dll" id="0141a2c2-e50a-01c9-fe5d-92c1257b0202">
+      <Execution id="b08715ce-f532-4b84-8b4f-e760b1caae80" />
+      <TestMethod codeBase="C:\Users\elydu\Desktop\Carsten23Prompt\ApocalypticFastFood\ApocalypticFastFood.Tests\bin\Debug\net9.0\ApocalypticFastFood.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ApocalypticFastFood.Tests.DiscountManagerDiscountProviderTests" name="Adapter_UsesDiscountManagerCalculateDiscount" />
+    </UnitTest>
+    <UnitTest name="ApocalypticFastFood.Tests.BirthdayRuleTests.BirthdayRule_VipDiamondHighVisit_ReturnsExpected" storage="c:\users\elydu\desktop\carsten23prompt\apocalypticfastfood\apocalypticfastfood.tests\bin\debug\net9.0\apocalypticfastfood.tests.dll" id="2308659e-8495-d148-ab12-290cd013506c">
+      <Execution id="8e577bf4-6d13-4803-b6d1-4e256faed9aa" />
+      <TestMethod codeBase="C:\Users\elydu\Desktop\Carsten23Prompt\ApocalypticFastFood\ApocalypticFastFood.Tests\bin\Debug\net9.0\ApocalypticFastFood.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ApocalypticFastFood.Tests.BirthdayRuleTests" name="BirthdayRule_VipDiamondHighVisit_ReturnsExpected" />
+    </UnitTest>
+    <UnitTest name="ApocalypticFastFood.Tests.DiscountEngineTests.Engine_Applies_PromoCodeRule_SAVE10" storage="c:\users\elydu\desktop\carsten23prompt\apocalypticfastfood\apocalypticfastfood.tests\bin\debug\net9.0\apocalypticfastfood.tests.dll" id="c621564b-6904-9d53-a0d6-2256f2fe6c71">
+      <Execution id="3b785347-f07d-4048-9612-000d98060ea1" />
+      <TestMethod codeBase="C:\Users\elydu\Desktop\Carsten23Prompt\ApocalypticFastFood\ApocalypticFastFood.Tests\bin\Debug\net9.0\ApocalypticFastFood.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ApocalypticFastFood.Tests.DiscountEngineTests" name="Engine_Applies_PromoCodeRule_SAVE10" />
+    </UnitTest>
+    <UnitTest name="ApocalypticFastFood.Tests.DefaultLoyaltyPointsCalculatorTests.DiamondCustomer_HighVisitCount_CalculatesExpectedPoints" storage="c:\users\elydu\desktop\carsten23prompt\apocalypticfastfood\apocalypticfastfood.tests\bin\debug\net9.0\apocalypticfastfood.tests.dll" id="fa1feb35-8568-844e-6c59-b24c41ef0cca">
+      <Execution id="da0d10b7-8c05-40fd-be7f-32b2afd97369" />
+      <TestMethod codeBase="C:\Users\elydu\Desktop\Carsten23Prompt\ApocalypticFastFood\ApocalypticFastFood.Tests\bin\Debug\net9.0\ApocalypticFastFood.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ApocalypticFastFood.Tests.DefaultLoyaltyPointsCalculatorTests" name="DiamondCustomer_HighVisitCount_CalculatesExpectedPoints" />
+    </UnitTest>
+    <UnitTest name="ApocalypticFastFood.Tests.CustomerPurchaseServiceTests.CustomerPurchaseService_DelegatesToCustomer" storage="c:\users\elydu\desktop\carsten23prompt\apocalypticfastfood\apocalypticfastfood.tests\bin\debug\net9.0\apocalypticfastfood.tests.dll" id="4f4676ac-6a5e-97a5-61de-1f34603f3c4d">
+      <Execution id="82d10765-4c60-4b85-90d9-d63897616b62" />
+      <TestMethod codeBase="C:\Users\elydu\Desktop\Carsten23Prompt\ApocalypticFastFood\ApocalypticFastFood.Tests\bin\Debug\net9.0\ApocalypticFastFood.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ApocalypticFastFood.Tests.CustomerPurchaseServiceTests" name="CustomerPurchaseService_DelegatesToCustomer" />
+    </UnitTest>
+    <UnitTest name="ApocalypticFastFood.Tests.VisitCountRuleV2Tests.VisitCountRuleV2_HighVisit_WithReferralAndDiamond_Multiplier150" storage="c:\users\elydu\desktop\carsten23prompt\apocalypticfastfood\apocalypticfastfood.tests\bin\debug\net9.0\apocalypticfastfood.tests.dll" id="099999f9-169e-7252-97ed-7f06b7636054">
+      <Execution id="f016ef3c-f3bb-4483-a907-27cfbe672445" />
+      <TestMethod codeBase="C:\Users\elydu\Desktop\Carsten23Prompt\ApocalypticFastFood\ApocalypticFastFood.Tests\bin\Debug\net9.0\ApocalypticFastFood.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ApocalypticFastFood.Tests.VisitCountRuleV2Tests" name="VisitCountRuleV2_HighVisit_WithReferralAndDiamond_Multiplier150" />
+    </UnitTest>
+    <UnitTest name="ApocalypticFastFood.Tests.BirthdayRuleTests.BirthdayRule_NonVip_ReturnsExpected" storage="c:\users\elydu\desktop\carsten23prompt\apocalypticfastfood\apocalypticfastfood.tests\bin\debug\net9.0\apocalypticfastfood.tests.dll" id="8b5e30e4-044b-373b-16c0-1b5a85a5a0fa">
+      <Execution id="d7662635-5ef9-42cc-8c49-cc111508039e" />
+      <TestMethod codeBase="C:\Users\elydu\Desktop\Carsten23Prompt\ApocalypticFastFood\ApocalypticFastFood.Tests\bin\Debug\net9.0\ApocalypticFastFood.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ApocalypticFastFood.Tests.BirthdayRuleTests" name="BirthdayRule_NonVip_ReturnsExpected" />
+    </UnitTest>
+    <UnitTest name="ApocalypticFastFood.Tests.CardPaymentProcessorTests.Facade_Delegates_CreditCard" storage="c:\users\elydu\desktop\carsten23prompt\apocalypticfastfood\apocalypticfastfood.tests\bin\debug\net9.0\apocalypticfastfood.tests.dll" id="43ff12e0-9cd3-fdf9-e511-01467ff1512d">
+      <Execution id="8b868a64-bc86-494f-899a-df71ddc6a5a5" />
+      <TestMethod codeBase="C:\Users\elydu\Desktop\Carsten23Prompt\ApocalypticFastFood\ApocalypticFastFood.Tests\bin\Debug\net9.0\ApocalypticFastFood.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ApocalypticFastFood.Tests.CardPaymentProcessorTests" name="Facade_Delegates_CreditCard" />
+    </UnitTest>
+    <UnitTest name="ApocalypticFastFood.Tests.ReceiptFormatterTests.Format_IncludesTotalLabel" storage="c:\users\elydu\desktop\carsten23prompt\apocalypticfastfood\apocalypticfastfood.tests\bin\debug\net9.0\apocalypticfastfood.tests.dll" id="edf6edcb-6766-03b2-2da5-3d7c45002c11">
+      <Execution id="dd589909-7e01-4d51-b466-d5a93e5416b8" />
+      <TestMethod codeBase="C:\Users\elydu\Desktop\Carsten23Prompt\ApocalypticFastFood\ApocalypticFastFood.Tests\bin\Debug\net9.0\ApocalypticFastFood.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ApocalypticFastFood.Tests.ReceiptFormatterTests" name="Format_IncludesTotalLabel" />
+    </UnitTest>
+    <UnitTest name="ApocalypticFastFood.Tests.SampleRunnerTests.RunDemos_DoesNotThrow" storage="c:\users\elydu\desktop\carsten23prompt\apocalypticfastfood\apocalypticfastfood.tests\bin\debug\net9.0\apocalypticfastfood.tests.dll" id="9ee8de60-726c-b2e5-8fd2-43ba9c5f2e1e">
+      <Execution id="96932b18-9afa-4a66-a685-20e08f46369f" />
+      <TestMethod codeBase="C:\Users\elydu\Desktop\Carsten23Prompt\ApocalypticFastFood\ApocalypticFastFood.Tests\bin\Debug\net9.0\ApocalypticFastFood.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ApocalypticFastFood.Tests.SampleRunnerTests" name="RunDemos_DoesNotThrow" />
+    </UnitTest>
+    <UnitTest name="ApocalypticFastFood.Tests.CustomerPolicyTests.VipCustomer_LoyaltyMultiplier_PreservesLegacyValue" storage="c:\users\elydu\desktop\carsten23prompt\apocalypticfastfood\apocalypticfastfood.tests\bin\debug\net9.0\apocalypticfastfood.tests.dll" id="11fadeca-a577-b3b3-04d7-1ae7ca9eeb22">
+      <Execution id="a73b4c62-0efc-4460-adfd-eafabdb84a4e" />
+      <TestMethod codeBase="C:\Users\elydu\Desktop\Carsten23Prompt\ApocalypticFastFood\ApocalypticFastFood.Tests\bin\Debug\net9.0\ApocalypticFastFood.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ApocalypticFastFood.Tests.CustomerPolicyTests" name="VipCustomer_LoyaltyMultiplier_PreservesLegacyValue" />
+    </UnitTest>
+    <UnitTest name="ApocalypticFastFood.Tests.OrderProcessorPaymentTests.OrderProcessor_Uses_PaymentProcessor_ForCash" storage="c:\users\elydu\desktop\carsten23prompt\apocalypticfastfood\apocalypticfastfood.tests\bin\debug\net9.0\apocalypticfastfood.tests.dll" id="da10e99f-b654-7171-95f9-5c3255392c7e">
+      <Execution id="241a7385-edbe-45f6-b5d6-4dbf5c31413d" />
+      <TestMethod codeBase="C:\Users\elydu\Desktop\Carsten23Prompt\ApocalypticFastFood\ApocalypticFastFood.Tests\bin\Debug\net9.0\ApocalypticFastFood.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ApocalypticFastFood.Tests.OrderProcessorPaymentTests" name="OrderProcessor_Uses_PaymentProcessor_ForCash" />
+    </UnitTest>
+  </TestDefinitions>
+  <TestEntries>
+    <TestEntry testId="575586fe-cf52-f1a9-07f2-afea0700d986" executionId="9a5a6589-5b50-4d9f-8f8e-5cbffdf87902" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="8b5e30e4-044b-373b-16c0-1b5a85a5a0fa" executionId="d7662635-5ef9-42cc-8c49-cc111508039e" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="6ad3bd5c-916d-9294-82ce-feb0a19f7195" executionId="8d2b0967-3581-4cc5-9d50-8fcb40523771" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="9444d6d1-7f45-ff11-52e5-e5a4c115c27d" executionId="633544df-0a7a-4169-aec9-af805d0d155a" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="495f0e36-3317-2483-70e9-4f7a85847861" executionId="4e039148-b688-4124-9820-1ae26a827a6b" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="039440e2-af58-e9cf-0141-61030843d1c4" executionId="87b43da1-c7bc-4d8c-adea-7b79c795ab49" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="9ee8de60-726c-b2e5-8fd2-43ba9c5f2e1e" executionId="96932b18-9afa-4a66-a685-20e08f46369f" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="c621564b-6904-9d53-a0d6-2256f2fe6c71" executionId="3b785347-f07d-4048-9612-000d98060ea1" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="48b209b2-7a06-8b3e-918c-5302801b129b" executionId="3953aa8b-7d6a-4fb7-95f6-97481dabeea2" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="0141a2c2-e50a-01c9-fe5d-92c1257b0202" executionId="b08715ce-f532-4b84-8b4f-e760b1caae80" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="56679e54-59a4-77c6-6aa3-e08b7355f1b1" executionId="2f77afe5-09e5-4048-84f8-79a619dc7ec6" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="cba4a1c2-8fee-a7ee-8198-66e99a1e5cf5" executionId="ec0d0935-be5b-40f8-8353-2f56b2e8a91d" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="4f4676ac-6a5e-97a5-61de-1f34603f3c4d" executionId="82d10765-4c60-4b85-90d9-d63897616b62" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="186f7675-c977-dab7-b810-8397f2d147d5" executionId="15082838-f6f0-4c5b-98df-dd55c37844cf" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="871a3a31-4a2c-3577-a52c-43b6913c7989" executionId="8da5511a-debe-4947-8d75-49120f54f8cd" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="2308659e-8495-d148-ab12-290cd013506c" executionId="8e577bf4-6d13-4803-b6d1-4e256faed9aa" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="02402fac-6388-12a7-930f-31b3eee2bbcf" executionId="e4d7eb9e-f6ff-48e6-b469-4ed7f35c1e1b" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="43ff12e0-9cd3-fdf9-e511-01467ff1512d" executionId="8b868a64-bc86-494f-899a-df71ddc6a5a5" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="c04692bb-ff56-e88d-ace1-f6cbc9868549" executionId="fa1fd53d-7d3b-4a19-bc83-ccaabe365eaf" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="11fadeca-a577-b3b3-04d7-1ae7ca9eeb22" executionId="a73b4c62-0efc-4460-adfd-eafabdb84a4e" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="da10e99f-b654-7171-95f9-5c3255392c7e" executionId="241a7385-edbe-45f6-b5d6-4dbf5c31413d" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="ad36c8ff-674a-57a3-a063-ccbd913713fd" executionId="7797777b-8f59-49d0-980c-1b4ec6c2c5ea" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="fff545cc-8086-0c96-49e4-c2e089e5b9af" executionId="bae68c0d-832b-432c-af12-5583aa8f697f" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="099999f9-169e-7252-97ed-7f06b7636054" executionId="f016ef3c-f3bb-4483-a907-27cfbe672445" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="fa1feb35-8568-844e-6c59-b24c41ef0cca" executionId="da0d10b7-8c05-40fd-be7f-32b2afd97369" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="4d103bd5-f3c6-ee6b-9b04-c8cbf60448f7" executionId="8e2ec2ef-05c9-4bfc-a534-c147b857ccd2" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="ae70a165-58dd-8129-90a8-d2eff0de6de3" executionId="e73267d8-ade0-401a-b591-9727782550aa" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="edf6edcb-6766-03b2-2da5-3d7c45002c11" executionId="dd589909-7e01-4d51-b466-d5a93e5416b8" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="6756290f-0572-c9c2-6d96-577367cb626d" executionId="e30f5116-4a6b-4004-8440-4be159769e0c" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="5ac497fe-7997-cfdb-21fa-d162f30723ba" executionId="345c2230-b6b1-460b-b9ab-f65c8e603718" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="258e2aa2-10da-95b1-3e07-0b8613f2a548" executionId="f847284f-2660-486a-bfb0-f71ba1746648" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="44cf8dc7-c12d-4e37-a741-92665eab16da" executionId="37c04fee-aa64-4663-939a-50794d9a0fc9" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="0a2e36bf-b6bd-c666-a10c-65e00278d252" executionId="020757ba-1518-4ece-9731-0bb0b715dedb" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="8d3b3592-67e5-33d6-d285-659c1c0d7eb5" executionId="23d74600-11f8-49e4-b0be-15278c6a449d" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="10012d30-98be-46f1-3cd1-124ed9343eb7" executionId="f16ca7b9-b3a7-4aa0-81fc-9475e5eb9661" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="f3dd320c-a66b-2e18-cec7-4ed1a59ff214" executionId="3184ffee-a829-4e02-9e88-689b8b27c9ff" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="ec7e2802-8bc2-716f-d627-c346cbab239c" executionId="928e2c71-b5cd-4594-8643-bc67b1d38b61" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="f3572fb2-9f67-a6bc-c5bf-3f87306c550d" executionId="276cad22-4db1-4c81-9d7c-c86f6bd5a06e" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+  </TestEntries>
+  <TestLists>
+    <TestList name="Ergebnisse nicht in einer Liste" id="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestList name="Alle geladenen Ergebnisse" id="19431567-8539-422a-85d7-44ee4e166bda" />
+  </TestLists>
+  <ResultSummary outcome="Completed">
+    <Counters total="38" executed="38" passed="38" failed="0" error="0" timeout="0" aborted="0" inconclusive="0" passedButRunAborted="0" notRunnable="0" notExecuted="0" disconnected="0" warning="0" completed="0" inProgress="0" pending="0" />
+    <Output>
+      <StdOut>[xUnit.net 00:00:00.00] xUnit.net VSTest Adapter v2.5.3.1+6b60a9e56a (64-bit .NET 9.0.10)&#xD;
+[xUnit.net 00:00:00.09]   Discovering: ApocalypticFastFood.Tests&#xD;
+[xUnit.net 00:00:00.11]   Discovered:  ApocalypticFastFood.Tests&#xD;
+[xUnit.net 00:00:00.11]   Starting:    ApocalypticFastFood.Tests&#xD;
+=== APOCALYPTIC DISCOUNT SYSTEM ===&#xD;
+TEST 1: VIP Diamond - Maximum Discounts&#xD;
+Processing cash: $10&#xD;
+====================================&#xD;
+    FAST FOOD MEGA CHAIN&#xD;
+====================================&#xD;
+Customer: Regular&#xD;
+Order #: 0&#xD;
+Date: Monday&#xD;
+Time: 12:0&#xD;
+Location: Restaurant #0&#xD;
+------------------------------------&#xD;
+ITEMS:&#xD;
+------------------------------------&#xD;
+Subtotal: $12,48&#xD;
+Discount: -$0,00&#xD;
+Tax (8%): $1,00&#xD;
+------------------------------------&#xD;
+TOTAL: $13,48&#xD;
+====================================&#xD;
+Loyalty Points Earned: 12&#xD;
+====================================&#xD;
+    FAST FOOD MEGA CHAIN&#xD;
+====================================&#xD;
+Customer: Regular&#xD;
+Order #: 0&#xD;
+Date: Monday&#xD;
+Time: 10:0&#xD;
+Location: Restaurant #0&#xD;
+------------------------------------&#xD;
+ITEMS:&#xD;
+------------------------------------&#xD;
+Subtotal: $8,99&#xD;
+Discount: -$0,00&#xD;
+Tax (8%): $0,72&#xD;
+------------------------------------&#xD;
+TOTAL: $9,71&#xD;
+====================================&#xD;
+Loyalty Points Earned: 8&#xD;
+====================================&#xD;
+    FAST FOOD MEGA CHAIN&#xD;
+====================================&#xD;
+Customer: Regular&#xD;
+Order #: 0&#xD;
+Date: Monday&#xD;
+Time: 10:0&#xD;
+Location: Restaurant #0&#xD;
+------------------------------------&#xD;
+ITEMS:&#xD;
+------------------------------------&#xD;
+Subtotal: $8,99&#xD;
+Discount: -$0,00&#xD;
+Tax (8%): $0,72&#xD;
+------------------------------------&#xD;
+TOTAL: $9,71&#xD;
+====================================&#xD;
+Loyalty Points Earned: 8&#xD;
+Saving order 0 to database&#xD;
+====================================&#xD;
+    FAST FOOD MEGA CHAIN&#xD;
+====================================&#xD;
+Customer: VIP - Diamond&#xD;
+*** PREMIUM CUSTOMER ***&#xD;
+Order #: 1001&#xD;
+Date: Tuesday&#xD;
+Time: 14:15&#xD;
+Location: Restaurant #101&#xD;
+Service: Drive-Thru&#xD;
+------------------------------------&#xD;
+ITEMS:&#xD;
+  3x BURGER @ $8,99 = $26,97&#xD;
+  2x FRIES @ $3,49 = $6,98&#xD;
+  2x SHAKE @ $4,99 = $9,98&#xD;
+------------------------------------&#xD;
+Subtotal: $41,91&#xD;
+Discount: -$39,81&#xD;
+Tax (8%): $0,17&#xD;
+------------------------------------&#xD;
+TOTAL: $2,26&#xD;
+====================================&#xD;
+Loyalty Points Earned: 1351&#xD;
+*** HAPPY BIRTHDAY! ***&#xD;
+TEST 2: Student - Multiple Strategy Stack&#xD;
+====================================&#xD;
+    FAST FOOD MEGA CHAIN&#xD;
+====================================&#xD;
+Customer: Student&#xD;
+Order #: 1002&#xD;
+Date: Monday&#xD;
+Time: 16:30&#xD;
+Location: Restaurant #102&#xD;
+------------------------------------&#xD;
+ITEMS:&#xD;
+  1x BURGER @ $8,99 = $8,99&#xD;
+  1x FRIES @ $3,49 = $3,49&#xD;
+  1x SHAKE @ $4,99 = $4,99&#xD;
+------------------------------------&#xD;
+Subtotal: $17,47&#xD;
+Discount: -$16,60&#xD;
+Tax (8%): $0,07&#xD;
+------------------------------------&#xD;
+TOTAL: $0,94&#xD;
+====================================&#xD;
+Loyalty Points Earned: 31&#xD;
+TEST 3: Regular Customer - Rush Hour Penalty&#xD;
+====================================&#xD;
+    FAST FOOD MEGA CHAIN&#xD;
+====================================&#xD;
+Customer: Regular&#xD;
+Order #: 1003&#xD;
+Date: Friday&#xD;
+Time: 12:30&#xD;
+Location: Restaurant #103&#xD;
+Service: Drive-Thru&#xD;
+------------------------------------&#xD;
+ITEMS:&#xD;
+  1x BURGER @ $8,99 = $8,99&#xD;
+  1x FRIES @ $3,49 = $3,49&#xD;
+------------------------------------&#xD;
+Subtotal: $12,48&#xD;
+Discount: -$-8,00&#xD;
+Tax (8%): $1,64&#xD;
+------------------------------------&#xD;
+TOTAL: $22,12&#xD;
+====================================&#xD;
+Loyalty Points Earned: 12&#xD;
+TEST 4: Family Meal - Holiday Special&#xD;
+====================================&#xD;
+    FAST FOOD MEGA CHAIN&#xD;
+====================================&#xD;
+Customer: Regular&#xD;
+Order #: 1004&#xD;
+Date: Sunday&#xD;
+Time: 13:0&#xD;
+Location: Restaurant #101&#xD;
+------------------------------------&#xD;
+ITEMS:&#xD;
+  4x BURGER @ $8,99 = $35,96&#xD;
+  3x FRIES @ $3,49 = $10,47&#xD;
+  2x SHAKE @ $4,99 = $9,98&#xD;
+  1x NUGGETS @ $6,49 = $6,49&#xD;
+------------------------------------&#xD;
+Subtotal: $62,91&#xD;
+Discount: -$10,00&#xD;
+Tax (8%): $4,23&#xD;
+------------------------------------&#xD;
+TOTAL: $57,14&#xD;
+====================================&#xD;
+Loyalty Points Earned: 62&#xD;
+=== LSP VIOLATION EXAMPLES ===&#xD;
+Regular customer discount: $0&#xD;
+VIP customer discount: $0&#xD;
+[xUnit.net 00:00:00.15]   Finished:    ApocalypticFastFood.Tests&#xD;
+</StdOut>
+    </Output>
+  </ResultSummary>
+</TestRun>
