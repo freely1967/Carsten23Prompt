@@ -129,7 +129,9 @@ public static class SampleRunner
         try
         {
             Customer minor = new MinorCustomer();
-            minor.MakePurchase();
+            // Use the purchase service adapter to demonstrate staged migration
+            var purchaseService = new ApocalypticFastFood.Services.CustomerPurchaseService(minor);
+            purchaseService.MakePurchase(new ApocalypticFastFood.CustomerContext(minor.Id, minor.Age, minor.VisitCount, minor.MembershipLevel, minor.HasParentApproval));
         }
         catch (Exception ex)
         {
