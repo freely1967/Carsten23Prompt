@@ -2,6 +2,13 @@
 
 public class DiscountManager
 {
+    private readonly ApocalypticFastFood.Services.ILoyaltyPointsCalculator _pointsCalculator;
+
+    public DiscountManager(ApocalypticFastFood.Services.ILoyaltyPointsCalculator? pointsCalculator = null)
+    {
+        _pointsCalculator = pointsCalculator ?? new ApocalypticFastFood.Services.DefaultLoyaltyPointsCalculator();
+    }
+
     public bool AcceptsMarketing;
     public int Age;
     public double AverageSpend;
@@ -1150,72 +1157,7 @@ public class ReceiptFormatter
 
     private int CalculateLoyaltyPoints()
     {
-        var points = 0;
-        
-        switch (CustomerType)
-        {
-            case 1:
-                points = (int)(TotalAmount * 1);
-                if (HasApp)
-                {
-                    if (EmailSubscribed)
-                    {
-                        if (VisitCount > 10)
-                            points = (int)(TotalAmount * 2);
-                        else
-                            points = (int)(TotalAmount * 1.5);
-                    }
-                    else
-                    {
-                        points = (int)(TotalAmount * 1.2);
-                    }
-                }
-
-                break;
-            case 2:
-                switch (MembershipLevel)
-                {
-                    case "Bronze":
-                        points = (int)(TotalAmount * 2);
-                        break;
-                    case "Silver":
-                        points = (int)(TotalAmount * 2.5);
-                        break;
-                    case "Gold":
-                    {
-                        if (VisitCount > 50)
-                            points = (int)(TotalAmount * 3.5);
-                        else
-                            points = (int)(TotalAmount * 3);
-                        break;
-                    }
-                    case "Platinum":
-                        points = (int)(TotalAmount * 4);
-                        break;
-                    case "Diamond":
-                    {
-                        if (VisitCount > 100)
-                            points = (int)(TotalAmount * 6);
-                        else
-                            points = (int)(TotalAmount * 5);
-                        break;
-                    }
-                }
-
-                break;
-            case 3:
-                points = (int)(TotalAmount * 1.5);
-                break;
-            case 5:
-                points = (int)(TotalAmount * 1.8);
-                break;
-        }
-
-        if (IsBirthday) points += 500;
-
-        if (ReferralCount > 0) points += ReferralCount * 50;
-
-        return points;
+        return _pointsCalculator.CalculatePoints(this);
     }
     
     public void SendEmailReceipt(string email)
