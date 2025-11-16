@@ -18,6 +18,17 @@ public interface IPurchaseApprovalPolicy
     bool CanMakePurchase(CustomerContext ctx);
 }
 
+// Narrow capability interfaces (Interface Segregation)
+public interface IOrderable
+{
+    void MakePurchase();
+}
+
+public interface IAlcoholConsumer
+{
+    bool CanOrderAlcohol();
+}
+
 public interface ILoyaltyCalculator
 {
     int GetMultiplier(CustomerContext ctx);
@@ -56,7 +67,7 @@ public class DefaultLoyaltyCalculator : ILoyaltyCalculator
     public int GetMultiplier(CustomerContext ctx) => 1;
 }
 
-public class Customer
+public class Customer : IOrderable, IAlcoholConsumer
 {
     // lightweight state kept for backwards compatibility
     public int Id { get; set; }
