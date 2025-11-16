@@ -438,6 +438,12 @@ public class DiscountManager
             visitDiscount = new DiscountEngine(new IDiscountRule[] { new VisitCountRule() }).Calculate(this);
             s5 = 0.0;
         }
+        // Visit-count multipliers migrated to VisitCountRuleV2 via DiscountEngineV2
+        if (VisitCount > 0)
+        {
+            var visitResult = new DiscountEngineV2(new IDiscountRuleV2[] { new VisitCountRuleV2() }).Calculate(this);
+            multiplier *= visitResult.Multiplier;
+        }
 
         if (CustomerType == 5)
             switch (Day)

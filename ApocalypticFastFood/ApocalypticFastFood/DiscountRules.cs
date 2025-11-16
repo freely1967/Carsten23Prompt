@@ -87,6 +87,65 @@ public class VisitCountRule : IDiscountRule
     }
 }
 
+// Multiplier-aware visit-count rule (V2): returns multiplier adjustments where applicable
+public class VisitCountRuleV2 : IDiscountRuleV2
+{
+    public bool IsApplicable(DiscountManager ctx)
+    {
+        return ctx.VisitCount > 0;
+    }
+
+    public DiscountResult CalculateResult(DiscountManager ctx)
+    {
+        double discount = 0.0; // visit-discount handled by VisitCountRule (legacy)
+        double multiplier = 1.0;
+
+        if (ctx.VisitCount >= 100)
+        {
+            if (ctx.CustomerType == 2)
+            {
+                if (ctx.MembershipLevel == "Diamond")
+                {
+                    if (ctx.MonthsSinceMembership > 24)
+                    {
+                        if (ctx.AverageSpend > 75)
+                        {
+                            if (ctx.ConsecutiveVisits > 10)
+                            {
+                                if (ctx.LeftReview && ctx.ReviewStars == 5)
+                                {
+                                    if (ctx.ReferralCount > 10)
+                                    {
+                                        multiplier *= 1.5;
+                                    }
+                                    else
+                                    {
+                                        multiplier *= 1.4;
+                                    }
+                                }
+                                else
+                                {
+                                    multiplier *= 1.3;
+                                }
+                            }
+                            else
+                            {
+                                multiplier *= 1.25;
+                            }
+                        }
+                        else
+                        {
+                            multiplier *= 1.2;
+                        }
+                    }
+                }
+            }
+        }
+
+        return new DiscountResult(discount, multiplier);
+    }
+}
+
 public class TimeOfDayRule : IDiscountRule
 {
     public bool IsApplicable(DiscountManager ctx)
