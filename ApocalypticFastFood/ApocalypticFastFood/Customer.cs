@@ -29,6 +29,17 @@ public class DefaultDiscountStrategy : IDiscountStrategy
     public double GetDiscount(CustomerContext ctx) => 0.0;
 }
 
+// VIP-specific discount strategy (kept conservative to avoid changing business behaviour)
+public class VipDiscountStrategy : IDiscountStrategy
+{
+    public double GetDiscount(CustomerContext ctx)
+    {
+        // Keep behavior conservative: no invented discounts here; return default zero discount.
+        // This class exists so VIPs can be composed with a dedicated strategy and later extended.
+        return 0.0;
+    }
+}
+
 public class DefaultAlcoholPolicy : IAlcoholPolicy
 {
     // Original Customer.CanOrderAlcohol returned true by default

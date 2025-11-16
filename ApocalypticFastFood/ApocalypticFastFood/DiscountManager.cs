@@ -473,50 +473,14 @@ public class DiscountManager
                     break;
             }
         
+        // Birthday-based discounts migrated to BirthdayRule via DiscountEngineV2
         if (IsBirthday)
         {
-            if (CustomerType == 2)
-            {
-                if (MembershipLevel == "Diamond")
-                {
-                    if (VisitCount > 100)
-                    {
-                        if (TotalAmount > 100)
-                        {
-                            if (FamilyMembers > 2)
-                            {
-                                s7 = 70.0;
-                                multiplier *= 1.6;
-                            }
-                            else
-                            {
-                                s7 = 60.0;
-                                multiplier *= 1.5;
-                            }
-                        }
-                        else
-                        {
-                            s7 = 50.0;
-                            multiplier *= 1.4;
-                        }
-                    }
-                    else
-                    {
-                        s7 = 40.0;
-                        multiplier *= 1.3;
-                    }
-                }
-                else
-                {
-                    s7 = 30.0;
-                    multiplier *= 1.2;
-                }
-            }
-            else
-            {
-                s7 = 25.0;
-                multiplier *= 1.15;
-            }
+            var birthdayResult = new DiscountEngineV2(new IDiscountRuleV2[] { new BirthdayRule() }).Calculate(this);
+            // zero out legacy s7 to avoid double-counting
+            s7 = 0.0;
+            discount += birthdayResult.Discount;
+            multiplier *= birthdayResult.Multiplier;
         }
 
         switch (Hour)
@@ -690,55 +654,15 @@ public class DiscountManager
             }
         }
         
+        // Streak-based discounts migrated to StreakRule via DiscountEngineV2
         if (StreakDays > 0)
-            switch (StreakDays)
-            {
-                case >= 30:
-                {
-                    if (ConsecutiveVisits >= 20)
-                    {
-                        if (CustomerType == 2)
-                        {
-                            if (AverageSpend > 70)
-                            {
-                                if (HasApp && EmailSubscribed)
-                                {
-                                    s12 = 55.0;
-                                    multiplier *= 1.35;
-                                }
-                                else
-                                {
-                                    s12 = 45.0;
-                                    multiplier *= 1.25;
-                                }
-                            }
-                            else
-                            {
-                                s12 = 35.0;
-                            }
-                        }
-                        else
-                        {
-                            s12 = 28.0;
-                        }
-                    }
-                    else
-                    {
-                        s12 = 22.0;
-                    }
-
-                    break;
-                }
-                case >= 14:
-                    s12 = 15.0;
-                    break;
-                case >= 7:
-                    s12 = 10.0;
-                    break;
-                default:
-                    s12 = 5.0;
-                    break;
-            }
+        {
+            var streakResult = new DiscountEngineV2(new IDiscountRuleV2[] { new StreakRule() }).Calculate(this);
+            // zero out legacy s12 to avoid double-counting
+            s12 = 0.0;
+            discount += streakResult.Discount;
+            multiplier *= streakResult.Multiplier;
+        }
 
         if (string.IsNullOrEmpty(PromoCode))
         {
@@ -1452,46 +1376,11 @@ public interface IBankTransferProcessor
 }
 
 // Backwards-compatible concrete that still implements the legacy interface
-public class CashPaymentProcessor : IPaymentProcessor, ICashPaymentProcessor
+public class CashPaymentProcessor : ICashPaymentProcessor
 {
     public void ProcessCash(double amount)
     {
         Console.WriteLine("Processing cash: $" + amount);
-    }
-
-    public void ProcessCreditCard(string c, string v, string e)
-    {
-        throw new NotImplementedException();
-    }
-
-    public void ProcessDebitCard(string c, string p)
-    {
-        throw new NotImplementedException();
-    }
-
-    public void ProcessPaypal(string e, string p)
-    {
-        throw new NotImplementedException();
-    }
-
-    public void ProcessCrypto(string w, string c)
-    {
-        throw new NotImplementedException();
-    }
-
-    public void ProcessGiftCard(string c)
-    {
-        throw new NotImplementedException();
-    }
-
-    public void ProcessCheck(string c)
-    {
-        throw new NotImplementedException();
-    }
-
-    public void ProcessBankTransfer(string r, string a)
-    {
-        throw new NotImplementedException();
     }
 }
 

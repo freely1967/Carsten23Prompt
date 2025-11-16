@@ -2,15 +2,7 @@
 
 public class VipCustomer : Customer
 {
-    public override double GetDiscount()
+    public VipCustomer() : base(discountStrategy: new VipDiscountStrategy())
     {
-        // VIPs now use an injected discount strategy; keep backward-compatible behavior
-        return base.GetDiscount();
     }
-
-    public override int GetLoyaltyMultiplier()
-    {
-        // Preserve previous odd behavior for now
-        return base.GetLoyaltyMultiplier();
-    } // Negative? What?
 }
