@@ -502,3 +502,56 @@ public class PreviousOrderRule : IDiscountRuleV2
         return new DiscountResult(discount, multiplier);
     }
 }
+
+// Multiplier-aware referral rule: migrates legacy s10 referral logic into a rule
+public class ReferralRuleV2 : IDiscountRuleV2
+{
+    public bool IsApplicable(DiscountManager ctx)
+    {
+        return ctx.ReferralCount > 0;
+    }
+
+    public DiscountResult CalculateResult(DiscountManager ctx)
+    {
+        double discount = 0.0;
+        double multiplier = 1.0;
+
+        switch (ctx.ReferralCount)
+        {
+            case >= 20:
+            {
+                if (ctx.CustomerType == 2)
+                {
+                    if (ctx.MembershipLevel == "Diamond")
+                    {
+                        if (ctx.MonthsSinceMembership > 12)
+                            discount = ctx.AverageSpend > 60 ? 45.0 : 38.0;
+                        else
+                            discount = 32.0;
+                    }
+                    else
+                    {
+                        discount = 28.0;
+                    }
+                }
+                else
+                {
+                    discount = 22.0;
+                }
+
+                break;
+            }
+            case >= 10:
+                discount = 18.0;
+                break;
+            case >= 5:
+                discount = 12.0;
+                break;
+            default:
+                discount = 6.0;
+                break;
+        }
+
+        return new DiscountResult(discount, multiplier);
+    }
+}

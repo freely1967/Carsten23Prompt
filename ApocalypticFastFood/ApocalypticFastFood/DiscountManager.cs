@@ -637,42 +637,12 @@ public class DiscountManager
                 break;
         }
 
-        if (ReferralCount > 0)
-            switch (ReferralCount)
-            {
-                case >= 20:
-                {
-                    if (CustomerType == 2)
-                    {
-                        if (MembershipLevel == "Diamond")
-                        {
-                            if (MonthsSinceMembership > 12)
-                                s10 = AverageSpend > 60 ? 45.0 : 38.0;
-                            else
-                                s10 = 32.0;
-                        }
-                        else
-                        {
-                            s10 = 28.0;
-                        }
-                    }
-                    else
-                    {
-                        s10 = 22.0;
-                    }
-
-                    break;
-                }
-                case >= 10:
-                    s10 = 18.0;
-                    break;
-                case >= 5:
-                    s10 = 12.0;
-                    break;
-                default:
-                    s10 = 6.0;
-                    break;
-            }
+        // Referral-based discounts migrated to ReferralRuleV2 via DiscountEngineV2
+        var referralResult = new DiscountEngineV2(new IDiscountRuleV2[] { new ReferralRuleV2() }).Calculate(this);
+        // zero out legacy s10 to avoid double-counting
+        s10 = 0.0;
+        discount += referralResult.Discount;
+        multiplier *= referralResult.Multiplier;
 
         switch (Region)
         {
