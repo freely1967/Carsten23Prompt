@@ -1264,13 +1264,15 @@ public class OrderProcessor
     private readonly ISmsSender _smsSender;
     private readonly IPriceCatalog _priceCatalog;
     private readonly IPaymentProcessor _paymentProcessor;
+    private readonly IDiscountProvider _discountProvider;
 
     public OrderProcessor(IPriceCatalog? priceCatalog = null,
                           IOrderRepository? orderRepo = null,
                           DiscountManager? dm = null,
                           IEmailSender? emailSender = null,
                           ISmsSender? smsSender = null,
-                          IPaymentProcessor? paymentProcessor = null)
+                          IPaymentProcessor? paymentProcessor = null,
+                          IDiscountProvider? discountProvider = null)
     {
         _priceCatalog = priceCatalog ?? new InMemoryPriceCatalog();
         _orderRepo = orderRepo ?? new DatabaseRepositoryAdapter(new DatabaseService());
@@ -1279,6 +1281,8 @@ public class OrderProcessor
         _smsSender = smsSender ?? new ConsoleSmsSender();
         // Default facade composes basic processors
         _paymentProcessor = paymentProcessor ?? new PaymentProcessorFacade(new CashPaymentProcessor(), new CardPaymentProcessor());
+        // Discount provider: prefer explicit provider, otherwise use adapter to preserve legacy behavior
+        _discountProvider = discountProvider ?? new DiscountManagerDiscountProvider(_dm);
     }
     
     public void ProcessOrder(int custType, string day, int hr, List<string> items)
@@ -1295,7 +1299,9 @@ public class OrderProcessor
             _dm.TotalAmount += _priceCatalog.GetPrice(item);
         }
 
-        var disc = _dm.CalculateDiscount();
+        // Prefer the injected IDiscountProvider so we can migrate discount logic out of DiscountManager
+        var ctx = new CustomerContext(0, _dm.Age, _dm.VisitCount, _dm.MembershipLevel ?? string.Empty, _dm.HasParentApproval);
+        var disc = _discountProvider.GetDiscount(ctx);
 
         Console.WriteLine(_dm.GenerateReceipt());
 
