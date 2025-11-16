@@ -12,8 +12,16 @@ public class Customer
     public string MembershipLevel { get; set; } = string.Empty;
     public bool HasParentApproval { get; set; }
 
-    // Compatibility constructor: accepts legacy policy/strategy params but keeps Customer as a data holder.
-    // These parameters are ignored and kept for binary/constructor compatibility with older callers.
+    // Parameterless data-only constructor (preferred for new code)
+    public Customer()
+    {
+    }
+
+    /// <summary>
+    /// Compatibility constructor: accepts legacy policy/strategy params but keeps Customer as a data holder.
+    /// These parameters are ignored and kept for binary/constructor compatibility with older callers.
+    /// </summary>
+    [System.Obsolete("Use parameterless constructor. Behavioral dependencies must be injected in services/adapters.")]
     public Customer(IDiscountStrategy? discountStrategy = null,
                     IAlcoholPolicy? alcoholPolicy = null,
                     IPurchaseApprovalPolicy? purchaseApprovalPolicy = null,
@@ -22,9 +30,13 @@ public class Customer
         // no-op: keep as data-only holder; adapters/services should be used for behaviour.
     }
 
-    // Compatibility no-op for legacy callers that expect Customer to perform actions.
+    /// <summary>
+    /// Compatibility no-op for legacy callers that expect Customer to perform actions.
+    /// Use an IPurchaseService implementation for actual purchase behavior.
+    /// </summary>
+    [System.Obsolete("Use IPurchaseService.MakePurchase(CustomerContext) instead of calling Customer.MakePurchase().")]
     public void MakePurchase()
     {
-        // Intentionally no-op: actual purchase logic moved to services/adapters.
+        // Intentionally left as no-op for binary compatibility. Consider removing in a later major version.
     }
 }

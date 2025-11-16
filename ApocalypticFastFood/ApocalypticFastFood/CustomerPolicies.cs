@@ -21,10 +21,10 @@ public class MinorPurchaseApprovalPolicy : IPurchaseApprovalPolicy
 
 public class VipDiscountStrategy : IDiscountStrategy
 {
-    public double GetDiscount(CustomerContext ctx)
+    public decimal GetDiscount(CustomerContext ctx)
     {
         // Placeholder: VIP discount logic is handled elsewhere - return 0 to keep parity
-        return 0.0;
+        return 0.0m;
     }
 }
 
@@ -32,7 +32,8 @@ public class VipLoyaltyCalculator : ILoyaltyCalculator
 {
     public int GetMultiplier(CustomerContext ctx)
     {
-        // Preserve the previous odd return value used in the codebase
-        return -1;
+        // VIP customers: provide a positive, documented multiplier.
+        // Using a positive multiplier is less surprising and easier to reason about.
+        return 2;
     }
 }

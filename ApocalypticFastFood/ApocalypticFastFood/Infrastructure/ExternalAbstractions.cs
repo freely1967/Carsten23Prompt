@@ -13,12 +13,12 @@ public interface ISmsSender
 
 public interface IOrderRepository
 {
-    void SaveOrder(int orderId, double total, double discount);
+    void SaveOrder(int orderId, decimal total, decimal discount);
 }
 
 // Legacy discount rule contract used by migrated rule files
 public interface IDiscountRule
 {
     bool IsApplicable(DiscountManager ctx);
-    double Calculate(DiscountManager ctx);
+    decimal Calculate(DiscountManager ctx);
 }

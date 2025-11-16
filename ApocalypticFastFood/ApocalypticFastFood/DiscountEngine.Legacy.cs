@@ -18,9 +18,9 @@ public class DiscountEngine
         _rules = rules?.ToArray() ?? Array.Empty<IDiscountRule>();
     }
 
-    public double Calculate(DiscountManager ctx)
+    public decimal Calculate(DiscountManager ctx)
     {
-        double total = 0.0;
+        decimal total = 0.0m;
         foreach (var r in _rules)
         {
             if (r.IsApplicable(ctx)) total += r.Calculate(ctx);

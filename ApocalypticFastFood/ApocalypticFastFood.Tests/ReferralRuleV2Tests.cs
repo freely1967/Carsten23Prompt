@@ -13,13 +13,13 @@ namespace ApocalypticFastFood.Tests
                 CustomerType = 2,
                 MembershipLevel = "Diamond",
                 MonthsSinceMembership = 13,
-                AverageSpend = 70.0
+                AverageSpend = 70.0m
             };
 
             var rule = new ReferralRuleV2();
             var res = rule.CalculateResult(dm);
 
-            Assert.Equal(45.0, res.Discount, 2);
+            Assert.Equal(45.0m, res.Discount);
             Assert.Equal(1.0, res.Multiplier, 3);
         }
 
@@ -35,7 +35,7 @@ namespace ApocalypticFastFood.Tests
             var rule = new ReferralRuleV2();
             var res = rule.CalculateResult(dm);
 
-            Assert.Equal(18.0, res.Discount, 2);
+            Assert.Equal(18.0m, res.Discount);
         }
 
         [Fact]
@@ -50,7 +50,7 @@ namespace ApocalypticFastFood.Tests
             var rule = new ReferralRuleV2();
             var res = rule.CalculateResult(dm);
 
-            Assert.Equal(6.0, res.Discount, 2);
+            Assert.Equal(6.0m, res.Discount);
         }
     }
 }

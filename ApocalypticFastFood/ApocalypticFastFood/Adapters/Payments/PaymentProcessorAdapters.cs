@@ -8,14 +8,14 @@ public interface IPaymentProcessor
     void ProcessPaypal(string email, string password);
     void ProcessCrypto(string wallet, string coin);
     void ProcessGiftCard(string code);
-    void ProcessCash(double amount);
+    void ProcessCash(decimal amount);
     void ProcessCheck(string checkNum);
     void ProcessBankTransfer(string routing, string account);
 }
 
 public interface ICashPaymentProcessor
 {
-    void ProcessCash(double amount);
+    void ProcessCash(decimal amount);
 }
 
 public interface ICardPaymentProcessor
@@ -52,9 +52,9 @@ public interface IBankTransferProcessor
 // Backwards-compatible concrete that still implements the legacy interface
 public class CashPaymentProcessor : ICashPaymentProcessor
 {
-    public void ProcessCash(double amount)
+    public void ProcessCash(decimal amount)
     {
-        Console.WriteLine("Processing cash: $" + amount);
+        Console.WriteLine($"Processing cash: ${amount:F2}");
     }
 }
 
@@ -130,7 +130,7 @@ public class PaymentProcessorFacade : IPaymentProcessor
         _gift.ProcessGiftCard(code);
     }
 
-    public void ProcessCash(double amount)
+    public void ProcessCash(decimal amount)
     {
         if (_cash is null) throw new NotSupportedException("Cash processing not configured");
         _cash.ProcessCash(amount);

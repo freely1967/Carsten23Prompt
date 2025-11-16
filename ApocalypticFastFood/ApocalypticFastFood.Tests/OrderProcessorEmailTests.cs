@@ -11,7 +11,7 @@ public class OrderProcessorEmailTests
     {
         var fakeRepo = new FakeRepo();
         var fakeEmail = new FakeEmailSender();
-        var dm = new DiscountManager { PaymentMethod = "cash", EmailSubscribed = true };
+        var dm = new DiscountManager { PaymentMethodEnum = ApocalypticFastFood.PaymentMethod.Cash, EmailSubscribed = true };
         var op = new OrderProcessor(null, fakeRepo, dm, fakeEmail, null, new FakePaymentProcessor());
 
         op.ProcessOrder(1, "Monday", 10, new List<string> { "burger" });
@@ -22,22 +22,22 @@ public class OrderProcessorEmailTests
 
     private class FakeRepo : IOrderRepository
     {
-        public bool Saved = false;
-        public void SaveOrder(int orderId, double total, double discount) => Saved = true;
+        public bool Saved { get; private set; } = false;
+        public void SaveOrder(int orderId, decimal total, decimal discount) => Saved = true;
     }
 
     private class FakeEmailSender : IEmailSender
     {
-        public bool Sent = false;
+        public bool Sent { get; private set; } = false;
         public void Send(string to, string subject, string body = "") => Sent = true;
     }
 
     private class FakePaymentProcessor : IPaymentProcessor
     {
-        public bool CashCalled = false;
-        public double CashAmount = 0.0;
+        public bool CashCalled { get; private set; } = false;
+        public decimal CashAmount { get; private set; } = 0.0m;
 
-        public void ProcessCash(double amount) { CashCalled = true; CashAmount = amount; }
+        public void ProcessCash(decimal amount) { CashCalled = true; CashAmount = amount; }
         public void ProcessCreditCard(string cardNum, string cvv, string exp) { }
         public void ProcessDebitCard(string cardNum, string pin) { }
         public void ProcessPaypal(string email, string password) { }

@@ -13,14 +13,14 @@ namespace ApocalypticFastFood.Tests
                 CustomerType = 2,
                 MembershipLevel = "Diamond",
                 VisitCount = 101,
-                TotalAmount = 150.0,
+                TotalAmount = 150.0m,
                 FamilyMembers = 3
             };
 
             var rule = new BirthdayRule();
             var res = rule.CalculateResult(dm);
 
-            Assert.Equal(70.0, res.Discount);
+            Assert.Equal(70.0m, res.Discount);
             Assert.Equal(1.6, res.Multiplier, 3);
         }
 
@@ -36,7 +36,7 @@ namespace ApocalypticFastFood.Tests
             var rule = new BirthdayRule();
             var res = rule.CalculateResult(dm);
 
-            Assert.Equal(25.0, res.Discount);
+            Assert.Equal(25.0m, res.Discount);
             Assert.Equal(1.15, res.Multiplier, 3);
         }
     }

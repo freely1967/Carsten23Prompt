@@ -12,7 +12,7 @@ namespace ApocalypticFastFood.Tests
             var ctx = new CustomerContext(1, 30, 5, "", false);
 
             var d = provider.GetDiscount(ctx);
-            Assert.IsType<double>(d);
+            Assert.IsType<decimal>(d);
         }
     }
 }

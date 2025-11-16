@@ -1,13 +1,15 @@
 ﻿namespace ApocalypticFastFood;
 
-public class VipCustomer : Customer
+public class VIPCustomer : Customer
 {
-    public VipCustomer() : base(discountStrategy: new VipDiscountStrategy())
+    public VIPCustomer()
+        : base()
     {
+        // Legacy behavior (VIP strategies/policies) moved out of Customer; keep parameterless ctor for compatibility.
     }
 
     // Compatibility helpers used by legacy tests: delegate to the strategy/calculator implementations
-    public double GetDiscount()
+    public decimal GetDiscount()
     {
         var strategy = new VipDiscountStrategy();
         var ctx = new CustomerContext(this.Id, this.Age, this.VisitCount, this.MembershipLevel, this.HasParentApproval);

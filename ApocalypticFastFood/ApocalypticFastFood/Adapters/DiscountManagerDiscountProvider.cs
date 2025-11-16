@@ -9,15 +9,16 @@ public class DiscountManagerDiscountProvider : IDiscountProvider
         _dm = dm ?? throw new System.ArgumentNullException(nameof(dm));
     }
 
-    public double GetDiscount(CustomerContext ctx)
+    public decimal GetDiscount(CustomerContext ctx)
     {
-        // Map available context fields into the existing DiscountManager instance
-        _dm.Id = ctx.Id;
-        _dm.Age = ctx.Age;
-        _dm.VisitCount = ctx.VisitCount;
-        _dm.MembershipLevel = ctx.MembershipLevel ?? string.Empty;
-        _dm.HasParentApproval = ctx.HasParentApproval;
+        // Avoid mutating consumer-provided DiscountManager. Create a fresh instance for calculation.
+        var copy = new DiscountManager(); // or use factory/DI if context-specific dependencies are required
+        copy.Id = ctx.Id;
+        copy.Age = ctx.Age;
+        copy.VisitCount = ctx.VisitCount;
+        copy.MembershipLevel = ctx.MembershipLevel ?? string.Empty;
+        copy.HasParentApproval = ctx.HasParentApproval;
 
-        return _dm.CalculateDiscount();
+        return copy.CalculateDiscount();
     }
 }

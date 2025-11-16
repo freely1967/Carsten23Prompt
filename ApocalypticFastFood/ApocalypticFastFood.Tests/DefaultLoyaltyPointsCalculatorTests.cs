@@ -9,7 +9,7 @@ namespace ApocalypticFastFood.Tests
         {
             // Arrange
             var dm = new ApocalypticFastFood.DiscountManager();
-            dm.TotalAmount = 200;
+            dm.TotalAmount = 200m;
             dm.CustomerType = 2;
             dm.MembershipLevel = "Diamond";
             dm.VisitCount = 150;

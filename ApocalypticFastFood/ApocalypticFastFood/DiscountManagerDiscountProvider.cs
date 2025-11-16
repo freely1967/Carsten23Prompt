@@ -9,7 +9,7 @@ public class DiscountManagerDiscountProvider : ApocalypticFastFood.IDiscountProv
         _dm = dm ?? throw new ArgumentNullException(nameof(dm));
     }
 
-    public double GetDiscount(ApocalypticFastFood.CustomerContext ctx)
+    public decimal GetDiscount(ApocalypticFastFood.CustomerContext ctx)
     {
         // Map available context fields into the existing DiscountManager instance
         _dm.Age = ctx.Age;

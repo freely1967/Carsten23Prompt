@@ -7,23 +7,23 @@ namespace ApocalypticFastFood.Tests
         [Fact]
         public void VipCustomer_GetDiscount_ReturnsDoubleAndDoesNotThrow()
         {
-            var vip = new VipCustomer { Id = 1, Age = 45, VisitCount = 150, MembershipLevel = "Diamond" };
-            double d = 0.0;
+            var vip = new VIPCustomer { Id = 1, Age = 45, VisitCount = 150, MembershipLevel = "Diamond" };
+            decimal d = 0.0m;
 
             // Act
             d = vip.GetDiscount();
 
             // Assert
-            Assert.IsType<double>(d);
+            Assert.IsType<decimal>(d);
         }
 
         [Fact]
         public void VipCustomer_DefaultStrategy_IsVipDiscountStrategy()
         {
-            var vip = new VipCustomer { Id = 2 };
+            var vip = new VIPCustomer { Id = 2 };
             // This simply verifies GetDiscount executes without exception and returns a numeric value
             var d = vip.GetDiscount();
-            Assert.IsType<double>(d);
+            Assert.IsType<decimal>(d);
         }
     }
 }

@@ -11,7 +11,7 @@ namespace ApocalypticFastFood.Tests
             var processor = new ApocalypticFastFood.CashPaymentProcessor();
 
             // Act
-            processor.ProcessCash(10.0);
+            processor.ProcessCash(10.0m);
 
             // Assert
             // If no exception was thrown, the processor behaved as expected.

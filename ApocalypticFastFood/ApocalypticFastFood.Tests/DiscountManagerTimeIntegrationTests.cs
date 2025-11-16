@@ -7,7 +7,7 @@ namespace ApocalypticFastFood.Tests;
 public class DiscountManagerTimeIntegrationTests
 {
     [Fact]
-    public void CalculateDiscount_Uses_TimeEngine_ForAfternoonCase()
+    public void CalculateDiscountUsesTimeEngineForAfternoonCase()
     {
         var dm = new DiscountManager
         {

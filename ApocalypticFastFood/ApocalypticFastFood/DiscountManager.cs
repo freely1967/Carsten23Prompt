@@ -1,107 +1,149 @@
 ﻿namespace ApocalypticFastFood;
 
+public enum PaymentMethod
+{
+    Unknown,
+    Cash,
+    Credit,
+    Debit,
+    Paypal,
+    App
+}
+
 public class DiscountManager
 {
     private readonly ApocalypticFastFood.Services.ILoyaltyPointsCalculator _pointsCalculator;
+    private readonly DiscountEngine _discountEngine;
+    private readonly DiscountEngine _promoEngine;
+    private readonly DiscountEngine _visitEngine;
+    private readonly DiscountEngine _timeEngine;
+    private readonly DiscountEngine _familyEngine;
+    private readonly IEmailSender _emailSender;
+    private readonly ISmsSender _smsSender;
+    public const decimal DiscountCapFactor = 0.95m;
+    public const decimal TaxRate = 0.08m;
 
-    public DiscountManager(ApocalypticFastFood.Services.ILoyaltyPointsCalculator? pointsCalculator = null)
+    public DiscountManager(DiscountEngine? discountEngine = null, ApocalypticFastFood.Services.ILoyaltyPointsCalculator? pointsCalculator = null, IEmailSender? emailSender = null, ISmsSender? smsSender = null)
     {
         _pointsCalculator = pointsCalculator ?? new ApocalypticFastFood.Services.DefaultLoyaltyPointsCalculator();
-        ItemPrices = new Dictionary<string, double>();
+        // Default rule set for legacy DiscountManager: create per-category engines to avoid allocations during CalculateDiscount
+        _promoEngine = new DiscountEngine(new IDiscountRule[] { new PromoCodeRule() });
+        _visitEngine = new DiscountEngine(new IDiscountRule[] { new VisitCountRule() });
+        _timeEngine = new DiscountEngine(new IDiscountRule[] { new TimeOfDayRule() });
+        _familyEngine = new DiscountEngine(new IDiscountRule[] { new FamilyRule() });
+
+        // Combined engine (used when injected or if callers want a single engine)
+        _discountEngine = discountEngine ?? new DiscountEngine(new IDiscountRule[] { new PromoCodeRule(), new VisitCountRule(), new TimeOfDayRule(), new FamilyRule() });
+
+        ItemPrices = new Dictionary<string, decimal>();
         ItemQuantities = new Dictionary<string, int>();
         Items = new List<string>();
         PastOrders = new List<string>();
+        _emailSender = emailSender ?? new ConsoleEmailSender();
+        _smsSender = smsSender ?? new ConsoleSmsSender();
     }
 
-    // Public state fields (kept as-is for compatibility with existing code/tests)
-    public bool AcceptsMarketing;
-    public int Age;
-    public double AverageSpend;
-    public bool CheckedIn;
-    public int ComplaintsCount;
-    public int ConsecutiveVisits;
-    public string? CreditCardType;
-    public int CurrentMonth;
-    public int CustomerType; // 1=regular, 2=vip, 3=employee, 4=senior, 5=student, 6=minor, 7=banned
-    public string Day = string.Empty;
-    public int DaysLastVisit;
-    public string DeviceType = string.Empty;
-    public string DietaryPreference = string.Empty;
-    public bool EmailSubscribed;
-    public string EmployeeName = string.Empty;
-    public int FamilyMembers;
-    public string FavoriteItem = string.Empty;
-    public bool HasAllergies;
-    public bool HasApp;
-    public bool HasKids;
-    public bool HasLoyaltyCard;
-    public int Hour;
-    public bool IsBirthday;
-    public bool IsCurbside;
-    public bool IsDelivery;
-    public bool IsDineIn;
-    public bool IsDriveThru;
-    public bool IsFirstOrder;
-    public bool IsHoliday;
-    public bool IsRushHour;
-    public bool IsWeekend;
-    public int ItemCount;
-    public Dictionary<string, double> ItemPrices;
-    public Dictionary<string, int> ItemQuantities;
-    public List<string> Items;
-    public double LastTipAmount;
-    public double Latitude;
-    public bool LeftReview;
-    public double Longitude;
-    public int ManagerApproval;
-    public string MembershipLevel = string.Empty;
-    public int Minute;
-    public int MonthsSinceMembership;
-    public int OrderNumber;
-    public List<string> PastOrders;
-    public string PaymentMethod = string.Empty;
-    public string PreviousOrder = string.Empty;
-    public string PromoCode = string.Empty;
-    public int ReferralCount;
-    public string Region = string.Empty;
-    public int RestaurantId;
-    public int ReviewStars;
-    public bool SmsSubscribed;
-    public string SocialMediaFollow = string.Empty;
-    public int StreakDays;
-    public int Temperature;
-    public double TotalAmount;
-    public int VisitCount;
-    public string Weather = string.Empty;
-    public bool HasParentApproval; // kept for compatibility with adapters
+    // Public state properties (converted from fields to follow C# conventions)
+    public bool AcceptsMarketing { get; set; }
+    public int Age { get; set; }
+    public decimal AverageSpend { get; set; }
+    public bool CheckedIn { get; set; }
+    public int ComplaintsCount { get; set; }
+    public int ConsecutiveVisits { get; set; }
+    public string? CreditCardType { get; set; }
+    public int CurrentMonth { get; set; }
+    public int CustomerType { get; set; } // 1=regular, 2=vip, 3=employee, 4=senior, 5=student, 6=minor, 7=banned
+    public string Day { get; set; } = string.Empty;
+    public int DaysLastVisit { get; set; }
+    public string DeviceType { get; set; } = string.Empty;
+    public string DietaryPreference { get; set; } = string.Empty;
+    public bool EmailSubscribed { get; set; }
+    public string EmployeeName { get; set; } = string.Empty;
+    public int FamilyMembers { get; set; }
+    public string FavoriteItem { get; set; } = string.Empty;
+    public bool HasAllergies { get; set; }
+    public bool HasApp { get; set; }
+    public bool HasKids { get; set; }
+    public bool HasLoyaltyCard { get; set; }
+    public int Hour { get; set; }
+    public bool IsBirthday { get; set; }
+    public bool IsCurbside { get; set; }
+    public bool IsDelivery { get; set; }
+    public bool IsDineIn { get; set; }
+    public bool IsDriveThru { get; set; }
+    public bool IsFirstOrder { get; set; }
+    public bool IsHoliday { get; set; }
+    public bool IsRushHour { get; set; }
+    public bool IsWeekend { get; set; }
+    public int ItemCount { get; set; }
+    public Dictionary<string, decimal> ItemPrices { get; set; }
+    public Dictionary<string, int> ItemQuantities { get; set; }
+    public List<string> Items { get; set; }
+    public decimal LastTipAmount { get; set; }
+    // Geographical coordinates - intentionally `double`, not a monetary value.
+    // TODO: keep as double; do NOT mix with `decimal` arithmetic for money.
+    public double Latitude { get; set; }
+    public bool LeftReview { get; set; }
+    // Geographical coordinates - intentionally `double`, not a monetary value.
+    // TODO: keep as double; do NOT mix with `decimal` arithmetic for money.
+    public double Longitude { get; set; }
+    public int ManagerApproval { get; set; }
+    public string MembershipLevel { get; set; } = string.Empty;
+    public int Minute { get; set; }
+    public int MonthsSinceMembership { get; set; }
+    public int OrderNumber { get; set; }
+    public List<string> PastOrders { get; set; }
+    private PaymentMethod _paymentMethodEnum = PaymentMethod.Unknown;
+
+    public PaymentMethod PaymentMethodEnum
+    {
+        get => _paymentMethodEnum;
+        set => _paymentMethodEnum = value;
+    }
+
+    // Legacy parsing helper removed as migration to typed `PaymentMethod` is complete.
+    public string PreviousOrder { get; set; } = string.Empty;
+    public string PromoCode { get; set; } = string.Empty;
+    public int ReferralCount { get; set; }
+    public string Region { get; set; } = string.Empty;
+    public int RestaurantId { get; set; }
+    public int ReviewStars { get; set; }
+    public bool SmsSubscribed { get; set; }
+    public string SocialMediaFollow { get; set; } = string.Empty;
+    public int StreakDays { get; set; }
+    public int Temperature { get; set; }
+    public decimal TotalAmount { get; set; }
+    public int VisitCount { get; set; }
+    public string Weather { get; set; } = string.Empty;
+    public bool HasParentApproval { get; set; } // kept for compatibility with adapters
     public int Id { get; set; }
 
     // Minimal, safe implementation: keep API stable, avoid reintroducing large legacy logic here.
-    public double CalculateDiscount()
+    public decimal CalculateDiscount()
     {
-        // Compose legacy, rule-based engines to preserve previous DiscountManager integration points.
-        double discount = 0.0;
+        // Use per-category engines to preserve previous conditional behavior while avoiding allocations
+        decimal discount = 0.0m;
 
         // Promo-based discount
         if (!string.IsNullOrEmpty(PromoCode))
         {
-            discount += new DiscountEngine(new IDiscountRule[] { new PromoCodeRule() }).Calculate(this);
+            discount += _promoEngine.Calculate(this);
         }
 
-        // Visit-count based discount (apply only for meaningful visit-counts to avoid stacking small visit discounts)
+        // Visit-count based discount (apply only for meaningful visit-counts)
         if (VisitCount >= 10)
         {
-            discount += new DiscountEngine(new IDiscountRule[] { new VisitCountRule() }).Calculate(this);
+            discount += _visitEngine.Calculate(this);
         }
 
         // Time-of-day discounts
-        discount += new DiscountEngine(new IDiscountRule[] { new TimeOfDayRule() }).Calculate(this);
+        discount += _timeEngine.Calculate(this);
 
         // Family-based discounts
-        discount += new DiscountEngine(new IDiscountRule[] { new FamilyRule() }).Calculate(this);
+        discount += _familyEngine.Calculate(this);
 
         // Ensure discount does not exceed a safety cap when there's a positive total amount
-        if (TotalAmount > 0 && discount > TotalAmount * 0.95) discount = TotalAmount * 0.95;
+        if (TotalAmount > 0 && discount > TotalAmount * DiscountCapFactor) discount = TotalAmount * DiscountCapFactor;
 
         return discount;
     }
@@ -119,118 +161,123 @@ public class DiscountManager
 
     public void SendEmailReceipt(string email)
     {
-        Console.WriteLine("Connecting to smtp.example.com:587");
-        Console.WriteLine("Sending to: " + email);
+        _emailSender.Send(email, "Receipt", GenerateReceipt());
     }
 
     public void SendSmsReceipt(string phone)
     {
-        Console.WriteLine("Sending SMS to: " + phone);
+        _smsSender.Send(phone, "Your receipt is ready.");
     }
 }
 
 // Responsibility: format a receipt string for a given DiscountManager state
 public class ReceiptFormatter
 {
+    private readonly IPriceCatalog _priceCatalog;
+
+    public ReceiptFormatter(IPriceCatalog? priceCatalog = null)
+    {
+        _priceCatalog = priceCatalog ?? new InMemoryPriceCatalog();
+    }
+
     public string Format(DiscountManager dm)
     {
-        var receipt = "====================================\n";
-        receipt += "    FAST FOOD MEGA CHAIN\n";
-        receipt += "====================================\n";
+        var sb = new System.Text.StringBuilder();
+        sb.AppendLine("====================================");
+        sb.AppendLine("    FAST FOOD MEGA CHAIN");
+        sb.AppendLine("====================================");
 
-        receipt += "Customer: ";
+        sb.Append("Customer: ");
         switch (dm.CustomerType)
         {
-            case 1: receipt += "Regular\n"; break;
+            case 1: sb.AppendLine("Regular"); break;
             case 2:
-                receipt += "VIP - " + dm.MembershipLevel + "\n";
-                if (dm.MembershipLevel == "Diamond") receipt += "*** PREMIUM CUSTOMER ***\n";
+                sb.Append("VIP - "); sb.AppendLine(dm.MembershipLevel);
+                if (dm.MembershipLevel == "Diamond") sb.AppendLine("*** PREMIUM CUSTOMER ***");
                 break;
-            case 3: receipt += "Employee\n"; break;
-            case 4: receipt += "Senior (Age: " + dm.Age + ")\n"; break;
-            case 5: receipt += "Student\n"; break;
-            case 6: receipt += "Minor - NEEDS APPROVAL\n"; break;
-            case 7: receipt += "BANNED CUSTOMER\n"; break;
-            default: receipt += "Unknown\n"; break;
+            case 3: sb.AppendLine("Employee"); break;
+            case 4: sb.AppendLine($"Senior (Age: {dm.Age})"); break;
+            case 5: sb.AppendLine("Student"); break;
+            case 6: sb.AppendLine("Minor - NEEDS APPROVAL"); break;
+            case 7: sb.AppendLine("BANNED CUSTOMER"); break;
+            default: sb.AppendLine("Unknown"); break;
         }
 
-        receipt += "Order #: " + dm.OrderNumber + "\n";
-        receipt += "Date: " + dm.Day + "\n";
-        receipt += "Time: " + dm.Hour + ":" + dm.Minute + "\n";
-        receipt += "Location: Restaurant #" + dm.RestaurantId + "\n";
+        sb.AppendLine($"Order #: {dm.OrderNumber}");
+        sb.AppendLine($"Date: {dm.Day}");
+        sb.AppendLine($"Time: {dm.Hour}:{dm.Minute}");
+        sb.AppendLine($"Location: Restaurant #{dm.RestaurantId}");
 
         if (dm.IsDineIn)
-            receipt += "Service: Dine-In\n";
+            sb.AppendLine("Service: Dine-In");
         else if (dm.IsDriveThru)
-            receipt += "Service: Drive-Thru\n";
+            sb.AppendLine("Service: Drive-Thru");
         else if (dm.IsCurbside)
-            receipt += "Service: Curbside\n";
+            sb.AppendLine("Service: Curbside");
         else if (dm.IsDelivery)
-            receipt += "Service: Delivery\n";
+            sb.AppendLine("Service: Delivery");
 
-        receipt += "------------------------------------\n";
-        receipt += "ITEMS:\n";
+        sb.AppendLine("------------------------------------");
+        sb.AppendLine("ITEMS:");
 
-        foreach (var item in dm.ItemQuantities)
+        foreach (var kv in dm.ItemQuantities)
         {
-            double price = dm.ItemPrices.TryGetValue(item.Key, out var p) ? p : item.Key switch
-            {
-                "burger" => 8.99,
-                "fries" => 3.49,
-                "shake" => 4.99,
-                "nuggets" => 6.49,
-                "salad" => 7.99,
-                _ => 0
-            };
+            var itemName = kv.Key;
+            var qty = kv.Value;
 
-            receipt += "  " + item.Value + "x " + item.Key.ToUpper() + " @ $" + price + " = $" +
-                       (item.Value * price).ToString("F2") + "\n";
+            decimal price = dm.ItemPrices != null && dm.ItemPrices.TryGetValue(itemName, out var p)
+                ? p
+                : _priceCatalog.GetPrice(itemName);
+
+            sb.AppendLine($"  {qty}x {itemName.ToUpperInvariant()} @ ${price:F2} = ${(price * qty):F2}");
         }
 
-        receipt += "------------------------------------\n";
-        receipt += "Subtotal: $" + dm.TotalAmount.ToString("F2") + "\n";
+        sb.AppendLine("------------------------------------");
+        sb.AppendLine($"Subtotal: ${dm.TotalAmount:F2}");
 
         var discount = dm.CalculateDiscount();
-        receipt += "Discount: -$" + discount.ToString("F2") + "\n";
+        sb.AppendLine($"Discount: -${discount:F2}");
 
-        var tax = Math.Max(0, (dm.TotalAmount - discount) * 0.08);
-        receipt += "Tax (8%): $" + tax.ToString("F2") + "\n";
+        var taxValue = (dm.TotalAmount - discount) * DiscountManager.TaxRate;
+        var tax = taxValue > 0m ? taxValue : 0m;
+        sb.AppendLine($"Tax ({(DiscountManager.TaxRate * 100m):F1}%): ${tax:F2}");
 
         var total = dm.TotalAmount - discount + tax;
-        receipt += "------------------------------------\n";
-        receipt += "TOTAL: $" + total.ToString("F2") + "\n";
-        receipt += "====================================\n";
+        sb.AppendLine("------------------------------------");
+        sb.AppendLine($"TOTAL: ${total:F2}");
+        sb.AppendLine("====================================");
 
         var points = dm.CalculateLoyaltyPoints();
-        receipt += "Loyalty Points Earned: " + points + "\n";
+        sb.AppendLine($"Loyalty Points Earned: {points}");
 
-        if (dm.IsBirthday) receipt += "\n*** HAPPY BIRTHDAY! ***\n";
+        if (dm.IsBirthday) sb.AppendLine("\n*** HAPPY BIRTHDAY! ***");
 
-        return receipt;
+        return sb.ToString();
     }
 }
 
 // Price catalog abstractions to centralize item pricing
+// Price catalog abstractions to centralize item pricing
 public interface IPriceCatalog
 {
-    double GetPrice(string item);
+    decimal GetPrice(string item);
 }
 
 public class InMemoryPriceCatalog : IPriceCatalog
 {
-    private readonly Dictionary<string, double> _prices = new()
+    private readonly Dictionary<string, decimal> _prices = new()
     {
-        ["burger"] = 8.99,
-        ["fries"] = 3.49,
-        ["shake"] = 4.99,
-        ["nuggets"] = 6.49,
-        ["salad"] = 7.99
+        ["burger"] = 8.99m,
+        ["fries"] = 3.49m,
+        ["shake"] = 4.99m,
+        ["nuggets"] = 6.49m,
+        ["salad"] = 7.99m
     };
 
-    public double GetPrice(string item)
+    public decimal GetPrice(string item)
     {
-        if (item is null) return 0.0;
-        return _prices.TryGetValue(item, out var p) ? p : 0.0;
+        if (item is null) return 0.0m;
+        return _prices.TryGetValue(item, out var p) ? p : 0.0m;
     }
 }
 
@@ -269,7 +316,7 @@ public class OrderProcessor
         _dm.Hour = hr;
         _dm.Items = items;
 
-        _dm.TotalAmount = 0;
+        _dm.TotalAmount = 0m;
         foreach (var item in items)
         {
             _dm.TotalAmount += _priceCatalog.GetPrice(item);
@@ -283,19 +330,23 @@ public class OrderProcessor
         _orderRepo.SaveOrder(_dm.OrderNumber, _dm.TotalAmount, disc);
 
         // simplified payment handling
-        switch (_dm.PaymentMethod)
+        switch (_dm.PaymentMethodEnum)
         {
-            case "cash":
+            case PaymentMethod.Cash:
                 _paymentProcessor.ProcessCash(_dm.TotalAmount);
                 break;
-            case "credit":
+            case PaymentMethod.Credit:
                 _paymentProcessor.ProcessCreditCard("4111111111111111", "123", "12/29");
                 break;
-            case "debit":
+            case PaymentMethod.Debit:
                 _paymentProcessor.ProcessDebitCard("4111111111111111", "0000");
                 break;
-            case "paypal":
-                    _paymentProcessor.ProcessPaypal("customer@paypal", "password");
+            case PaymentMethod.Paypal:
+                _paymentProcessor.ProcessPaypal("customer@paypal", "password");
+                break;
+            case PaymentMethod.App:
+                // Application wallet processing falls back to cash for now
+                _paymentProcessor.ProcessCash(_dm.TotalAmount);
                 break;
             default:
                 break;

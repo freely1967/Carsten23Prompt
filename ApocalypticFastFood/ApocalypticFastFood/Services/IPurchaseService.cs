@@ -24,7 +24,9 @@ namespace ApocalypticFastFood.Services
             _customer.MembershipLevel = ctx.MembershipLevel ?? string.Empty;
             _customer.HasParentApproval = ctx.HasParentApproval;
 
-            _customer.MakePurchase();
+            // Note: Do not call the legacy Customer.MakePurchase() here — that API is obsolete.
+            // This adapter applies the incoming context to the wrapped Customer instance so
+            // callers that later rely on Customer state can observe the updated values.
         }
     }
 }

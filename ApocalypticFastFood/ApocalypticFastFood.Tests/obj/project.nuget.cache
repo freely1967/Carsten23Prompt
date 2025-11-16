@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "mFum3yi3JqE=",
+  "dgSpecHash": "uL16dh85Rcc=",
   "success": true,
-  "projectFilePath": "C:\\Users\\elydu\\Desktop\\Carsten23Prompt\\ApocalypticFastFood\\ApocalypticFastFood.Tests\\ApocalypticFastFood.Tests.csproj",
+  "projectFilePath": "c:\\Users\\elydu\\Desktop\\Carsten23Prompt\\ApocalypticFastFood\\ApocalypticFastFood.Tests\\ApocalypticFastFood.Tests.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\elydu\\.nuget\\packages\\microsoft.codecoverage\\18.0.1\\microsoft.codecoverage.18.0.1.nupkg.sha512",
     "C:\\Users\\elydu\\.nuget\\packages\\microsoft.net.test.sdk\\18.0.1\\microsoft.net.test.sdk.18.0.1.nupkg.sha512",

@@ -10,12 +10,12 @@ namespace ApocalypticFastFood.Tests
         {
             var catalog = new InMemoryPriceCatalog();
 
-            Assert.Equal(8.99, catalog.GetPrice("burger"));
-            Assert.Equal(3.49, catalog.GetPrice("fries"));
-            Assert.Equal(4.99, catalog.GetPrice("shake"));
-            Assert.Equal(6.49, catalog.GetPrice("nuggets"));
-            Assert.Equal(7.99, catalog.GetPrice("salad"));
-            Assert.Equal(0.0, catalog.GetPrice("unknown"));
+            Assert.Equal(8.99m, catalog.GetPrice("burger"));
+            Assert.Equal(3.49m, catalog.GetPrice("fries"));
+            Assert.Equal(4.99m, catalog.GetPrice("shake"));
+            Assert.Equal(6.49m, catalog.GetPrice("nuggets"));
+            Assert.Equal(7.99m, catalog.GetPrice("salad"));
+            Assert.Equal(0.0m, catalog.GetPrice("unknown"));
         }
     }
 }

@@ -7,17 +7,17 @@ namespace ApocalypticFastFood.Tests
     {
         private class TestDiscountProvider : ApocalypticFastFood.IDiscountProvider
         {
-            private readonly double _value;
-            public TestDiscountProvider(double value) => _value = value;
-            public double GetDiscount(ApocalypticFastFood.CustomerContext ctx) => _value;
+            private readonly decimal _value;
+            public TestDiscountProvider(decimal value) => _value = value;
+            public decimal GetDiscount(ApocalypticFastFood.CustomerContext ctx) => _value;
         }
 
         private class FakeOrderRepo : ApocalypticFastFood.IOrderRepository
         {
-            public int SavedOrderId;
-            public double SavedTotal;
-            public double SavedDiscount;
-            public void SaveOrder(int orderId, double total, double discount)
+            public int SavedOrderId { get; private set; }
+            public decimal SavedTotal { get; private set; }
+            public decimal SavedDiscount { get; private set; }
+            public void SaveOrder(int orderId, decimal total, decimal discount)
             {
                 SavedOrderId = orderId;
                 SavedTotal = total;
@@ -32,7 +32,7 @@ namespace ApocalypticFastFood.Tests
             var priceCatalog = new ApocalypticFastFood.InMemoryPriceCatalog();
             var fakeRepo = new FakeOrderRepo();
             var dm = new ApocalypticFastFood.DiscountManager();
-            var provider = new TestDiscountProvider(7.5);
+            var provider = new TestDiscountProvider(7.5m);
 
             var proc = new ApocalypticFastFood.OrderProcessor(priceCatalog, fakeRepo, dm, null, null, null, provider);
 
@@ -40,7 +40,7 @@ namespace ApocalypticFastFood.Tests
             proc.ProcessOrder(1, "Monday", 12, new List<string> { "burger", "fries" });
 
             // Assert
-            Assert.Equal(7.5, fakeRepo.SavedDiscount);
+            Assert.Equal(7.5m, fakeRepo.SavedDiscount);
         }
     }
 }

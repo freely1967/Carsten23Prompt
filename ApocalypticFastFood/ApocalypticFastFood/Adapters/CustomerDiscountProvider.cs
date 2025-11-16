@@ -3,30 +3,31 @@ namespace ApocalypticFastFood;
 public class CustomerDiscountProvider : IDiscountProvider
 {
     private readonly Customer _customer;
-    private readonly DiscountManager _dm;
 
     public CustomerDiscountProvider(Customer customer)
     {
         _customer = customer ?? throw new System.ArgumentNullException(nameof(customer));
-        _dm = new DiscountManager();
     }
 
-    public double GetDiscount(CustomerContext ctx)
+    public decimal GetDiscount(CustomerContext ctx)
     {
-        // Apply context to the wrapped Customer (data holder)
-        _customer.Id = ctx.Id;
-        _customer.Age = ctx.Age;
-        _customer.VisitCount = ctx.VisitCount;
-        _customer.MembershipLevel = ctx.MembershipLevel ?? string.Empty;
-        _customer.HasParentApproval = ctx.HasParentApproval;
+        // Avoid mutating shared objects. Create transient, initialized instances per call.
+        var localCustomer = new Customer
+        {
+            Id = ctx.Id,
+            Age = ctx.Age,
+            VisitCount = ctx.VisitCount,
+            MembershipLevel = ctx.MembershipLevel ?? string.Empty,
+            HasParentApproval = ctx.HasParentApproval
+        };
 
-        // Map relevant fields into a DiscountManager instance and delegate calculation
-        _dm.Id = _customer.Id;
-        _dm.Age = _customer.Age;
-        _dm.VisitCount = _customer.VisitCount;
-        _dm.MembershipLevel = _customer.MembershipLevel;
-        _dm.HasParentApproval = _customer.HasParentApproval;
+        var dm = new DiscountManager(); // consider factory/DI if dependencies matter
+        dm.Id = localCustomer.Id;
+        dm.Age = localCustomer.Age;
+        dm.VisitCount = localCustomer.VisitCount;
+        dm.MembershipLevel = localCustomer.MembershipLevel;
+        dm.HasParentApproval = localCustomer.HasParentApproval;
 
-        return _dm.CalculateDiscount();
+        return dm.CalculateDiscount();
     }
 }

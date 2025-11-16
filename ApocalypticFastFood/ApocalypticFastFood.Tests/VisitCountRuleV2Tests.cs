@@ -13,7 +13,7 @@ namespace ApocalypticFastFood.Tests
                 CustomerType = 2,
                 MembershipLevel = "Diamond",
                 MonthsSinceMembership = 25,
-                AverageSpend = 80.0,
+                AverageSpend = 80.0m,
                 ConsecutiveVisits = 11,
                 LeftReview = true,
                 ReviewStars = 5,
@@ -24,7 +24,7 @@ namespace ApocalypticFastFood.Tests
             var res = rule.CalculateResult(dm);
 
             Assert.Equal(1.5, res.Multiplier, 3);
-            Assert.Equal(0.0, res.Discount);
+            Assert.Equal(0.0m, res.Discount);
         }
 
         [Fact]
@@ -36,7 +36,7 @@ namespace ApocalypticFastFood.Tests
                 CustomerType = 2,
                 MembershipLevel = "Diamond",
                 MonthsSinceMembership = 30,
-                AverageSpend = 90.0,
+                AverageSpend = 90.0m,
                 ConsecutiveVisits = 12,
                 LeftReview = true,
                 ReviewStars = 5,

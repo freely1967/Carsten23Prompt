@@ -3,8 +3,9 @@
 public class MinorCustomer : Customer
 {
     public MinorCustomer()
-        : base(discountStrategy: null, alcoholPolicy: new MinorAlcoholPolicy(), purchaseApprovalPolicy: new MinorPurchaseApprovalPolicy())
+        : base()
     {
+        // Legacy behavior (policies) moved out of Customer; keep constructor parameterless for compatibility.
     }
 
     public bool CanOrderAlcohol()

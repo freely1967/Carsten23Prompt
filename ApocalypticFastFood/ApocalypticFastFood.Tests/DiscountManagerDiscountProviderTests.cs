@@ -9,7 +9,7 @@ namespace ApocalypticFastFood.Tests
         {
             // Arrange
             var dm = new ApocalypticFastFood.DiscountManager();
-            dm.TotalAmount = 100;
+            dm.TotalAmount = 100m;
             dm.CustomerType = 1;
             var adapter = new ApocalypticFastFood.DiscountManagerDiscountProvider(dm);
 
@@ -19,7 +19,7 @@ namespace ApocalypticFastFood.Tests
             var d = adapter.GetDiscount(ctx);
 
             // Assert
-            Assert.IsType<double>(d);
+            Assert.IsType<decimal>(d);
         }
     }
 }

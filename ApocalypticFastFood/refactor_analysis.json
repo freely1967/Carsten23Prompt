@@ -1,0 +1,434 @@
+[
+  {
+    "file": "ApocalypticFastFood/Customer.cs",
+    "line": 18,
+    "category": "Readability",
+    "problem_summary": "Constructor accepts legacy strategy/policy parameters but ignores them (unused parameters); confusing and fragile.",
+    "current_code": "public Customer(IDiscountStrategy? discountStrategy = null,\n                    IAlcoholPolicy? alcoholPolicy = null,\n                    IPurchaseApprovalPolicy? purchaseApprovalPolicy = null,\n                    ILoyaltyCalculator? loyaltyCalculator = null)\n{\n    // no-op: keep as data-only holder; adapters/services should be used for behaviour.\n}",
+    "suggested_fix": "public Customer()\n{\n    // Data-only constructor. Legacy behavioral constructor removed to avoid unused-parameter confusion.\n}\n\n// If you must preserve a binary-compatible constructor, mark it as obsolete and delegate to the parameterless ctor:\n[System.Obsolete(\"Use parameterless constructor. Behavioral dependencies must be injected in services/adapters.\")]\npublic Customer(object? legacyPlaceholder = null) : this()\n{\n    // no-op – for binary compatibility only\n}",
+    "recommendation": "Removes unused constructor parameters which are confusing to readers and tools; mark any compatibility constructor as [Obsolete] if binary compatibility must be preserved."
+  },
+  {
+    "file": "ApocalypticFastFood/Customer.cs",
+    "line": 27,
+    "category": "Readability",
+    "problem_summary": "Public method `MakePurchase` is a no-op; callers may expect behavior but method does nothing.",
+    "current_code": "public void MakePurchase()\n{\n    // Intentionally no-op: actual purchase logic moved to services/adapters.\n}",
+    "suggested_fix": "/// <summary>\n/// Compatibility no-op. Use <see cref=\"Services.IPurchaseService\"/> implementations for purchase behavior.\n/// </summary>\n[System.Obsolete(\"Use IPurchaseService.MakePurchase(CustomerContext) instead of calling Customer.MakePurchase().\")]\npublic void MakePurchase()\n{\n    // Intentionally left as no-op for binary compatibility. Consider removing in a later major version.\n}",
+    "recommendation": "Document and mark the no-op explicitly so maintainers and tools know this is intentional; avoids silent bugs from calling code."
+  },
+  {
+    "file": "ApocalypticFastFood/DiscountManager.cs",
+    "line": 34,
+    "category": "NamingConventions",
+    "problem_summary": "Many public mutable fields are declared as public fields instead of public properties. Public fields break encapsulation and don't follow C# naming conventions.",
+    "current_code": "public bool AcceptsMarketing;\npublic int Age;\npublic double AverageSpend;\npublic bool CheckedIn;\npublic int ComplaintsCount;\n// ... (continues for many public fields)",
+    "suggested_fix": "public bool AcceptsMarketing { get; set; }\npublic int Age { get; set; }\npublic decimal AverageSpend { get; set; }\npublic bool CheckedIn { get; set; }\npublic int ComplaintsCount { get; set; }\n// ... convert all remaining public fields into properties with appropriate types and naming",
+    "recommendation": "Properties maintain encapsulation, allow future validation/notification and follow C# conventions (PascalCase). Converting fields to properties enables refactoring (e.g., change representation without breaking callers)."
+  },
+  {
+    "file": "ApocalypticFastFood/DiscountManager.cs",
+    "line": 77,
+    "category": "DataTypeOptimization",
+    "problem_summary": "Monetary values (prices, totals, discounts) are represented with `double`. Using `double` for currency can cause precision issues.",
+    "current_code": "public Dictionary<string, double> ItemPrices;\npublic double LastTipAmount;\npublic double Latitude;\npublic double Longitude;\npublic double TotalAmount;",
+    "suggested_fix": "public Dictionary<string, decimal> ItemPrices { get; set; }\npublic decimal LastTipAmount { get; set; }\npublic decimal Latitude { get; set; }\npublic decimal Longitude { get; set; }\npublic decimal TotalAmount { get; set; }",
+    "recommendation": "Use `decimal` for monetary values to avoid floating-point rounding errors when calculating totals, taxes and discounts."
+  },
+  {
+    "file": "ApocalypticFastFood/DiscountManager.cs",
+    "line": 108,
+    "category": "ComplexityReduction",
+    "problem_summary": "`CalculateDiscount` constructs new `DiscountEngine` instances and rule instances inline repeatedly, causing duplication and hidden allocations; it also composes behavior imperatively inside the method.",
+    "current_code": "if (!string.IsNullOrEmpty(PromoCode))\n{\n    discount += new DiscountEngine(new IDiscountRule[] { new PromoCodeRule() }).Calculate(this);\n}\n\nif (VisitCount >= 10)\n{\n    discount += new DiscountEngine(new IDiscountRule[] { new VisitCountRule() }).Calculate(this);\n}\n\ndiscount += new DiscountEngine(new IDiscountRule[] { new TimeOfDayRule() }).Calculate(this);\n",
+    "suggested_fix": "private readonly DiscountEngine _discountEngine;\n\npublic DiscountManager(DiscountEngine? discountEngine = null /* other deps */)\n{\n    _discountEngine = discountEngine ?? new DiscountEngine(new IDiscountRule[] {\n        new PromoCodeRule(), new VisitCountRule(), new TimeOfDayRule(), new FamilyRule()\n    });\n}\n\npublic decimal CalculateDiscount()\n{\n    // Single engine invocation; rules controlled/configured at construction time or via DI\n    return _discountEngine.Calculate(this);\n}",
+    "recommendation": "Move rule composition to construction/DI to avoid repeated allocations and to make `CalculateDiscount` simple, testable and fast. Centralizes rule configuration and reduces method complexity."
+  },
+  {
+    "file": "ApocalypticFastFood/DiscountManager.cs",
+    "line": 134,
+    "category": "Readability",
+    "problem_summary": "`SendEmailReceipt` and `SendSmsReceipt` write to Console directly, reintroducing I/O in domain code instead of using the `IEmailSender`/`ISmsSender` abstractions.",
+    "current_code": "public void SendEmailReceipt(string email)\n{\n    Console.WriteLine(\"Connecting to smtp.example.com:587\");\n    Console.WriteLine(\"Sending to: \" + email);\n}\n\npublic void SendSmsReceipt(string phone)\n{\n    Console.WriteLine(\"Sending SMS to: \" + phone);\n}",
+    "suggested_fix": "private readonly IEmailSender _emailSender;\nprivate readonly ISmsSender _smsSender;\n\npublic DiscountManager(IEmailSender? emailSender = null, ISmsSender? smsSender = null /*, ... */)\n{\n    _emailSender = emailSender ?? new ConsoleEmailSender();\n    _sms_sender = smsSender ?? new ConsoleSmsSender();\n}\n\npublic void SendEmailReceipt(string email)\n{\n    _emailSender.Send(email, \"Receipt\", GenerateReceipt());\n}\n\npublic void SendSmsReceipt(string phone)\n{\n    _smsSender.Send(phone, \"Your receipt is ready.\");\n}",
+    "recommendation": "Use injected abstractions for I/O to support testing, separation of concerns and replaceability (send via real email provider in production and console in tests)."
+  },
+  {
+    "file": "ApocalypticFastFood/DiscountManager.cs",
+    "line": 157,
+    "category": "Readability",
+    "problem_summary": "`ReceiptFormatter.Format` uses repeated string concatenation and magic literals for item-price mapping; the method is long and violates SRP.",
+    "current_code": "foreach (var item in dm.ItemQuantities)\n{\n    double price = dm.ItemPrices.TryGetValue(item.Key, out var p) ? p : item.Key switch\n    {\n        \"burger\" => 8.99,\n        \"fries\" => 3.49,\n        \"shake\" => 4.99,\n        \"nuggets\" => 6.49,\n        \"salad\" => 7.99,\n        _ => 0\n    };\n\n    receipt += \"  \" + item.Value + \"x \" + item.Key.ToUpper() + \" @ $\" + price + \" = $\" +\n               (item.Value * price).ToString(\"F2\") + \"\\n\";\n}",
+    "suggested_fix": "var sb = new System.Text.StringBuilder();\nforeach (var kv in dm.ItemQuantities)\n{\n    var itemName = kv.Key;\n    var qty = kv.Value;\n    var price = priceCatalog.GetPrice(itemName);\n    sb.AppendLine($\"  {qty}x {itemName.ToUpperInvariant()} @ ${price:F2} = ${(price * qty):F2}\");\n}\n// Use sb.ToString() appended to receipt base\n",
+    "recommendation": "Use a `StringBuilder`, interpolation and an injected `IPriceCatalog` to avoid repeated allocations, improve readability, centralize price data, and remove duplicated magic numbers."
+  },
+  {
+    "file": "ApocalypticFastFood/DiscountManager.cs",
+    "line": 190,
+    "category": "Readability",
+    "problem_summary": "Tax rate (`0.08`) and discount cap (`0.95`) are magic numbers scattered in code.",
+    "current_code": "if (TotalAmount > 0 && discount > TotalAmount * 0.95) discount = TotalAmount * 0.95;\n...\nvar tax = Math.Max(0, (dm.TotalAmount - discount) * 0.08);",
+    "suggested_fix": "private const decimal DiscountCapFactor = 0.95m;\nprivate const decimal TaxRate = 0.08m;\n\nif (TotalAmount > 0 && discount > TotalAmount * DiscountCapFactor) discount = TotalAmount * DiscountCapFactor;\n...\nvar tax = Math.Max(0m, (dm.TotalAmount - discount) * TaxRate);",
+    "recommendation": "Introduce named constants for configuration-magic values to make intent explicit and enable centralized tuning and tests."
+  },
+  {
+    "file": "ApocalypticFastFood/OrderProcessor.cs",
+    "line": 276,
+    "category": "Readability",
+    "problem_summary": "Payment method is matched against string literals in a `switch` (`\"cash\"`, `\"credit\"`, `\"debit\"`, `\"paypal\"`) leading to fragile code and duplicated handling.",
+    "current_code": "switch (_dm.PaymentMethod)\n{\n    case \"cash\":\n        _paymentProcessor.ProcessCash(_dm.TotalAmount);\n        break;\n    case \"credit\":\n        _paymentProcessor.ProcessCreditCard(\"4111111111111111\", \"123\", \"12/29\");\n        break;\n    case \"debit\":\n        _paymentProcessor.ProcessDebitCard(\"4111111111111111\", \"0000\");\n        break;\n    case \"paypal\":\n        _paymentProcessor.ProcessPaypal(\"customer@paypal\", \"password\");\n        break;\n    default:\n        break;\n}",
+    "suggested_fix": "public enum PaymentMethod { Unknown, Cash, Credit, Debit, Paypal }\n\n// store PaymentMethod as the enum in DiscountManager\n\nswitch (_dm.PaymentMethodEnum)\n{\n    case PaymentMethod.Cash:\n        _paymentProcessor.ProcessCash(_dm.TotalAmount);\n        break;\n    case PaymentMethod.Credit:\n        _paymentProcessor.ProcessCreditCard(cardNumber, cvv, exp);\n        break;\n    case PaymentMethod.Debit:\n        _paymentProcessor.ProcessDebitCard(cardNumber, pin);\n        break;\n    case PaymentMethod.Paypal:\n        _paymentProcessor.ProcessPaypal(paypalEmail, paypalToken);\n        break;\n    default:\n        throw new InvalidOperationException(\"Unsupported payment method\");\n}",
+    "recommendation": "Use a typed enum (or strategy) for payment methods to avoid brittle string comparisons and centralize payment info handling; improves readability and reduces runtime errors."
+  },
+  {
+    "file": "ApocalypticFastFood/DiscountRules.cs",
+    "line": 28,
+    "category": "ComplexityReduction",
+    "problem_summary": "`VisitCountRule.Calculate` contains extremely deep nested `if` statements (high cyclomatic complexity), impairing readability and maintainability.",
+    "current_code": "if (ctx.VisitCount >= 100)\n{\n    if (ctx.CustomerType == 2)\n    {\n        if (ctx.MembershipLevel == \"Diamond\")\n        {\n            if (ctx.MonthsSinceMembership > 24)\n            {\n                if (ctx.AverageSpend > 75)\n                {\n                    if (ctx.ConsecutiveVisits > 10)\n                    {\n                        if (ctx.LeftReview && ctx.ReviewStars == 5)\n                            {\n                                if (ctx.ReferralCount > 10)\n                                {\n                                    return 60.0;\n                                }\n                                return 45.0;\n                            }\n                        return 45.0;\n                    }\n                    return 40.0;\n                }\n                return 35.0;\n            }\n            return 30.0;\n        }\n        return 25.0;\n    }\n\n    return 20.0;\n}",
+    "suggested_fix": "public double Calculate(DiscountManager ctx)\n{\n    // Extract small, testable helpers and use tier tables or rule objects\n    if (ctx.VisitCount >= 100) return CalculateHighVisitDiscount(ctx);\n    if (ctx.VisitCount >= 50) return 15.0;\n    if (ctx.VisitCount >= 25) return 10.0;\n    if (ctx.VisitCount >= 10) return 6.0;\n    return 3.0;\n}\n\nprivate double CalculateHighVisitDiscount(DiscountManager ctx)\n{\n    // Example: early-return style and small helpers\n    if (ctx.CustomerType != 2) return 20.0;\n    if (ctx.MembershipLevel != \"Diamond\") return 25.0;\n    if (ctx.MonthsSinceMembership <= 24) return 30.0;\n    if (ctx.AverageSpend <= 75) return 35.0;\n    if (ctx.ConsecutiveVisits <= 10) return 40.0;\n    if (ctx.LeftReview && ctx.ReviewStars == 5)\n        return ctx.ReferralCount > 10 ? 60.0 : 45.0;\n    return 45.0;\n}",
+    "recommendation": "Reduce nesting by extracting helper methods and using early returns or a table-driven approach; improves readability, reduces cognitive load, and makes unit testing easier."
+  },
+  {
+    "file": "ApocalypticFastFood/DiscountRules.cs",
+    "line": 1,
+    "category": "DataTypeOptimization",
+    "problem_summary": "Discount values are represented as `double` throughout rule calculations — monetary values should use `decimal` to avoid precision issues.",
+    "current_code": "public class PromoCodeRule : IDiscountRule\n{\n    public double Calculate(DiscountManager ctx)\n    {\n        switch (ctx.PromoCode)\n        {\n            case \"SAVE10\":\n                return ctx.TotalAmount > 50 ? (ctx.CustomerType == 2 ? 15.0 : 10.0) : 5.0;\n            // ...\n        }\n    }\n}",
+    "suggested_fix": "public class PromoCodeRule : IDiscountRule\n{\n    public decimal Calculate(DiscountManager ctx)\n    {\n        switch (ctx.PromoCode)\n        {\n            case \"SAVE10\":\n                return ctx.TotalAmount > 50m ? (ctx.CustomerType == 2 ? 15.0m : 10.0m) : 5.0m;\n            // ...\n        }\n    }\n}",
+    "recommendation": "Use `decimal` for currency/discount values to avoid rounding/precision issues and to align domain semantics with C# numeric types."
+  },
+  {
+    "file": "ApocalypticFastFood/DiscountEngine.cs",
+    "line": 3,
+    "category": "DataTypeOptimization",
+    "problem_summary": "`DiscountResult` uses `double` for `Discount` (monetary) which is susceptible to precision loss for currency; `Multiplier` can remain double.",
+    "current_code": "public readonly record struct DiscountResult(double Discount, double Multiplier);",
+    "suggested_fix": "public readonly record struct DiscountResult(decimal Discount, double Multiplier);",
+    "recommendation": "Use `decimal` for monetary `Discount` to maintain numeric precision when aggregating or applying discounts."
+  },
+  {
+    "file": "ApocalypticFastFood/Infrastructure/ExternalAbstractions.cs",
+    "line": 8,
+    "category": "DataTypeOptimization",
+    "problem_summary": "Repository and discount contract methods use `double` for monetary values. Repository APIs should use `decimal` for amounts.",
+    "current_code": "public interface IOrderRepository\n{\n    void SaveOrder(int orderId, double total, double discount);\n}\n\npublic interface IDiscountRule\n{\n    bool IsApplicable(DiscountManager ctx);\n    double Calculate(DiscountManager ctx);\n}",
+    "suggested_fix": "public interface IOrderRepository\n{\n    void SaveOrder(int orderId, decimal total, decimal discount);\n}\n\npublic interface IDiscountRule\n{\n    bool IsApplicable(DiscountManager ctx);\n    decimal Calculate(DiscountManager ctx);\n}",
+    "recommendation": "Use `decimal` across repository and rule contracts for monetary values so the whole pipeline preserves currency precision."
+  },
+  {
+    "file": "ApocalypticFastFood/Adapters/CustomerDiscountProvider.cs",
+    "line": 6,
+    "category": "ComplexityReduction",
+    "problem_summary": "`CustomerDiscountProvider` stores a single `DiscountManager` instance in `_dm` and mutates it on each `GetDiscount` call — this preserves mutable state across calls and is not thread-safe.",
+    "current_code": "private readonly Customer _customer;\nprivate readonly DiscountManager _dm;\n\npublic CustomerDiscountProvider(Customer customer)\n{\n    _customer = customer ?? throw new System.ArgumentNullException(nameof(customer));\n    _dm = new DiscountManager();\n}\n\npublic double GetDiscount(CustomerContext ctx)\n{\n    // Apply context to the wrapped Customer (data holder)\n    _customer.Id = ctx.Id;\n    _customer.Age = ctx.Age;\n    _customer.VisitCount = ctx.VisitCount;\n    _customer.MembershipLevel = ctx.MembershipLevel ?? string.Empty;\n    _customer.HasParentApproval = ctx.HasParentApproval;\n\n    // Map relevant fields into a DiscountManager instance and delegate calculation\n    _dm.Id = _customer.Id;\n    _dm.Age = _customer.Age;\n    _dm.VisitCount = _customer.VisitCount;\n    _dm.MembershipLevel = _customer.MembershipLevel;\n    _dm.HasParentApproval = _customer.HasParentApproval;\n\n    return _dm.CalculateDiscount();\n}",
+    "suggested_fix": "public double GetDiscount(CustomerContext ctx)\n{\n    var customer = new Customer()\n    {\n        Id = ctx.Id,\n        Age = ctx.Age,\n        VisitCount = ctx.VisitCount,\n        MembershipLevel = ctx.MembershipLevel ?? string.Empty,\n        HasParentApproval = ctx.HasParentApproval\n    };\n\n    var dm = new DiscountManager(); // or create via factory/DI to ensure fresh stateless instance\n    dm.Id = customer.Id;\n    dm.Age = customer.Age;\n    dm.VisitCount = customer.VisitCount;\n    dm.MembershipLevel = customer.MembershipLevel;\n    dm.HasParentApproval = customer.HasParentApproval;\n\n    return dm.CalculateDiscount();\n}",
+    "recommendation": "Avoid reusing and mutating a shared `DiscountManager` instance; create a transient, initialized instance per call (or use immutable DTOs) to prevent cross-call state leakage and improve thread-safety."
+  },
+  {
+    "file": "ApocalypticFastFood/Adapters/DiscountManagerDiscountProvider.cs",
+    "line": 6,
+    "category": "Readability",
+    "problem_summary": "Adapter mutates the injected `DiscountManager` instance directly when mapping `CustomerContext` fields, potentially surprising callers and causing shared-state issues.",
+    "current_code": "public double GetDiscount(CustomerContext ctx)\n{\n    // Map available context fields into the existing DiscountManager instance\n    _dm.Id = ctx.Id;\n    _dm.Age = ctx.Age;\n    _dm.VisitCount = ctx.VisitCount;\n    _dm.MembershipLevel = ctx.MembershipLevel ?? string.Empty;\n    _dm.HasParentApproval = ctx.HasParentApproval;\n\n    return _dm.CalculateDiscount();\n}",
+    "suggested_fix": "public double GetDiscount(CustomerContext ctx)\n{\n    // Create a shallow copy or new instance to avoid mutating caller's DiscountManager\n    var copy = new DiscountManager(/* pass dependencies */)\n    {\n        Id = ctx.Id,\n        Age = ctx.Age,\n        VisitCount = ctx.VisitCount,\n        MembershipLevel = ctx.MembershipLevel ?? string.Empty,\n        HasParentApproval = ctx.HasParentApproval\n    };\n\n    return copy.CalculateDiscount();\n}",
+    "recommendation": "Avoid mutating dependencies provided by callers. Either document mutation semantics clearly or, preferably, operate on a copy to prevent surprising side-effects."
+  },
+  {
+    "file": "ApocalypticFastFood/Adapters/Payments/PaymentProcessorAdapters.cs",
+    "line": 8,
+    "category": "DataTypeOptimization",
+    "problem_summary": "Payment-related interfaces use `double` for cash amounts. Currency types should be `decimal`.",
+    "current_code": "public interface IPaymentProcessor\n{\n    void ProcessCash(double amount);\n    // ... other methods\n}\n\npublic interface ICashPaymentProcessor\n{\n    void ProcessCash(double amount);\n}\n\npublic class CashPaymentProcessor : ICashPaymentProcessor\n{\n    public void ProcessCash(double amount)\n    {\n        Console.WriteLine(\"Processing cash: $\" + amount);\n    }\n}",
+    "suggested_fix": "public interface IPaymentProcessor\n{\n    void ProcessCash(decimal amount);\n    // ... other methods using decimal for monetary values\n}\n\npublic class CashPaymentProcessor : ICashPaymentProcessor\n{\n    public void ProcessCash(decimal amount)\n    {\n        Console.WriteLine($\"Processing cash: ${amount:F2}\");\n    }\n}",
+    "recommendation": "Use `decimal` for monetary parameters in payment interfaces and implementations to preserve precision and make intent explicit."
+  },
+  {
+    "file": "ApocalypticFastFood/Adapters/Repositories/DatabaseRepositoryAdapter.cs",
+    "line": 3,
+    "category": "DataTypeOptimization",
+    "problem_summary": "Repository `SaveOrder` uses `double` for `total` and `discount`. Use `decimal` for financial values.",
+    "current_code": "public class DatabaseRepositoryAdapter : IOrderRepository\n{\n    private readonly DatabaseService _db;\n    public DatabaseRepositoryAdapter(DatabaseService db) => _db = db;\n    public void SaveOrder(int orderId, double total, double discount) => _db.SaveOrder(orderId, total, discount);\n}\n\npublic class DatabaseService\n{\n    public void SaveOrder(int orderId, double total, double disc)\n    {\n        Console.WriteLine(\"Saving order \" + orderId + \" to database\");\n    }\n}",
+    "suggested_fix": "public class DatabaseRepositoryAdapter : IOrderRepository\n{\n    private readonly DatabaseService _db;\n    public DatabaseRepositoryAdapter(DatabaseService db) => _db = db;\n    public void SaveOrder(int orderId, decimal total, decimal discount) => _db.SaveOrder(orderId, total, discount);\n}\n\npublic class DatabaseService\n{\n    public void SaveOrder(int orderId, decimal total, decimal disc)\n    {\n        Console.WriteLine($\"Saving order {orderId} to database (total: {total:C2})\");\n    }\n}",
+    "recommendation": "Persist monetary values as `decimal` to avoid precision issues and to make database mapping explicit and consistent with domain types."
+  },
+  {
+    "file": "ApocalypticFastFood/CustomerPolicies.cs",
+    "line": 22,
+    "category": "Readability",
+    "problem_summary": "`VipLoyaltyCalculator.GetMultiplier` returns a magic value `-1`, which is surprising and likely to cause consumer bugs.",
+    "current_code": "public class VipLoyaltyCalculator : ILoyaltyCalculator\n{\n    public int GetMultiplier(CustomerContext ctx)\n    {\n        // Preserve the previous odd return value used in the codebase\n        return -1;\n    }\n}",
+    "suggested_fix": "public class VipLoyaltyCalculator : ILoyaltyCalculator\n{\n    public int GetMultiplier(CustomerContext ctx)\n    {\n        // VIP customers: positive multiplier (example: 2x loyalty)\n        return 2;\n    }\n}",
+    "recommendation": "Returning `-1` as a multiplier is non-intuitive and error-prone. Use a documented, positive integer multiplier, or return a nullable/int with clear contract if special values are needed."
+  },
+  {
+    "file": "ApocalypticFastFood/VIPCustomer.cs",
+    "line": 1,
+    "category": "NamingConventions",
+    "problem_summary": "Class name `VipCustomer` uses mixed-case acronym 'Vip' instead of consistent `VIPCustomer`, and file name `VIPCustomer.cs` differs from class name capitalization. Acronym casing should be consistent and file name should match class name.",
+    "current_code": "public class VipCustomer : Customer\n{\n    public VipCustomer() : base(discountStrategy: new VipDiscountStrategy())\n    {\n    }\n\n    public double GetDiscount()\n    {\n        var strategy = new VipDiscountStrategy();\n        var ctx = new CustomerContext(this.Id, this.Age, this.VisitCount, this.MembershipLevel, this.HasParentApproval);\n        return strategy.GetDiscount(ctx);\n    }\n\n    public int GetLoyaltyMultiplier()\n    {\n        var calc = new VipLoyaltyCalculator();\n        var ctx = new CustomerContext(this.Id, this.Age, this.VisitCount, this.MembershipLevel, this.HasParentApproval);\n        return calc.GetMultiplier(ctx);\n    }\n}",
+    "suggested_fix": "public class VIPCustomer : Customer\n{\n    public VIPCustomer() : base(discountStrategy: new VipDiscountStrategy()) { }\n\n    public double GetDiscount()\n    {\n        var strategy = new VipDiscountStrategy();\n        var ctx = new CustomerContext(this.Id, this.Age, this.VisitCount, this.MembershipLevel, this.HasParentApproval);\n        return strategy.GetDiscount(ctx);\n    }\n\n    public int GetLoyaltyMultiplier()\n    {\n        var calc = new VipLoyaltyCalculator();\n        var ctx = new CustomerContext(this.Id, this.Age, this.VisitCount, this.MembershipLevel, this.HasParentApproval);\n        return calc.GetMultiplier(ctx);\n    }\n}",
+    "recommendation": "Use consistent acronym casing (`VIPCustomer`) and ensure the file name matches the class name exactly to avoid tooling issues and improve discoverability."
+  },
+  {
+    "file": "ApocalypticFastFood/Services/ILoyaltyPointsCalculator.cs",
+    "line": 10,
+    "category": "DataTypeOptimization",
+    "problem_summary": "`DefaultLoyaltyPointsCalculator.CalculatePoints` casts monetary `TotalAmount` (double) to `int`, frequently truncating and mixing money with integer math; also uses `double` arithmetic.",
+    "current_code": "points = (int)(dm.TotalAmount * 1);\nif (dm.HasApp)\n{\n    if (dm.EmailSubscribed)\n    {\n        if (dm.VisitCount > 10)\n            points = (int)(dm.TotalAmount * 2);\n        else\n            points = (int)(dm.TotalAmount * 1.5);\n    }\n    else\n    {\n        points = (int)(dm.TotalAmount * 1.2);\n    }\n}",
+    "suggested_fix": "decimal amount = dm.TotalAmount;\npoints = (int)decimal.Round(amount * 1m);\nif (dm.HasApp)\n{\n    if (dm.EmailSubscribed)\n    {\n        points = dm.VisitCount > 10 ? (int)decimal.Round(amount * 2m) : (int)decimal.Round(amount * 1.5m);\n    }\n    else\n    {\n        points = (int)decimal.Round(amount * 1.2m);\n    }\n}",
+    "recommendation": "Keep monetary arithmetic in `decimal`, use rounding explicitly when converting to integers (or define a points-calculation contract) to avoid silent truncation and precision surprises."
+  },
+  {
+    "file": "ApocalypticFastFood/ApocalypticFastFood.Tests/DiscountEngineTests.cs",
+    "line": 16,
+    "category": "CSharpFeatures",
+    "problem_summary": "Asserting exact equality on `double` values is brittle due to floating-point precision.",
+    "current_code": "Assert.Equal(10.0, d);",
+    "suggested_fix": "Assert.Equal(10.0, d, 3);",
+    "recommendation": "Use the precision overload for `Assert.Equal` when comparing floating-point values, or switch to `decimal` in the domain/tests. This prevents flaky failures caused by small rounding differences."
+  },
+  {
+    "file": "ApocalypticFastFood/ApocalypticFastFood.Tests/DiscountEngineTests.cs",
+    "line": 26,
+    "category": "CSharpFeatures",
+    "problem_summary": "Exact equality assertion for a computed `double` value in tests.",
+    "current_code": "Assert.Equal(45.0, d);",
+    "suggested_fix": "Assert.Equal(45.0, d, 3);",
+    "recommendation": "Allow a small precision threshold when asserting on floating-point results to avoid fragile tests due to rounding."
+  },
+  {
+    "file": "ApocalypticFastFood/ApocalypticFastFood.Tests/DiscountManagerPromoIntegrationTests.cs",
+    "line": 15,
+    "category": "Readability",
+    "problem_summary": "Comparing two floating-point results with `Assert.Equal` risks precision issues and provides little failure context.",
+    "current_code": "Assert.Equal(expected, actual);",
+    "suggested_fix": "Assert.Equal(expected, actual, 3);",
+    "recommendation": "Be explicit about precision when asserting floating-point equality or compare domain values using decimal types for monetary calculations."
+  },
+  {
+    "file": "ApocalypticFastFood/ApocalypticFastFood.Tests/DiscountManagerVisitIntegrationTests.cs",
+    "line": 15,
+    "category": "Readability",
+    "problem_summary": "Test asserts exact equality of values produced by engine and manager using `double`.",
+    "current_code": "Assert.Equal(expected, actual);",
+    "suggested_fix": "Assert.Equal(expected, actual, 3);",
+    "recommendation": "Use precision-aware assertions for floating-point comparisons to reduce flaky tests."
+  },
+  {
+    "file": "ApocalypticFastFood/ApocalypticFastFood.Tests/DiscountManagerFamilyIntegrationTests.cs",
+    "line": 15,
+    "category": "Readability",
+    "problem_summary": "Floating-point equality asserted without tolerance; test relies on domain numeric types being stable.",
+    "current_code": "Assert.Equal(expected, actual);",
+    "suggested_fix": "Assert.Equal(expected, actual, 3);",
+    "recommendation": "Prefer tolerant comparisons for floating-point arithmetic in tests, or migrate monetary types to `decimal`."
+  },
+  {
+    "file": "ApocalypticFastFood/ApocalypticFastFood.Tests/DiscountManagerTimeIntegrationTests.cs",
+    "line": 29,
+    "category": "NamingConventions",
+    "problem_summary": "Test method names include underscores (snake-like naming) instead of PascalCase; inconsistent with standard C# naming guidelines.",
+    "current_code": "public void CalculateDiscount_Uses_TimeEngine_ForAfternoonCase()",
+    "suggested_fix": "public void CalculateDiscountUsesTimeEngineForAfternoonCase()",
+    "recommendation": "Use PascalCase for method names to follow C# conventions. If separators improve readability, consider `Theory` with `MemberData` or a consistent naming policy across the test suite."
+  },
+  {
+    "file": "ApocalypticFastFood/ApocalypticFastFood.Tests/DiscountManagerDiscountProviderTests.cs",
+    "line": 27,
+    "category": "Readability",
+    "problem_summary": "The test asserts only the returned type (`double`) which is a weak assertion and makes the test less meaningful.",
+    "current_code": "Assert.IsType<double>(d);",
+    "suggested_fix": "// Prefer asserting on expected numeric behavior\nAssert.InRange(d, 0.0, 1000.0);\n// Or assert exact expected value with tolerance\n// Assert.Equal(expectedValue, d, 3);",
+    "recommendation": "Assert meaningful domain expectations (value ranges or specific expected results) instead of only checking the CLR type; improves test strength."
+  },
+  {
+    "file": "ApocalypticFastFood/ApocalypticFastFood.Tests/OrderProcessorTests.cs",
+    "line": 12,
+    "category": "Readability",
+    "problem_summary": "Test helper `FakeOrderRepo` exposes mutable public fields; prefer properties or a verification API for clarity and immutability semantics.",
+    "current_code": "public int SavedOrderId;\npublic double SavedTotal;\npublic double SavedDiscount;\npublic void SaveOrder(int orderId, double total, double discount)\n{\n    SavedOrderId = orderId;\n    SavedTotal = total;\n    SavedDiscount = discount;\n}",
+    "suggested_fix": "public int SavedOrderId { get; private set; }\npublic double SavedTotal { get; private set; }\npublic double SavedDiscount { get; private set; }\npublic void SaveOrder(int orderId, double total, double discount)\n{\n    SavedOrderId = orderId;\n    SavedTotal = total;\n    SavedDiscount = discount;\n}",
+    "recommendation": "Use properties with controlled setters in test doubles to make intent explicit and avoid accidental mutation from outside the test helper."
+  },
+  {
+    "file": "ApocalypticFastFood/ApocalypticFastFood.Tests/OrderProcessorPaymentTests.cs",
+    "line": 36,
+    "category": "DataTypeOptimization",
+    "problem_summary": "Fake payment processor stores cash amount in `double`; domain code uses doubles for money — this risks precision problems and implicit type mismatch if domain migrates to `decimal`.",
+    "current_code": "public double CashAmount = 0.0;\n\npublic void ProcessCash(double amount)\n{\n    CashCalled = true;\n    CashAmount = amount;\n}",
+    "suggested_fix": "public decimal CashAmount { get; private set; } = 0m;\n\npublic void ProcessCash(decimal amount)\n{\n    CashCalled = true;\n    CashAmount = amount;\n}",
+    "recommendation": "Prefer `decimal` for monetary amounts in tests and fakes to match best-practice domain types and avoid precision surprises if production types change."
+  },
+  {
+    "file": "ApocalypticFastFood/ApocalypticFastFood.Tests/OrderProcessorEmailTests.cs",
+    "line": 23,
+    "category": "Readability",
+    "problem_summary": "Fake implementations in tests (`FakeRepo`, `FakeEmailSender`) use public mutable fields for state verification instead of properties or methods, reducing clarity.",
+    "current_code": "public bool Saved = false;\npublic void SaveOrder(int orderId, double total, double discount) => Saved = true;\n\npublic bool Sent = false;\npublic void Send(string to, string subject, string body = \"\") => Sent = true;",
+    "suggested_fix": "public bool Saved { get; private set; }\npublic void SaveOrder(int orderId, double total, double discount) => Saved = true;\n\npublic bool Sent { get; private set; }\npublic void Send(string to, string subject, string body = \"\") => Sent = true;",
+    "recommendation": "Use private setters or explicit verification methods for test fakes to express intent and prevent accidental external mutation."
+  },
+  {
+    "file": "ApocalypticFastFood/ApocalypticFastFood.Tests/OrderProcessorPaymentTests.cs",
+    "line": 7,
+    "category": "Readability",
+    "problem_summary": "Test constructs `DiscountManager` with a string-based payment method. Using string literals for domain-typed values is fragile; prefer the typed `PaymentMethod` enum.",
+    "current_code": "var dm = new DiscountManager { PaymentMethodEnum = PaymentMethod.Cash };",
+    "suggested_fix": "dm.PaymentMethodEnum = PaymentMethod.Cash; // use the typed enum",
+    "recommendation": "Tests should follow domain typing; if `PaymentMethod` is later refactored to an enum, tests will break less if they already use the enum or a dedicated factory method."
+  },
+  {
+    "file": "ApocalypticFastFood/ApocalypticFastFood.Tests/DefaultLoyaltyPointsCalculatorTests.cs",
+    "line": 18,
+    "category": "Readability",
+    "problem_summary": "Assertion is weak and non-specific (`Assert.True(pts > 0)`), which doesn't verify expected domain behavior.",
+    "current_code": "Assert.True(pts > 0);",
+    "suggested_fix": "// Better: assert a concrete expected value or a precise range\n// Example: for Diamond with TotalAmount=200 and VisitCount=150 we expect at least 1000 points (tune as needed)\nAssert.InRange(pts, 1000, int.MaxValue);",
+    "recommendation": "Use meaningful assertions (exact expected values or defined ranges) so tests fail noisily on regressions and document intended behavior."
+  },
+  {
+    "file": "ApocalypticFastFood/ApocalypticFastFood.Tests/CustomerPurchaseServiceTests.cs",
+    "line": 18,
+    "category": "Readability",
+    "problem_summary": "Test ends with `Assert.True(true)` which is a no-op and does not validate behavior.",
+    "current_code": "svc.MakePurchase(ctx);\nAssert.True(true);",
+    "suggested_fix": "svc.MakePurchase(ctx);\n// Replace no-op assertion with a verification: if Customer.MakePurchase has observable effects, assert them.\n// Otherwise, simply allow the test to pass if no exception is thrown (no Assert required), or use:\nAssert.DoesNotThrow(() => svc.MakePurchase(ctx)); // note: xUnit has no DoesNotThrow; use try/catch or meaningful asserts instead",
+    "recommendation": "Remove meaningless assertions and either assert the expected state change or rely on explicit verification patterns so the test documents intended behavior."
+  },
+  {
+    "file": "ApocalypticFastFood/ApocalypticFastFood.Tests/CustomerPolicyTests.cs",
+    "line": 12,
+    "category": "Readability",
+    "problem_summary": "`MinorCustomer_MakePurchase_NoException_WhenNoApproval` calls `minor.MakePurchase()` with no assertion — the test is implicit and doesn't document the intended outcome.",
+    "current_code": "minor.MakePurchase();",
+    "suggested_fix": "// If the requirement is 'no exception', make that explicit via try/catch and Assert.Fail or use a more meaningful post-condition.\ntry\n{\n    minor.MakePurchase();\n}\ncatch (Exception ex)\n{\n    Assert.False(true, $\"Expected no exception but got: {ex}\");\n}\n// Or better: assert that the expected side effect did not occur or that the state remains unchanged.",
+    "recommendation": "Make the intended result explicit; implicit tests reduce clarity and make intent ambiguous for future maintainers."
+  },
+  {
+    "file": "ApocalypticFastFood/ApocalypticFastFood.Tests/CustomerPolicyTests.cs",
+    "line": 25,
+    "category": "Readability",
+    "problem_summary": "Test asserts legacy behavior (`-1`) for VIP loyalty multiplier, locking in an odd sentinel value that hampers refactorability.",
+    "current_code": "Assert.Equal(-1, vip.GetLoyaltyMultiplier());",
+    "suggested_fix": "// Prefer an assertion that checks contract rather than implementation-specific sentinel values\n// e.g. Assert.True(vip.GetLoyaltyMultiplier() > 0, \"Expected positive loyalty multiplier for VIP customers\");\n// If sentinel -1 is intentionally preserved, add a comment explaining historical reasons and expected lifetime.",
+    "recommendation": "Avoid asserting obscure sentinel values without an explicit comment. If sentinel behavior must remain, document it; otherwise migrate to a clear positive multiplier contract."
+  },
+  {
+    "file": "ApocalypticFastFood/ApocalypticFastFood.Tests/CustomerDiscountProviderTests.cs",
+    "line": 14,
+    "category": "Readability",
+    "problem_summary": "Test only asserts the CLR return type (`double`) which is a weak check and doesn't validate domain correctness.",
+    "current_code": "var d = provider.GetDiscount(ctx);\nAssert.IsType<double>(d);",
+    "suggested_fix": "// Assert domain expectations, for example a non-negative discount within expected bounds\nvar d = provider.GetDiscount(ctx);\nAssert.InRange(d, 0.0, 1000.0);\n// Or assert a specific expected discount value with tolerance\n// Assert.Equal(expectedValue, d, 3);",
+    "recommendation": "Tests should assert meaningful behavior (value ranges or specific expected values) rather than only the CLR type."
+  },
+  {
+    "file": "ApocalypticFastFood/ApocalypticFastFood.Tests/CashPaymentProcessorTests.cs",
+    "line": 15,
+    "category": "Readability",
+    "problem_summary": "Test uses `Assert.True(true)` as a placeholder assertion; it doesn't validate any real behavior of `ProcessCash`.",
+    "current_code": "processor.ProcessCash(10.0);\n\n// Assert\nAssert.True(true);",
+    "suggested_fix": "processor.ProcessCash(10.0);\n// Verify side effects (e.g., no exception and expected log/output) or replace with a more meaningful assertion\n// Example if you expose behavior via a testable abstraction:\n// Assert.True(logger.Messages.Any(m => m.Contains(\"Processing cash\")));",
+    "recommendation": "Replace placeholder assertions with checks that validate the observable behavior of the method or remove the assertion and keep the test as an exception-safety check with a clear comment."
+  },
+  {
+    "file": "ApocalypticFastFood/ApocalypticFastFood.Tests/CardPaymentProcessorTests.cs",
+    "line": 24,
+    "category": "Readability",
+    "problem_summary": "Test double `FakeCard` exposes public mutable fields (`Called`, `Number`) — use properties with private setters to make intent explicit.",
+    "current_code": "private class FakeCard : ICardPaymentProcessor\n{\n    public bool Called = false;\n    public string Number = \"\";\n\n    public void ProcessCreditCard(string cardNum, string cvv, string exp)\n    {\n        Called = true;\n        Number = cardNum;\n    }\n\n    public void ProcessDebitCard(string cardNum, string pin) { }\n}",
+    "suggested_fix": "private class FakeCard : ICardPaymentProcessor\n{\n    public bool Called { get; private set; }\n    public string Number { get; private set; } = string.Empty;\n\n    public void ProcessCreditCard(string cardNum, string cvv, string exp)\n    {\n        Called = true;\n        Number = cardNum;\n    }\n\n    public void ProcessDebitCard(string cardNum, string pin) { }\n}",
+    "recommendation": "Use properties with controlled setters in test doubles to make the API clearer and reduce accidental external mutation."
+  },
+  {
+    "file": "ApocalypticFastFood/ApocalypticFastFood.Tests/BirthdayRuleTests.cs",
+    "line": 20,
+    "category": "CSharpFeatures",
+    "problem_summary": "Asserting `double` monetary equality without tolerance is brittle; the test asserts `Assert.Equal(70.0, res.Discount)`.",
+    "current_code": "Assert.Equal(70.0, res.Discount);",
+    "suggested_fix": "Assert.Equal(70.0m, res.Discount); // if Discount becomes decimal\n// Or use precision overload for doubles:\nAssert.Equal(70.0, res.Discount, 3);",
+    "recommendation": "Use `decimal` for monetary domain values or use the precision overload in `Assert.Equal` to prevent flakiness from floating-point rounding."
+  },
+  {
+    "file": "ApocalypticFastFood/ApocalypticFastFood.Tests/BirthdayRuleTests.cs",
+    "line": 21,
+    "category": "CSharpFeatures",
+    "problem_summary": "Test correctly uses precision for multiplier assertion but not for discount; be consistent across assertions.",
+    "current_code": "Assert.Equal(1.6, res.Multiplier, 3);",
+    "suggested_fix": "Assert.Equal(70.0, res.Discount, 3);\nAssert.Equal(1.6, res.Multiplier, 3);",
+    "recommendation": "Apply consistent precision-aware assertions for floating point values throughout tests, or migrate domain to `decimal` to assert exact monetary values."
+  },
+  {
+    "file": "ApocalypticFastFood/ApocalypticFastFood.Tests/PreviousOrderRuleTests.cs",
+    "line": 36,
+    "category": "CSharpFeatures",
+    "problem_summary": "Assertions compare `double` monetary results without specifying tolerance in some places (e.g., `Assert.Equal(35.0, res.Discount)`).",
+    "current_code": "Assert.Equal(35.0, res.Discount);\nAssert.Equal(1.25, res.Multiplier, 3);",
+    "suggested_fix": "Assert.Equal(35.0, res.Discount, 3);\nAssert.Equal(1.25, res.Multiplier, 3);",
+    "recommendation": "Use the precision-aware overload of `Assert.Equal` for floating-point comparisons to avoid fragile tests based on minor rounding differences."
+  },
+  {
+    "file": "ApocalypticFastFood/ApocalypticFastFood.Tests/PriceCatalogTests.cs",
+    "line": 11,
+    "category": "DataTypeOptimization",
+    "problem_summary": "Price assertions use `double` literals (e.g. `8.99`) instead of `decimal`; prices are monetary values and should use `decimal` where domain intends exactness.",
+    "current_code": "Assert.Equal(8.99, catalog.GetPrice(\"burger\"));",
+    "suggested_fix": "Assert.Equal(8.99m, catalog.GetPrice(\"burger\"));\n// And migrate InMemoryPriceCatalog.GetPrice signature to return decimal\n// public decimal GetPrice(string item)",
+    "recommendation": "Use `decimal` for monetary values in both production code and tests to prevent precision issues and to make intent explicit."
+  },
+  {
+    "file": "ApocalypticFastFood/ApocalypticFastFood.Tests/ReceiptFormatterTests.cs",
+    "line": 22,
+    "category": "Readability",
+    "problem_summary": "The test checks only that the formatted string contains `\"TOTAL:\"`, which is a shallow assertion that may miss formatting/regression issues.",
+    "current_code": "Assert.Contains(\"TOTAL:\", s);",
+    "suggested_fix": "// Assert the formatted numeric total using culture-invariant formatting or compare expected lines\nAssert.Contains(\"TOTAL:\", s);\nAssert.Contains(\"$8.99\", s); // or a more precise expected fragment\n// Or parse the output and assert numeric equality for the computed total.",
+    "recommendation": "Assert on essential, structured parts of the receipt (labels and numeric totals) rather than a single label to increase test usefulness."
+  },
+  {
+    "file": "ApocalypticFastFood/ApocalypticFastFood.Tests/ReferralRuleV2Tests.cs",
+    "line": 18,
+    "category": "CSharpFeatures",
+    "problem_summary": "Floating-point assertions use small precision (2) for discounts; be consistent across test suite and prefer `decimal` for currency.",
+    "current_code": "Assert.Equal(45.0, res.Discount, 2);",
+    "suggested_fix": "Assert.Equal(45.0m, res.Discount); // if Discount is migrated to decimal\n// or use precision 3 for doubles\nAssert.Equal(45.0, res.Discount, 3);",
+    "recommendation": "Use consistent precision or decimal types across the test suite for monetary assertions to avoid flaky tests and clarify intent."
+  },
+  {
+    "file": "ApocalypticFastFood/ApocalypticFastFood.Tests/SampleRunnerTests.cs",
+    "line": 11,
+    "category": "Readability",
+    "problem_summary": "The test invokes `SampleRunner.RunDemos()` which writes to console and may be noisy and slow; it asserts nothing (implicit 'no exception').",
+    "current_code": "SampleRunner.RunDemos();",
+    "suggested_fix": "// If the intent is to ensure no exception, make it explicit or capture output and assert expected demo outputs\nvar output = CaptureConsoleOutput(() => SampleRunner.RunDemos());\nAssert.Contains(\"FAST FOOD MEGA CHAIN\", output);\n\n// helper method (example):\nstring CaptureConsoleOutput(Action action)\n{\n    var sw = new System.IO.StringWriter();\n    var original = Console.Out;\n    try { Console.SetOut(sw); action(); return sw.ToString(); }\n    finally { Console.SetOut(original); }\n}",
+    "recommendation": "Make demo tests deterministic by capturing and asserting on console output or avoid running heavy demos in unit tests; keep unit tests fast and isolated."
+  },
+  {
+    "file": "ApocalypticFastFood/ApocalypticFastFood.Tests/StreakRuleTests.cs",
+    "line": 17,
+    "category": "CSharpFeatures",
+    "problem_summary": "Test asserts `double` discount without specifying precision (`Assert.Equal(55.0, res.Discount)`), risking brittle assertions.",
+    "current_code": "Assert.Equal(55.0, res.Discount);\nAssert.Equal(1.35, res.Multiplier, 3);",
+    "suggested_fix": "Assert.Equal(55.0, res.Discount, 3);\nAssert.Equal(1.35, res.Multiplier, 3);",
+    "recommendation": "Be consistent with precision-aware comparisons for floating-point values to reduce flakiness."
+  },
+  {
+    "file": "ApocalypticFastFood/ApocalypticFastFood.Tests/VipCustomerStrategyTests.cs",
+    "line": 13,
+    "category": "Readability",
+    "problem_summary": "Tests verify `IsType<double>` for `GetDiscount()` which is weak and doesn't assert expected domain discount behavior.",
+    "current_code": "d = vip.GetDiscount();\nAssert.IsType<double>(d);",
+    "suggested_fix": "// Assert domain semantics instead of CLR type\nvar d = vip.GetDiscount();\nAssert.InRange(d, 0.0, 1000.0);\n// or assert specific expected discount based on configured VIP state",
+    "recommendation": "Assert concrete expected values or ranges rather than types to increase test fidelity."
+  },
+  {
+    "file": "ApocalypticFastFood/ApocalypticFastFood.Tests/VisitCountRuleV2Tests.cs",
+    "line": 18,
+    "category": "CSharpFeatures",
+    "problem_summary": "Tests correctly use precision for multiplier but may assert `double` monetary values elsewhere without precision; ensure consistency.",
+    "current_code": "Assert.Equal(1.5, res.Multiplier, 3);\nAssert.Equal(0.0, res.Discount);",
+    "suggested_fix": "Assert.Equal(1.5, res.Multiplier, 3);\nAssert.Equal(0.0, res.Discount, 3);\n// Or migrate discounts to decimal and assert exact decimal values.",
+    "recommendation": "Use precision-aware assertions consistently or switch to `decimal` for discount values across domain and tests."
+  }
+]

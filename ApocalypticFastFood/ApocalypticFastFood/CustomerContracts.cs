@@ -3,7 +3,7 @@ namespace ApocalypticFastFood;
 // Interfaces extracted from the original Customer implementation to preserve contracts
 public interface IDiscountStrategy
 {
-    double GetDiscount(CustomerContext ctx);
+    decimal GetDiscount(CustomerContext ctx);
 }
 
 public interface IAlcoholPolicy
@@ -24,5 +24,5 @@ public interface ILoyaltyCalculator
 // Adapter contract used across the codebase
 public interface IDiscountProvider
 {
-    double GetDiscount(CustomerContext ctx);
+    decimal GetDiscount(CustomerContext ctx);
 }

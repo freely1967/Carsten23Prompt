@@ -17,17 +17,17 @@ public class CardPaymentProcessorTests
         Assert.Equal("4111111111111111", fake.Number);
     }
 
-    private class FakeCard : ICardPaymentProcessor
-    {
-        public bool Called = false;
-        public string Number = "";
-
-        public void ProcessCreditCard(string cardNum, string cvv, string exp)
+        private class FakeCard : ICardPaymentProcessor
         {
-            Called = true;
-            Number = cardNum;
-        }
+            public bool Called { get; private set; } = false;
+            public string Number { get; private set; } = string.Empty;
 
-        public void ProcessDebitCard(string cardNum, string pin) { }
-    }
+            public void ProcessCreditCard(string cardNum, string cvv, string exp)
+            {
+                Called = true;
+                Number = cardNum;
+            }
+
+            public void ProcessDebitCard(string cardNum, string pin) { }
+        }
 }

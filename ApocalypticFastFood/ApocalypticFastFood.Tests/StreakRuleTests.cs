@@ -12,7 +12,7 @@ namespace ApocalypticFastFood.Tests
                 StreakDays = 30,
                 ConsecutiveVisits = 20,
                 CustomerType = 2,
-                AverageSpend = 80.0,
+                AverageSpend = 80.0m,
                 HasApp = true,
                 EmailSubscribed = true
             };
@@ -20,7 +20,7 @@ namespace ApocalypticFastFood.Tests
             var rule = new StreakRule();
             var res = rule.CalculateResult(dm);
 
-            Assert.Equal(55.0, res.Discount);
+            Assert.Equal(55.0m, res.Discount);
             Assert.Equal(1.35, res.Multiplier, 3);
         }
 
@@ -35,7 +35,7 @@ namespace ApocalypticFastFood.Tests
             var rule = new StreakRule();
             var res = rule.CalculateResult(dm);
 
-            Assert.Equal(10.0, res.Discount);
+            Assert.Equal(10.0m, res.Discount);
             Assert.Equal(1.0, res.Multiplier, 3);
         }
     }

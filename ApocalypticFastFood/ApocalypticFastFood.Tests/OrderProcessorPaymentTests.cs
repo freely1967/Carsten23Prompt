@@ -11,7 +11,7 @@ public class OrderProcessorPaymentTests
     {
         // Arrange
         var fakePayment = new FakePaymentProcessor();
-        var dm = new DiscountManager { PaymentMethod = "cash" };
+        var dm = new DiscountManager { PaymentMethodEnum = ApocalypticFastFood.PaymentMethod.Cash };
         var orderProcessor = new OrderProcessor(null, null, dm, null, null, fakePayment);
 
         // Act
@@ -24,10 +24,10 @@ public class OrderProcessorPaymentTests
 
     private class FakePaymentProcessor : IPaymentProcessor
     {
-        public bool CashCalled = false;
-        public double CashAmount = 0.0;
+        public bool CashCalled { get; private set; } = false;
+        public decimal CashAmount { get; private set; } = 0.0m;
 
-        public void ProcessCash(double amount)
+        public void ProcessCash(decimal amount)
         {
             CashCalled = true;
             CashAmount = amount;

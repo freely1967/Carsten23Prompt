@@ -14,19 +14,19 @@ namespace ApocalypticFastFood.Services
             switch (dm.CustomerType)
             {
                 case 1:
-                    points = (int)(dm.TotalAmount * 1);
+                    points = (int)(dm.TotalAmount * 1m);
                     if (dm.HasApp)
                     {
                         if (dm.EmailSubscribed)
                         {
                             if (dm.VisitCount > 10)
-                                points = (int)(dm.TotalAmount * 2);
+                                points = (int)(dm.TotalAmount * 2m);
                             else
-                                points = (int)(dm.TotalAmount * 1.5);
+                                points = (int)(dm.TotalAmount * 1.5m);
                         }
                         else
                         {
-                            points = (int)(dm.TotalAmount * 1.2);
+                            points = (int)(dm.TotalAmount * 1.2m);
                         }
                     }
 
@@ -35,34 +35,34 @@ namespace ApocalypticFastFood.Services
                     switch (dm.MembershipLevel)
                     {
                         case "Bronze":
-                            points = (int)(dm.TotalAmount * 2);
+                            points = (int)(dm.TotalAmount * 2m);
                             break;
                         case "Silver":
-                            points = (int)(dm.TotalAmount * 2.5);
+                            points = (int)(dm.TotalAmount * 2.5m);
                             break;
                         case "Gold":
                             if (dm.VisitCount > 50)
-                                points = (int)(dm.TotalAmount * 3.5);
+                                points = (int)(dm.TotalAmount * 3.5m);
                             else
-                                points = (int)(dm.TotalAmount * 3);
+                                points = (int)(dm.TotalAmount * 3m);
                             break;
                         case "Platinum":
-                            points = (int)(dm.TotalAmount * 4);
+                            points = (int)(dm.TotalAmount * 4m);
                             break;
                         case "Diamond":
                             if (dm.VisitCount > 100)
-                                points = (int)(dm.TotalAmount * 6);
+                                points = (int)(dm.TotalAmount * 6m);
                             else
-                                points = (int)(dm.TotalAmount * 5);
+                                points = (int)(dm.TotalAmount * 5m);
                             break;
                     }
 
                     break;
                 case 3:
-                    points = (int)(dm.TotalAmount * 1.5);
+                    points = (int)(dm.TotalAmount * 1.5m);
                     break;
                 case 5:
-                    points = (int)(dm.TotalAmount * 1.8);
+                    points = (int)(dm.TotalAmount * 1.8m);
                     break;
             }
 

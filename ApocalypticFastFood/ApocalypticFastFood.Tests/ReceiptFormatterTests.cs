@@ -15,7 +15,7 @@ public class ReceiptFormatterTests
         dm.Minute = 30;
         dm.RestaurantId = 1;
         dm.ItemQuantities = new System.Collections.Generic.Dictionary<string,int> { ["burger"] = 1 };
-        dm.TotalAmount = 8.99;
+        dm.TotalAmount = 8.99m;
 
         var f = new ReceiptFormatter();
         var s = f.Format(dm);

@@ -11,18 +11,18 @@ public class PaymentProcessorTests
         var fake = new FakeCash();
         var facade = new PaymentProcessorFacade(fake);
 
-        facade.ProcessCash(12.34);
+        facade.ProcessCash(12.34m);
 
         Assert.True(fake.Called);
-        Assert.Equal(12.34, fake.Amount);
+        Assert.Equal(12.34m, fake.Amount);
     }
 
     private class FakeCash : ICashPaymentProcessor
     {
-        public bool Called = false;
-        public double Amount = 0.0;
+        public bool Called { get; private set; } = false;
+        public decimal Amount { get; private set; } = 0.0m;
 
-        public void ProcessCash(double amount)
+        public void ProcessCash(decimal amount)
         {
             Called = true;
             Amount = amount;

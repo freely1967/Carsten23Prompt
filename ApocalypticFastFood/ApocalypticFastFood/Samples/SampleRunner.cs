@@ -20,7 +20,7 @@ public static class SampleRunner
         dm1.ItemQuantities["burger"] = 3;
         dm1.ItemQuantities["fries"] = 2;
         dm1.ItemQuantities["shake"] = 2;
-        dm1.TotalAmount = 41.91;
+        dm1.TotalAmount = 41.91m;
         dm1.VisitCount = 150;
         dm1.IsBirthday = true;
         dm1.HasApp = true;
@@ -32,12 +32,12 @@ public static class SampleRunner
         dm1.ReferralCount = 12;
         dm1.StreakDays = 45;
         dm1.ConsecutiveVisits = 25;
-        dm1.AverageSpend = 85;
+        dm1.AverageSpend = 85m;
         dm1.PromoCode = "VIP50";
         dm1.SocialMediaFollow = "instagram";
         dm1.LeftReview = true;
         dm1.ReviewStars = 5;
-        dm1.PaymentMethod = "app";
+        dm1.PaymentMethodEnum = PaymentMethod.App;
         dm1.OrderNumber = 1001;
         dm1.RestaurantId = 101;
 
@@ -56,7 +56,7 @@ public static class SampleRunner
         dm2.ItemQuantities["burger"] = 1;
         dm2.ItemQuantities["fries"] = 1;
         dm2.ItemQuantities["shake"] = 1;
-        dm2.TotalAmount = 17.47;
+        dm2.TotalAmount = 17.47m;
         dm2.VisitCount = 8;
         dm2.HasApp = true;
         dm2.PromoCode = "STUDENT25";
@@ -76,7 +76,7 @@ public static class SampleRunner
         dm3.Items = new List<string> { "burger", "fries" };
         dm3.ItemQuantities["burger"] = 1;
         dm3.ItemQuantities["fries"] = 1;
-        dm3.TotalAmount = 12.48;
+        dm3.TotalAmount = 12.48m;
         dm3.IsRushHour = true;
         dm3.IsDriveThru = true;
         dm3.VisitCount = 3;
@@ -100,7 +100,7 @@ public static class SampleRunner
         dm4.ItemQuantities["fries"] = 3;
         dm4.ItemQuantities["shake"] = 2;
         dm4.ItemQuantities["nuggets"] = 1;
-        dm4.TotalAmount = 62.91;
+        dm4.TotalAmount = 62.91m;
         dm4.IsHoliday = true;
         dm4.OrderNumber = 1004;
         dm4.RestaurantId = 101;
@@ -117,7 +117,7 @@ public static class SampleRunner
             var regularProvider = new ApocalypticFastFood.CustomerDiscountProvider(regular);
             Console.WriteLine("Regular customer discount: $" + regularProvider.GetDiscount(new ApocalypticFastFood.CustomerContext()));
 
-            Customer vip = new VipCustomer();
+            Customer vip = new VIPCustomer();
             var vipProvider = new ApocalypticFastFood.CustomerDiscountProvider((Customer)vip);
             Console.WriteLine("VIP customer discount: $" + vipProvider.GetDiscount(new ApocalypticFastFood.CustomerContext()));
         }

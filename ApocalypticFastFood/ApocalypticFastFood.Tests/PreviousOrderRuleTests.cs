@@ -15,7 +15,7 @@ namespace ApocalypticFastFood.Tests
                 ConsecutiveVisits = 5,
                 CustomerType = 2,
                 MembershipLevel = "Diamond",
-                AverageSpend = 100.0,
+                AverageSpend = 100.0m,
                 HasApp = true,
                 EmailSubscribed = true
             };
@@ -23,7 +23,7 @@ namespace ApocalypticFastFood.Tests
             var rule = new PreviousOrderRule();
             var res = rule.CalculateResult(dm);
 
-            Assert.Equal(35.0, res.Discount);
+            Assert.Equal(35.0m, res.Discount);
             Assert.Equal(1.25, res.Multiplier, 3);
         }
 
@@ -40,7 +40,7 @@ namespace ApocalypticFastFood.Tests
             var rule = new PreviousOrderRule();
             var res = rule.CalculateResult(dm);
 
-            Assert.Equal(0.0, res.Discount);
+            Assert.Equal(0.0m, res.Discount);
             Assert.Equal(1.0, res.Multiplier, 3);
         }
     }

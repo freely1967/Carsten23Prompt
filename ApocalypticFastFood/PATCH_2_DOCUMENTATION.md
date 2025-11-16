@@ -18,7 +18,7 @@ Geänderte Datei:
 
 Neue Testdatei:
 - `ApocalypticFastFood/ApocalypticFastFood.Tests/OrderProcessorPaymentTests.cs`
-  - Test `OrderProcessor_Uses_PaymentProcessor_ForCash` prüft, dass bei `PaymentMethod = "cash"` die `ProcessCash`-Methode des bereitgestellten `IPaymentProcessor` aufgerufen wird.
+  - Test `OrderProcessor_Uses_PaymentProcessor_ForCash` prüft, dass bei `PaymentMethodEnum = PaymentMethod.Cash` die `ProcessCash`-Methode des bereitgestellten `IPaymentProcessor` aufgerufen wird.
 
 ## Detaillierte Änderungen (Auszug)
 

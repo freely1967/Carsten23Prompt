@@ -22,8 +22,10 @@ namespace ApocalypticFastFood.Tests
         public void MinorCustomer_CanMakePurchase_WithParentApproval()
         {
             var m = new MinorCustomer { Id = 3, Age = 15, HasParentApproval = true };
-            // MakePurchase no-ops when not approved; ensure it does not throw
-            m.MakePurchase();
+            // Use the service adapter instead of calling the obsolete Customer.MakePurchase()
+            var svc = new ApocalypticFastFood.Services.CustomerPurchaseService(m);
+            var ctx = new ApocalypticFastFood.CustomerContext(m.Id, m.Age, m.VisitCount, m.MembershipLevel, m.HasParentApproval);
+            svc.MakePurchase(ctx);
             Assert.True(true);
         }
     }

@@ -3,7 +3,10 @@ namespace ApocalypticFastFood;
 using System.Collections.Generic;
 using System.Linq;
 
-public readonly record struct DiscountResult(double Discount, double Multiplier);
+// DiscountResult: Discount is monetary (decimal). Multiplier is a non-monetary factor (double).
+// Keep multiplier as double for fine-grained fractional multipliers; when applying it to
+// monetary values cast explicitly: e.g. `amount * (decimal)multiplier`.
+public readonly record struct DiscountResult(decimal Discount, double Multiplier);
 
 public interface IDiscountRuleV2
 {
@@ -22,7 +25,9 @@ public class DiscountEngineV2
 
         public DiscountResult Calculate(DiscountManager ctx)
         {
-                double discount = 0.0;
+                decimal discount = 0.0m;
+                // multiplier is intentionally double (non-monetary). When combining with
+                // decimal monetary values perform an explicit cast to avoid compiler errors.
                 double multiplier = 1.0;
 
                 foreach (var rule in _rules)
