@@ -160,4 +160,90 @@
     "tests": "[Fact] public void Sample_VipDiamond_ProducesExpectedReceipt() { var dm = new DiscountManager(...); var r = dm.GenerateReceipt(new CustomerContext(1,40,120,\"Diamond\")); Assert.Contains(\"PREMIUM CUSTOMER\", r); }",
     "risk": "Low - purely organizational; move code carefully to preserve demonstrative value."
   }
+  ,
+  {
+    "file": "ApocalypticFastFood/ApocalypticFastFood/OrderProcessor.cs",
+    "strategy": "Stage-2 migration: make a production consumer accept IDiscountProvider and fall back to existing behavior (adapter).",
+    "steps": [
+      "1) Add optional IDiscountProvider parameter to OrderProcessor ctor (default null).",
+      "2) When provided, construct a CustomerContext from available order/customer info and call provider.GetDiscount(ctx) to obtain discount; otherwise keep existing DiscountManager.CalculateDiscount() call.",
+      "3) Add a small adapter DiscountManagerDiscountProvider that wraps existing DiscountManager and exposes IDiscountProvider.GetDiscount(CustomerContext).",
+      "4) Add unit tests that exercise both code paths (adapter vs legacy) to ensure parity.",
+      "5) Run integration tests and validate no behavioral regression.",
+      "6) Commit and push; document the staged migration in PATCH_XX_DOCUMENTATION.md.\n"
+    ],
+    "diff": "--- a/OrderProcessor.cs\n+++ b/OrderProcessor.cs\n@@\n-public class OrderProcessor { public OrderProcessor(IPriceCatalog? priceCatalog = null, ...) { ... } public void ProcessOrder(int custType, string day, int hr, List<string> items) { var disc = _dm.CalculateDiscount(); ... } }\n+public class OrderProcessor { public OrderProcessor(IPriceCatalog? priceCatalog = null, IDiscountProvider? discountProvider = null, ...) { _discountProvider = discountProvider; ... } public void ProcessOrder(...) { if (_discount_provider != null) { var ctx = new CustomerContext(id, age, visitCount, membershipLevel, hasParentApproval); var disc = _discount_provider.GetDiscount(ctx); } else { var disc = _dm.CalculateDiscount(); } ... } }",
+    "tests": "[Fact] public void ProcessOrder_UsesDiscountProvider_WhenProvided() { var provider = new Mock<IDiscountProvider>(); provider.Setup(p => p.GetDiscount(It.IsAny<CustomerContext>())).Returns(5.0); var proc = new OrderProcessor(new InMemoryPriceCatalog(), provider.Object, ...); proc.ProcessOrder(...); /* assertions that discount and saved order reflect provider value */ }",
+    "risk": "Medium - touches a production consumer but preserves legacy behavior via defaulting and adapter; tests mitigate risk."
+  },
+  {
+    "file": "ApocalypticFastFood/ApocalypticFastFood/Adapters/DiscountManagerDiscountProvider.cs",
+    "strategy": "Provide a small adapter that exposes DiscountManager as IDiscountProvider to ease staged migration.",
+    "steps": [
+      "1) Create DiscountManagerDiscountProvider which accepts a DiscountManager instance.",
+      "2) Implement GetDiscount(CustomerContext) by mapping context fields into the DiscountManager instance and calling CalculateDiscount().",
+      "3) Add tests validating the adapter preserves DiscountManager semantics for a few representative contexts.",
+      "4) Use this adapter as the default when migrating consumers incrementally.",
+      "5) Document the adapter in PATCH_XX_DOCUMENTATION.md.\n"
+    ],
+    "diff": "--- a/Adapters/DiscountManagerDiscountProvider.cs\n+++ b/Adapters/DiscountManagerDiscountProvider.cs\n@@\n+public class DiscountManagerDiscountProvider : IDiscountProvider { private readonly DiscountManager _dm; public DiscountManagerDiscountProvider(DiscountManager dm) { _dm = dm; } public double GetDiscount(CustomerContext ctx) { _dm.Id = ctx.Id; _dm.Age = ctx.Age; _dm.VisitCount = ctx.VisitCount; _dm.MembershipLevel = ctx.MembershipLevel; _dm.HasParentApproval = ctx.HasParentApproval; return _dm.CalculateDiscount(); } }",
+    "tests": "[Fact] public void Adapter_MapsContextToDiscountManager() { var dm = new DiscountManager(); var adapter = new DiscountManagerDiscountProvider(dm); var ctx = new CustomerContext(1,30,5,\"Gold\", false); var d = adapter.GetDiscount(ctx); Assert.IsType<double>(d); }",
+    "risk": "Low-Medium - adapter duplicates mapping but keeps behavior intact; intended as temporary bridge."
+  },
+  {
+    "file": "ApocalypticFastFood/ApocalypticFastFood/Services/IPurchaseService.cs",
+    "strategy": "Introduce IPurchaseService to encapsulate MakePurchase behavior and allow staged migration away from Customer.MakePurchase().",
+    "steps": [
+      "1) Define IPurchaseService with MakePurchase(CustomerContext) and a default CustomerPurchaseService that delegates to existing Customer.MakePurchase().",
+      "2) Update SampleRunner and tests to consume IPurchaseService where appropriate.",
+      "3) Add unit tests for the new service and ensure behavior parity.",
+      "4) When all callers use IPurchaseService, consider removing Customer.MakePurchase implementation.",
+      "5) Document the migration plan and timeline.\n"
+    ],
+    "diff": "--- a/Customer.cs\n+++ b/Customer.cs\n@@\n+public interface IPurchaseService { void MakePurchase(CustomerContext ctx); }\n+public class CustomerPurchaseService : IPurchaseService { private readonly Customer _customer; public CustomerPurchaseService(Customer customer) { _customer = customer; } public void MakePurchase(CustomerContext ctx) { _customer.Id = ctx.Id; _customer.Age = ctx.Age; _customer.VisitCount = ctx.VisitCount; _customer.MembershipLevel = ctx.MembershipLevel; _customer.HasParentApproval = ctx.HasParentApproval; _customer.MakePurchase(); } }",
+    "tests": "[Fact] public void CustomerPurchaseService_DelegatesToCustomer() { var c = new Customer(); var svc = new CustomerPurchaseService(c); var ctx = new CustomerContext(1,17,0,\"\", true); svc.MakePurchase(ctx); /* ensure no exception */ }",
+    "risk": "Low-Medium - adapter-based approach keeps existing semantics while enabling future removal of behavior from Customer."
+  },
+  {
+    "file": "ApocalypticFastFood/ApocalypticFastFood/Services/ILoyaltyCalculator.cs",
+    "strategy": "Centralize loyalty calculation in ILoyaltyCalculator so Customer becomes a data holder and the logic is testable and replaceable.",
+    "steps": [
+      "1) Extract loyalty logic from DiscountManager.CalculateLoyaltyPoints into ILoyaltyCalculator implementation (DefaultLoyaltyCalculator).",
+      "2) Make DiscountManager and other consumers depend on ILoyaltyCalculator (injection).",
+      "3) Add unit tests covering loyalty calculations for different membership tiers.",
+      "4) Document the change and provide a migration adapter for any direct callers.\n"
+    ],
+    "diff": "--- a/DiscountManager.cs\n+++ b/DiscountManager.cs\n@@\n-public class DiscountManager { private int CalculateLoyaltyPoints() { /* large switch */ } }\n+public interface ILoyaltyCalculator { int CalculatePoints(DiscountManager dm); } public class DefaultLoyaltyCalculator : ILoyaltyCalculator { public int CalculatePoints(DiscountManager dm) { /* move existing logic here unchanged */ } }",
+    "tests": "[Fact] public void DefaultLoyaltyCalculator_Bronze_2xMultiplier() { var calc = new DefaultLoyaltyCalculator(); var dm = new DiscountManager { TotalAmount = 100, CustomerType = 2, MembershipLevel = \"Bronze\" }; var pts = calc.CalculatePoints(dm); Assert.Equal(200, pts); }",
+    "risk": "Medium - extracts logic but keeps the same computations; tests reduce regression risk."
+  },
+  {
+    "file": "ApocalypticFastFood/ApocalypticFastFood/Customer.cs",
+    "strategy": "Finalize: convert Customer to pure data holder after all consumers use services/adapters (final high-risk step).",
+    "steps": [
+      "1) Verify all call sites use IDiscountProvider, IPurchaseService, ILoyaltyCalculator, IAlcoholPolicy where applicable.",
+      "2) Replace Customer methods (GetDiscount, MakePurchase, CanOrderAlcohol, GetLoyaltyMultiplier) with auto-properties only.",
+      "3) Rename existing policy/strategy classes to services and wire via DI in composition roots or adapters.",
+      "4) Run full test-suite and integration tests; add compatibility shims if external consumers remain.",
+      "5) Update documentation explaining the final API shape and migration steps for integrators.\n"
+    ],
+    "diff": "--- a/Customer.cs\n+++ b/Customer.cs\n@@\n-public class Customer { public virtual double GetDiscount() => _discountStrategy.GetDiscount(...); public virtual void MakePurchase() { ... } }\n+public class Customer { public int Id { get; set; } public int Age { get; set; } public int VisitCount { get; set; } public string MembershipLevel { get; set; } public bool HasParentApproval { get; set; } }",
+    "tests": "[Fact] public void Customer_IsPlainDataHolder_AfterMigration() { var c = new Customer { Id = 1, Age = 30 }; Assert.Equal(1, c.Id); }",
+    "risk": "High - API-breaking; must only be done after staged migration and wide test coverage."
+  },
+  {
+    "file": "ApocalypticFastFood/ApocalypticFastFood/PR_DRAFT_REFRACTOR.md",
+    "strategy": "Prepare final PR checklist and integration test plan to land refactor branch safely.",
+    "steps": [
+      "1) Ensure all unit tests pass locally and on CI.",
+      "2) Prepare changelog entries per PATCH_*.md files.",
+      "3) Run a smoke integration suite covering: VIP+Referral+Birthday combos, OrderProcessor default path, SampleRunner demos.",
+      "4) Solicit review from domain stakeholders for VIP/loyalty business logic (these were intentionally conservative).",
+      "5) Merge after approvals and monitor telemetry for regressions.",
+      "6) Tag a release and provide migration notes for downstream integrators.\n"
+    ],
+    "diff": "--- a/PR_DRAFT_REFRACTOR.md\n+++ b/PR_DRAFT_REFRACTOR.md\n@@\n+Add checklist and links to per-patch docs.\n",
+    "tests": "N/A - process/documentation work",
+    "risk": "Low - operational checklist to reduce merge risk."
+  }
 ]
