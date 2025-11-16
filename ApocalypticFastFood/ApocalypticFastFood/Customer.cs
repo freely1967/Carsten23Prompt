@@ -113,3 +113,25 @@ public class Customer
         return _loyaltyCalculator.GetMultiplier(ctx);
     }
 }
+
+// Minor-specific policies
+public class MinorAlcoholPolicy : IAlcoholPolicy
+{
+    public bool CanOrderAlcohol(CustomerContext ctx)
+    {
+        // Deny alcohol if under 18 or no parent approval
+        if (ctx.Age < 18) return false;
+        if (!ctx.HasParentApproval) return false;
+        return true;
+    }
+}
+
+public class MinorApprovalPolicy : IPurchaseApprovalPolicy
+{
+    public bool CanMakePurchase(CustomerContext ctx)
+    {
+        // Allow purchase if parent approval present or customer is 18+
+        if (ctx.Age >= 18) return true;
+        return ctx.HasParentApproval;
+    }
+}
