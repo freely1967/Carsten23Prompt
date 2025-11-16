@@ -307,3 +307,66 @@ public class BirthdayRule : IDiscountRuleV2
         return new DiscountResult(discount, multiplier);
     }
 }
+
+public class StreakRule : IDiscountRuleV2
+{
+    public bool IsApplicable(DiscountManager ctx)
+    {
+        return ctx.StreakDays > 0;
+    }
+
+    public DiscountResult CalculateResult(DiscountManager ctx)
+    {
+        double discount = 0.0;
+        double multiplier = 1.0;
+
+        if (ctx.StreakDays >= 30)
+        {
+            if (ctx.ConsecutiveVisits >= 20)
+            {
+                if (ctx.CustomerType == 2)
+                {
+                    if (ctx.AverageSpend > 70)
+                    {
+                        if (ctx.HasApp && ctx.EmailSubscribed)
+                        {
+                            discount = 55.0;
+                            multiplier *= 1.35;
+                        }
+                        else
+                        {
+                            discount = 45.0;
+                            multiplier *= 1.25;
+                        }
+                    }
+                    else
+                    {
+                        discount = 35.0;
+                    }
+                }
+                else
+                {
+                    discount = 28.0;
+                }
+            }
+            else
+            {
+                discount = 22.0;
+            }
+        }
+        else if (ctx.StreakDays >= 14)
+        {
+            discount = 15.0;
+        }
+        else if (ctx.StreakDays >= 7)
+        {
+            discount = 10.0;
+        }
+        else
+        {
+            discount = 5.0;
+        }
+
+        return new DiscountResult(discount, multiplier);
+    }
+}

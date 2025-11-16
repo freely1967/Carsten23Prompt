@@ -171,3 +171,19 @@ Beginne jetzt.
  dazu kommt 
  ja erstelle aber auch ein dokument wo du genau dokumentioerst was du gemacht hast also paatch 1 was war und was wurde gemacht,
  
+da der prompt sehr groß war wurde imme riweder gefragt ob man so wwiter machen will woraufhin man mit 
+
+"Bitte fahre fort.
+Achte dabei gründlich auf folgende Punkte:
+
+Sorgfältigkeit – arbeite präzise, strukturiert und vollständig.
+
+Nichts auslassen – alle Inhalte, Details und Schritte vollständig berücksichtigen.
+
+Nichts erfinden – keinerlei Informationen hinzufügen, die nicht im ursprünglichen Text stehen.
+
+Konsistenz – Stil, Struktur und Inhalt durchgehend beibehalten.
+
+Klarheit – verständlich, korrekt und gut lesbar formulieren.
+
+Falls Unklarheiten bestehen oder Informationen fehlen, bitte zuerst nachfragen, anstatt Annahmen zu treffen."
