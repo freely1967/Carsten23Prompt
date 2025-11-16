@@ -373,30 +373,25 @@ public class DiscountManager
                                             if (ReferralCount > 10)
                                             {
                                                 s5 = 60.0;
-                                                multiplier *= 1.5;
                                             }
                                             else
                                             {
                                                 s5 = 50.0;
-                                                multiplier *= 1.4;
                                             }
                                         }
                                         else
                                         {
                                             s5 = 45.0;
-                                            multiplier *= 1.3;
                                         }
                                     }
                                     else
                                     {
                                         s5 = 40.0;
-                                        multiplier *= 1.25;
                                     }
                                 }
                                 else
                                 {
                                     s5 = 35.0;
-                                    multiplier *= 1.2;
                                 }
                             }
                             else
