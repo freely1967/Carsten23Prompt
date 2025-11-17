@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "c:\\Users\\elydu\\Desktop\\Carsten23Prompt\\ApocalypticFastFood\\ApocalypticFastFood\\ApocalypticFastFood.csproj": {}
+    "C:\\Users\\elydu\\Desktop\\Carsten23Prompt\\ApocalypticFastFood\\ApocalypticFastFood\\ApocalypticFastFood.csproj": {}
   },
   "projects": {
-    "c:\\Users\\elydu\\Desktop\\Carsten23Prompt\\ApocalypticFastFood\\ApocalypticFastFood\\ApocalypticFastFood.csproj": {
+    "C:\\Users\\elydu\\Desktop\\Carsten23Prompt\\ApocalypticFastFood\\ApocalypticFastFood\\ApocalypticFastFood.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "c:\\Users\\elydu\\Desktop\\Carsten23Prompt\\ApocalypticFastFood\\ApocalypticFastFood\\ApocalypticFastFood.csproj",
+        "projectUniqueName": "C:\\Users\\elydu\\Desktop\\Carsten23Prompt\\ApocalypticFastFood\\ApocalypticFastFood\\ApocalypticFastFood.csproj",
         "projectName": "ApocalypticFastFood",
-        "projectPath": "c:\\Users\\elydu\\Desktop\\Carsten23Prompt\\ApocalypticFastFood\\ApocalypticFastFood\\ApocalypticFastFood.csproj",
+        "projectPath": "C:\\Users\\elydu\\Desktop\\Carsten23Prompt\\ApocalypticFastFood\\ApocalypticFastFood\\ApocalypticFastFood.csproj",
         "packagesPath": "C:\\Users\\elydu\\.nuget\\packages\\",
-        "outputPath": "c:\\Users\\elydu\\Desktop\\Carsten23Prompt\\ApocalypticFastFood\\ApocalypticFastFood\\obj\\",
+        "outputPath": "C:\\Users\\elydu\\Desktop\\Carsten23Prompt\\ApocalypticFastFood\\ApocalypticFastFood\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"

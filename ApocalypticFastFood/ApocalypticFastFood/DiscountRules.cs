@@ -186,26 +186,46 @@ public class TimeOfDayRule : IDiscountRule
 
     private decimal MorningWindowDiscount(DiscountManager ctx)
     {
-        // Morning window: 6:00-9:59
-        if (ctx.IsDineIn)
-        {
-            return ctx.Items.Contains("burger") ? (ctx.Day == "Monday" ? 18.0m : 12.0m) : 8.0m;
+        // Afternoon window: 14:00-16:59 with finer minute split
+        // Flattened for readability and testability
+        if (ctx.Minute < 0 || ctx.Minute > 59) return 8.0m;
+        if (ctx.Minute > 30) return 8.0m;
+
+        // Early exits for the common, non-senior paths
+        if (ctx.CustomerType != CustomerCategory.Senior) return 12.0m;
+
+        // Senior customers have age-based tiers
+        if (ctx.Age < 70) return 15.0m;
+
+        // Seniors aged 70+ get loyalty-card-based uplift
+        if (ctx.HasLoyaltyCard) return ctx.VisitCount > 20 ? 30.0m : 25.0m;
+
+        return 20.0m;
         }
 
-        if (ctx.IsDriveThru) return 6.0m;
-        return 0.0m;
-    }
+        private decimal LateNightWindowDiscount(DiscountManager ctx)
+        {
+            // Late-night window: 22:00 and later. Keep this conservative and predictable.
+            if (ctx.Hour < 22) return 0.0m;
 
-    private decimal LateNightWindowDiscount(DiscountManager ctx)
-    {
-        // Late-night window: 22:00+
-        if (ctx.IsDriveThru) return ctx.ItemCount >= 3 ? 16.0m : 12.0m;
-        return 10.0m;
-    }
+            // Drive-thru customers get a small fixed late-night uplift
+            if (ctx.IsDriveThru)
+            {
+                return ctx.ItemCount >= 3 ? 10.0m : 5.0m;
+            }
 
-    private decimal RushHourPenalty(DiscountManager ctx)
-    {
-        if (!ctx.IsRushHour) return 0.0m;
+            // Minors don't receive late-night discounts
+            if (ctx.CustomerType == CustomerCategory.Minor) return 0.0m;
+
+            // Higher spenders get a larger late-night discount
+            if (ctx.TotalAmount > 50m) return 12.0m;
+
+            return 6.0m;
+        }
+
+        private decimal RushHourPenalty(DiscountManager ctx)
+        {
+            if (!ctx.IsRushHour) return 0.0m;
 
         // Midday penalty (12:00-13:59)
         if (ctx.Hour >= 12 && ctx.Hour <= 13)
