@@ -13,7 +13,7 @@ public class DiscountManagerTimeIntegrationTests
         {
             Hour = 15,
             Minute = 10,
-            CustomerType = 1,
+            CustomerType = CustomerCategory.Regular,
             IsDineIn = true,
             Items = new List<string> { "burger" },
             VisitCount = 5

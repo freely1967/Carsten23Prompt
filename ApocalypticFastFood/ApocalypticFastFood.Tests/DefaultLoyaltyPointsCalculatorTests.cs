@@ -10,7 +10,7 @@ namespace ApocalypticFastFood.Tests
             // Arrange
             var dm = new ApocalypticFastFood.DiscountManager();
             dm.TotalAmount = 200m;
-            dm.CustomerType = 2;
+            dm.CustomerType = CustomerCategory.VIP;
             dm.MembershipLevel = "Diamond";
             dm.VisitCount = 150;
 

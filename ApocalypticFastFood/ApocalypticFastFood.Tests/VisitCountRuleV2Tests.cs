@@ -10,7 +10,7 @@ namespace ApocalypticFastFood.Tests
             var dm = new DiscountManager
             {
                 VisitCount = 150,
-                CustomerType = 2,
+                CustomerType = CustomerCategory.VIP,
                 MembershipLevel = "Diamond",
                 MonthsSinceMembership = 25,
                 AverageSpend = 80.0m,
@@ -33,7 +33,7 @@ namespace ApocalypticFastFood.Tests
             var dm = new DiscountManager
             {
                 VisitCount = 120,
-                CustomerType = 2,
+                CustomerType = CustomerCategory.VIP,
                 MembershipLevel = "Diamond",
                 MonthsSinceMembership = 30,
                 AverageSpend = 90.0m,

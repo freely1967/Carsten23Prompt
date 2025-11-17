@@ -13,7 +13,7 @@ namespace ApocalypticFastFood.Tests
                 PreviousOrder = "burger,fries",
                 DaysLastVisit = 2,
                 ConsecutiveVisits = 5,
-                CustomerType = 2,
+                CustomerType = CustomerCategory.VIP,
                 MembershipLevel = "Diamond",
                 AverageSpend = 100.0m,
                 HasApp = true,

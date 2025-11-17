@@ -10,7 +10,7 @@ namespace ApocalypticFastFood.Tests
             // Arrange
             var dm = new ApocalypticFastFood.DiscountManager();
             dm.TotalAmount = 100m;
-            dm.CustomerType = 1;
+            dm.CustomerType = CustomerCategory.Regular;
             var adapter = new ApocalypticFastFood.DiscountManagerDiscountProvider(dm);
 
             var ctx = new ApocalypticFastFood.CustomerContext(0, 30, 1, "", false);

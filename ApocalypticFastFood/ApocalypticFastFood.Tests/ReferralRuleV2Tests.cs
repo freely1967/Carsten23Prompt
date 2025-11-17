@@ -10,7 +10,7 @@ namespace ApocalypticFastFood.Tests
             var dm = new DiscountManager
             {
                 ReferralCount = 25,
-                CustomerType = 2,
+                CustomerType = CustomerCategory.VIP,
                 MembershipLevel = "Diamond",
                 MonthsSinceMembership = 13,
                 AverageSpend = 70.0m
@@ -29,7 +29,7 @@ namespace ApocalypticFastFood.Tests
             var dm = new DiscountManager
             {
                 ReferralCount = 12,
-                CustomerType = 1
+                CustomerType = CustomerCategory.Regular
             };
 
             var rule = new ReferralRuleV2();
@@ -44,7 +44,7 @@ namespace ApocalypticFastFood.Tests
             var dm = new DiscountManager
             {
                 ReferralCount = 1,
-                CustomerType = 1
+                CustomerType = CustomerCategory.Regular
             };
 
             var rule = new ReferralRuleV2();

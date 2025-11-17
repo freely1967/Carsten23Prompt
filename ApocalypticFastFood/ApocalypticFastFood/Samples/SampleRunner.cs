@@ -11,7 +11,7 @@ public static class SampleRunner
 
         // Test 1: VIP Diamond member with all strategies
         var dm1 = new DiscountManager();
-        dm1.CustomerType = 2;
+        dm1.CustomerType = CustomerCategory.VIP;
         dm1.MembershipLevel = "Diamond";
         dm1.Day = "Tuesday";
         dm1.Hour = 14;
@@ -47,7 +47,7 @@ public static class SampleRunner
 
         // Test 2: Student on Monday evening
         var dm2 = new DiscountManager();
-        dm2.CustomerType = 5;
+        dm2.CustomerType = CustomerCategory.Student;
         dm2.Day = "Monday";
         dm2.Hour = 16;
         dm2.Minute = 30;
@@ -69,7 +69,7 @@ public static class SampleRunner
 
         // Test 3: Regular customer rush hour penalty
         var dm3 = new DiscountManager();
-        dm3.CustomerType = 1;
+        dm3.CustomerType = CustomerCategory.Regular;
         dm3.Day = "Friday";
         dm3.Hour = 12;
         dm3.Minute = 30;
@@ -89,7 +89,7 @@ public static class SampleRunner
 
         // Test 4: Family meal deal
         var dm4 = new DiscountManager();
-        dm4.CustomerType = 1;
+        dm4.CustomerType = CustomerCategory.Regular;
         dm4.Day = "Sunday";
         dm4.Hour = 13;
         dm4.FamilyMembers = 5;

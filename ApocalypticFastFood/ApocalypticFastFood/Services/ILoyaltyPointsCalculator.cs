@@ -13,7 +13,7 @@ namespace ApocalypticFastFood.Services
 
             switch (dm.CustomerType)
             {
-                case 1:
+                case CustomerCategory.Regular:
                     points = (int)(dm.TotalAmount * 1m);
                     if (dm.HasApp)
                     {
@@ -31,7 +31,7 @@ namespace ApocalypticFastFood.Services
                     }
 
                     break;
-                case 2:
+                case CustomerCategory.VIP:
                     switch (dm.MembershipLevel)
                     {
                         case "Bronze":
@@ -58,10 +58,10 @@ namespace ApocalypticFastFood.Services
                     }
 
                     break;
-                case 3:
+                case CustomerCategory.Employee:
                     points = (int)(dm.TotalAmount * 1.5m);
                     break;
-                case 5:
+                case CustomerCategory.Student:
                     points = (int)(dm.TotalAmount * 1.8m);
                     break;
             }

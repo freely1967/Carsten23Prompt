@@ -10,7 +10,7 @@ namespace ApocalypticFastFood.Tests
             var dm = new DiscountManager
             {
                 IsBirthday = true,
-                CustomerType = 2,
+                CustomerType = CustomerCategory.VIP,
                 MembershipLevel = "Diamond",
                 VisitCount = 101,
                 TotalAmount = 150.0m,
@@ -30,7 +30,7 @@ namespace ApocalypticFastFood.Tests
             var dm = new DiscountManager
             {
                 IsBirthday = true,
-                CustomerType = 1
+                CustomerType = CustomerCategory.Regular
             };
 
             var rule = new BirthdayRule();

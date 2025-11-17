@@ -308,3 +308,181 @@ Keine Änderungen durchführen, nur exakt dokumentieren.
 Keine Vermutungen über Funktionalität — nur das beschreiben, was im Code klar erkennbar ist.
 
 Keine weiteren Schritte oder Aufgaben vorschlagen. Nur Task A + Task B.
+
+
+
+
+Prompt 9:
+okey wenn ich mri den code anschaue sind dort aber noch viele gehler mit clean code oder best practises die ncith engehalten wurden. z,b namengebungen oder ob für die variable ein int oder ein short etz mehr sinn mach tum nicht zuu viel platz zu verschendne oder venestetet if if if if if ketten. können oder sollten wir ert das beheben ? Aktuell sind die SOLID PRINZIEPEN JA angewandt wurden und es fehtl das :
+
+C#-Best-Practices (4 Punkte)
+
+Integration etablierter Namenskonventionen und Refactoring-Patterns was ich gerade erkklärt habe und
+
+Testing-Konzept (3 Punkte)
+
+Durchdachte Integration von xUnit und Reqnroll in die Prompt-Strategie
+
+
+
+oder ? sollten wir dort nicth prompts erstellen die dafür sorgen das alle diese probleme gesucht udn behoben werden in allen c# dateien ? macht das sinn wenn ja dann erstee diese prompt die ich einem agent geben kann der das dann amcht und lass diese prompt plaintext sein mit du bist .... udn hast ... udn arbeitest .... und achte auf ... udn .... und halluziere nicht und arebite sorgfältig etc um am ende sehr gute und passend eprompt zu haben ?
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Prompt 9.1:
+SYSTEM: Du bist ein akribischer C# Senior-Entwickler und "Clean Code"-Spezialist. Deine Expertise liegt im Erkennen und Beheben von Code-Smells, der Optimierung von Implementierungsdetails und der strikten Einhaltung von C#-Best-Practices.
+
+USER:
+Analysiere den gesamten C#-Code im Repository. Gehe jede `.cs`-Datei in jedem Unterordner Zeile für Zeile durch.
+
+Identifiziere und melde alle Verstöße gegen C#-Best-Practices und Clean-Code-Prinzipien. Konzentriere dich dabei besonders auf folgende Kategorien:
+
+1.  **NamingConventions**: Falsche Benennung (z.B. private Felder nicht mit `_`, Methoden nicht mit PascalCase, lokale Variablen nicht mit camelCase).
+2.  **ComplexityReduction**: Hohe zyklomatische Komplexität (z.B. tief verschachtelte `if`-Ketten, verschachtelte Schleifen).
+3.  **DataTypeOptimization**: Ineffiziente Datentypen (z.B. `int` für Werte, die nie über 100 gehen und als `byte` oder `short` deklariert werden könnten, oder `string` für feste, bekannte Werte, die `enum` sein sollten).
+4.  **Readability**: Schlecht lesbarer Code (z.B. "Magic Numbers", unklare Variablennamen, überlange Methoden, die das Single-Responsibility-Prinzip auf Methodenebene verletzen).
+5.  **CSharpFeatures**: Verpasste Gelegenheiten, moderne C#-Features zu nutzen (z.B. `var`-Nutzung, Expression-bodied members, `?.` Null-conditional Operator, `is not null`).
+
+**Dein Ziel ist es, eine JSON-Datei mit LÖSUNGVORSCHLÄGEN zu erstellen.**
+
+Antworte ausschließlich als JSON-Liste mit Objekten im folgenden Format:
+
+[
+  {
+    "file": "<relativer Pfad zur Datei>",
+    "line": <Zeilennummer>,
+    "category": "<NamingConvention|ComplexityReduction|DataTypeOptimization|Readability|CSharpFeatures>",
+    "problem_summary": "<Kurze Beschreibung des Problems>",
+    "current_code": "<die exakte Codezeile oder der Block>",
+    "suggested_fix": "<der Code, wie er sein sollte (als String)>",
+    "recommendation": "<Begründung, warum die Änderung sinnvoll ist (z.B. 'Reduziert Speicher' oder 'Verbessert Lesbarkeit')>"
+  }
+]
+
+**Regeln:**
+* Arbeite absolut sorgfältig und gehe das gesamte Projekt durch.
+* Überspringe keine Dateien oder Unterordner.
+* Halte dich strikt an das JSON-Format.
+* Halluziniere keine Probleme. Wenn eine Datei sauber ist, melde nichts für diese Datei.
+* Die `suggested_fix`-Felder müssen syntaktisch korrekter C#-Code sein.
+* Führe keine Änderungen selbst durch. Erstelle nur den Analyse-Bericht (die JSON-Datei).
+
+
+Prompt 10:
+SYSTEM: Du bist eine methodische C# Refactoring-Engine. Deine Aufgabe ist es, Code-Verbesserungen präzise, sicher und überprüfbar anzuwenden. Du arbeitest streng nach dem Prinzip: "Wende eine kleine Änderung an, teste sie, und fahre erst dann fort."
+
+USER:
+Du findest im Arbeitsverzeichnis die Datei `refactor_analysist.json` (erstellt durch Prompt 9). Diese Datei enthält eine Liste von Code-Smells und deren `suggested_fix`.
+
+Deine Aufgabe ist es, diese Vorschläge sicher und iterativ anzuwenden. Du darfst NICHT alle Änderungen auf einmal anwenden.
+
+**Dein Arbeitsablauf (Ablauf):**
+
+Du arbeitest in drei Phasen, basierend auf dem "category"-Feld in der JSON.
+
+---
+**Phase 1: Sicherstes Refactoring (Niedrigstes Risiko)**
+
+1.  **Einlesen:** Lese die `refactor_analysis.json` ein.
+2.  **Filtern:** Extrahiere NUR die Einträge mit `category` == `NamingConvention` und `category` == `CSharpFeatures`.
+3.  **Anwenden:** Wende alle `suggested_fix` dieser risikoarmen Kategorien an (z.B. per `apply_patch`).
+4.  **Verifizieren (Build):** Führe `dotnet build` für die gesamte Solution aus.
+    * **Bei Fehler:** Stoppe sofort. Mache die letzte Änderung rückgängig, protokolliere den Fehler und fahre mit dem nächsten Fix fort.
+5.  **Verifizieren (Tests):** Führe `dotnet test` für die gesamte Solution aus.
+    * **Bei Fehler:** Stoppe sofort. Mache die letzte Änderung rückgängig, protokolliere den fehlschlagenden Test und den Patch, der ihn verursacht hat.
+6.  **Protokollieren:** Erstelle ein Markdown-Dokument `clean_code_phase1_log.md`, das auflistet, welche Fixes angewendet wurden und dass Build und Tests erfolgreich waren.
+
+---
+**Phase 2: Refactoring mittlerer Komplexität**
+
+(Du darfst diese Phase nur starten, wenn Phase 1 vollständig und fehlerfrei abgeschlossen wurde.)
+
+1.  **Filtern:** Extrahiere nun die Einträge mit `category` == `Readability` und `category` == `ComplexityReduction`.
+2.  **Iteratives Anwenden (EINZELN):** Gehe diese Liste EINZELN durch. Wende EINEN `suggested_fix` an.
+3.  **Sofort-Verifizierung:** Führe `dotnet build` UND `dotnet test` aus.
+4.  **Loop:**
+    * **Bei Erfolg:** Committe die Änderung (hypothetisch) und fahre mit dem nächsten Fix fort.
+    * **Bei Fehler:** Mache die Änderung rückgängig. Protokolliere den fehlschlagenden Fix und den Test-Fehler in `clean_code_phase2_log.md`. Überspringe diesen Fix und gehe zum nächsten.
+5.  **Protokollieren:** Aktualisiere `clean_code_phase2_log.md` mit dem finalen Status aller Fixes dieser Phase.
+
+---
+**Phase 3: Refactoring hoher Komplexität (Hohes Risiko)**
+
+(Du darfst diese Phase nur starten, wenn Phase 2 abgeschlossen wurde.)
+
+1.  **Filtern:** Extrahiere alle verbleibenden Einträge, insbesondere `category` == `DataTypeOptimization`.
+2.  **Iteratives Anwenden (EINZELN):** Behandle diese Liste mit derselben Sorgfalt wie in Phase 2. Gehe sie EINZELN durch.
+3.  **Anwenden:** Wende EINEN `suggested_fix` an (z.B. eine `int` zu `short` Änderung).
+4.  **Sofort-Verifizierung:** Führe `dotnet build` UND `dotnet test` aus.
+    * **WICHTIG:** Führe die Tests sehr gründlich aus. Achte auf alle Ausgaben, insbesondere auf `System.OverflowException` oder ähnliche Laufzeitfehler, die auf Datenverlust hindeuten.
+5.  **Loop:**
+    * **Bei Erfolg:** Behalte die Änderung bei und fahre mit dem nächsten Fix fort.
+    * **Bei Fehler (Build ODER Test):** Mache die Änderung sofort und vollständig rückgängig.
+6.  **Protokollieren:** Erstelle eine Datei `clean_code_phase3_log.md`. Dokumentiere JEDEN Versuch aus dieser Phase, ob er erfolgreich angewendet wurde ODER ob er fehlschlug und zurückgerollt wurde (inklusive der Fehlermeldung des Tests).
+---
+**Abschließende Aufgabe (Selbst-Überprüfung)**
+
+Nachdem du Phase 1 und 2 abgeschlossen hast, führe den Analyse-Befehl von Prompt 9 (den du gerade für die Erstellung der JSON genutzt hast) *erneut* aus.
+
+* **Ziel:** Überprüfe, ob durch deine Refactorings (z.B. das Entwirren von `if`-Ketten) neue, kleinere Code-Smells (z.B. neue "Magic Numbers") entstanden sind.
+* **Bericht:** Erstelle eine Datei `clean_code_final_audit.json` mit allen *neu* gefundenen oder *verbliebenen* (übersprungenen) Problemen.
+
+**Regeln:**
+* Arbeite absolut sorgfältig und methodisch.
+* Halte dich exakt an die Phasen-Reihenfolge.
+* Ein Fehlschlag beim Testen stoppt die Anwendung des *aktuellen* Fixes, nicht den gesamten Prozess.
+* Halluziniere keine Schritte und erfinde keine Fixes, die nicht in der JSON-Datei stehen.
+* Dein Endprodukt sind die Logs (`...log.md`), der Review-Bericht (`...review.md`) und die finale Audit-JSON (`...final_audit.json`).
+
+
+
+
+
+
+
+
+Promt 9 wiede verwenden udn wiederholen zum überprüfen:
+Analysiere den gesamten C#-Code im Repository. Gehe jede .cs-Datei in jedem Unterordner Zeile für Zeile durch.
+
+Identifiziere und melde alle Verstöße gegen C#-Best-Practices und Clean-Code-Prinzipien. Konzentriere dich dabei besonders auf folgende Kategorien:
+
+NamingConventions: Falsche Benennung (z.B. private Felder nicht mit _, Methoden nicht mit PascalCase, lokale Variablen nicht mit camelCase).
+ComplexityReduction: Hohe zyklomatische Komplexität (z.B. tief verschachtelte if-Ketten, verschachtelte Schleifen).
+DataTypeOptimization: Ineffiziente Datentypen (z.B. int für Werte, die nie über 100 gehen und als byte oder short deklariert werden könnten, oder string für feste, bekannte Werte, die enum sein sollten).
+Readability: Schlecht lesbarer Code (z.B. "Magic Numbers", unklare Variablennamen, überlange Methoden, die das Single-Responsibility-Prinzip auf Methodenebene verletzen).
+CSharpFeatures: Verpasste Gelegenheiten, moderne C#-Features zu nutzen (z.B. var-Nutzung, Expression-bodied members, ?. Null-conditional Operator, is not null).
+Dein Ziel ist es, eine JSON-Datei mit LÖSUNGVORSCHLÄGEN zu erstellen namens refactor_analysis2.json.
+
+Antworte ausschließlich als JSON-Liste mit Objekten im folgenden Format:
+
+[
+{
+"file": "<relativer Pfad zur Datei>",
+"line": <Zeilennummer>,
+"category": "<NamingConvention|ComplexityReduction|DataTypeOptimization|Readability|CSharpFeatures>",
+"problem_summary": "<Kurze Beschreibung des Problems>",
+"current_code": "<die exakte Codezeile oder der Block>",
+"suggested_fix": "<der Code, wie er sein sollte (als String)>",
+"recommendation": "<Begründung, warum die Änderung sinnvoll ist (z.B. 'Reduziert Speicher' oder 'Verbessert Lesbarkeit')>"
+}
+]
+
+Regeln:
+
+Arbeite absolut sorgfältig und gehe das gesamte Projekt durch.
+Überspringe keine Dateien oder Unterordner.
+Halte dich strikt an das JSON-Format.
+Halluziniere keine Probleme. Wenn eine Datei sauber ist, melde nichts für diese Datei.
+Die suggested_fix-Felder müssen syntaktisch korrekter C#-Code sein.
+Führe keine Änderungen selbst durch. Erstelle nur den Analyse-Bericht (die JSON-Datei).

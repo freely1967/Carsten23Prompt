@@ -10,6 +10,17 @@ public enum PaymentMethod
     App
 }
 
+public enum CustomerCategory
+{
+    Regular = 1,
+    VIP = 2,
+    Employee = 3,
+    Senior = 4,
+    Student = 5,
+    Minor = 6,
+    Banned = 7
+}
+
 public class DiscountManager
 {
     private readonly ApocalypticFastFood.Services.ILoyaltyPointsCalculator _pointsCalculator;
@@ -52,7 +63,7 @@ public class DiscountManager
     public int ConsecutiveVisits { get; set; }
     public string? CreditCardType { get; set; }
     public int CurrentMonth { get; set; }
-    public int CustomerType { get; set; } // 1=regular, 2=vip, 3=employee, 4=senior, 5=student, 6=minor, 7=banned
+    public CustomerCategory CustomerType { get; set; } = CustomerCategory.Regular;
     public string Day { get; set; } = string.Empty;
     public int DaysLastVisit { get; set; }
     public string DeviceType { get; set; } = string.Empty;
@@ -190,16 +201,16 @@ public class ReceiptFormatter
         sb.Append("Customer: ");
         switch (dm.CustomerType)
         {
-            case 1: sb.AppendLine("Regular"); break;
-            case 2:
+            case CustomerCategory.Regular: sb.AppendLine("Regular"); break;
+            case CustomerCategory.VIP:
                 sb.Append("VIP - "); sb.AppendLine(dm.MembershipLevel);
                 if (dm.MembershipLevel == "Diamond") sb.AppendLine("*** PREMIUM CUSTOMER ***");
                 break;
-            case 3: sb.AppendLine("Employee"); break;
-            case 4: sb.AppendLine($"Senior (Age: {dm.Age})"); break;
-            case 5: sb.AppendLine("Student"); break;
-            case 6: sb.AppendLine("Minor - NEEDS APPROVAL"); break;
-            case 7: sb.AppendLine("BANNED CUSTOMER"); break;
+            case CustomerCategory.Employee: sb.AppendLine("Employee"); break;
+            case CustomerCategory.Senior: sb.AppendLine($"Senior (Age: {dm.Age})"); break;
+            case CustomerCategory.Student: sb.AppendLine("Student"); break;
+            case CustomerCategory.Minor: sb.AppendLine("Minor - NEEDS APPROVAL"); break;
+            case CustomerCategory.Banned: sb.AppendLine("BANNED CUSTOMER"); break;
             default: sb.AppendLine("Unknown"); break;
         }
 
@@ -311,7 +322,7 @@ public class OrderProcessor
 
     public void ProcessOrder(int custType, string day, int hr, List<string> items)
     {
-        _dm.CustomerType = custType;
+        _dm.CustomerType = (CustomerCategory)custType;
         _dm.Day = day;
         _dm.Hour = hr;
         _dm.Items = items;

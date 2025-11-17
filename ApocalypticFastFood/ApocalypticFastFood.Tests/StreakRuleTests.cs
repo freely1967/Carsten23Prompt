@@ -11,7 +11,7 @@ namespace ApocalypticFastFood.Tests
             {
                 StreakDays = 30,
                 ConsecutiveVisits = 20,
-                CustomerType = 2,
+                CustomerType = CustomerCategory.VIP,
                 AverageSpend = 80.0m,
                 HasApp = true,
                 EmailSubscribed = true

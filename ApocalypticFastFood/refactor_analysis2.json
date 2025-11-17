@@ -1,0 +1,102 @@
+[
+  {
+    "file": "ApocalypticFastFood/ApocalypticFastFood/DiscountManager.cs",
+    "line": 55,
+    "category": "DataTypeOptimization",
+    "problem_summary": "`CustomerType` is an `int` used as a numeric code with magic values (1=regular,2=vip,...). Enums would improve readability and type-safety.",
+    "current_code": "public int CustomerType { get; set; } // 1=regular, 2=vip, 3=employee, 4=senior, 5=student, 6=minor, 7=banned",
+    "suggested_fix": "public enum CustomerCategory { Regular = 1, VIP = 2, Employee = 3, Senior = 4, Student = 5, Minor = 6, Banned = 7 }\n\npublic CustomerCategory CustomerType { get; set; }",
+    "recommendation": "Using an `enum` removes magic numbers, makes switch/case and comparisons self-documenting, and prevents invalid numeric values being assigned."
+  },
+  {
+    "file": "ApocalypticFastFood/ApocalypticFastFood/DiscountManager.cs",
+    "line": 208,
+    "category": "Readability",
+    "problem_summary": "Time formatting uses `dm.Hour` and `dm.Minute` directly and can produce unpadded minutes (e.g. `12:5`), reducing readability.",
+    "current_code": "sb.AppendLine($\"Time: {dm.Hour}:{dm.Minute}\");",
+    "suggested_fix": "sb.AppendLine($\"Time: {dm.Hour:D2}:{dm.Minute:D2}\");",
+    "recommendation": "Consistent, zero-padded time format looks professional and avoids ambiguous output for single-digit minutes."
+  },
+  {
+    "file": "ApocalypticFastFood/ApocalypticFastFood/DiscountManager.cs",
+    "line": 191,
+    "category": "Readability",
+    "problem_summary": "ReceiptFormatter switch uses numeric `CustomerType` cases with hard-coded semantics and duplicated string logic (e.g. `case 2` -> `VIP - {membership}`).",
+    "current_code": "switch (dm.CustomerType)\n{\n    case 1: sb.AppendLine(\"Regular\"); break;\n    case 2:\n        sb.Append(\"VIP - \"); sb.AppendLine(dm.MembershipLevel);\n        if (dm.MembershipLevel == \"Diamond\") sb.AppendLine(\"*** PREMIUM CUSTOMER ***\");\n        break;\n    ...\n}",
+    "suggested_fix": "switch (dm.CustomerType)\n{\n    case CustomerCategory.Regular: sb.AppendLine(\"Regular\"); break;\n    case CustomerCategory.VIP:\n        sb.Append(\"VIP - \" ); sb.AppendLine(dm.MembershipLevel);\n        if (string.Equals(dm.MembershipLevel, MembershipLevel.Diamond.ToString(), StringComparison.OrdinalIgnoreCase))\n            sb.AppendLine(\"*** PREMIUM CUSTOMER ***\");\n        break;\n    // other cases...\n}",
+    "recommendation": "Switching on an enum (see `CustomerCategory`) and using case labels improves clarity and avoids mental mapping of numeric codes to semantics."
+  },
+  {
+    "file": "ApocalypticFastFood/ApocalypticFastFood/DiscountManager.cs",
+    "line": 228,
+    "category": "CSharpFeatures",
+    "problem_summary": "Code redundantly checks `dm.ItemPrices != null` though `ItemPrices` is initialized in the constructor and non-null by design.",
+    "current_code": "decimal price = dm.ItemPrices != null && dm.ItemPrices.TryGetValue(itemName, out var p)\n                ? p\n                : _priceCatalog.GetPrice(itemName);",
+    "suggested_fix": "decimal price = dm.ItemPrices.TryGetValue(itemName, out var p) ? p : _priceCatalog.GetPrice(itemName);",
+    "recommendation": "Removing the unnecessary null check simplifies the expression and reflects the non-nullable contract established by the constructor initialization."
+  },
+  {
+    "file": "ApocalypticFastFood/ApocalypticFastFood/DiscountRules.cs",
+    "line": 73,
+    "category": "ComplexityReduction",
+    "problem_summary": "`VisitCountRuleV2.CalculateResult` contains deeply nested `if` blocks (many levels), creating high cyclomatic complexity and making the logic hard to follow and test.",
+    "current_code": "(block starting at VisitCountRuleV2.CalculateResult with many nested ifs that multiply `multiplier` in deep nesting)",
+    "suggested_fix": "public DiscountResult CalculateResult(DiscountManager ctx)\n{\n    double multiplier = 1.0;\n\n    if (ctx.VisitCount < 100)\n        return new DiscountResult(0.0m, multiplier);\n\n    if (ctx.CustomerType != (int)CustomerCategory.VIP)\n        return new DiscountResult(0.0m, multiplier);\n\n    if (!string.Equals(ctx.MembershipLevel, MembershipLevel.Diamond.ToString(), StringComparison.OrdinalIgnoreCase))\n        return new DiscountResult(0.0m, multiplier);\n\n    if (ctx.MonthsSinceMembership <= 24)\n        return new DiscountResult(0.0m, multiplier);\n\n    if (ctx.AverageSpend <= 75)\n    {\n        multiplier *= 1.2;\n        return new DiscountResult(0.0m, multiplier);\n    }\n\n    if (ctx.ConsecutiveVisits <= 10)\n    {\n        multiplier *= 1.25;\n        return new DiscountResult(0.0m, multiplier);\n    }\n\n    if (ctx.LeftReview && ctx.ReviewStars == 5)\n    {\n        multiplier *= ctx.ReferralCount > 10 ? 1.5 : 1.4;\n    }\n    else\n    {\n        multiplier *= 1.3;\n    }\n\n    return new DiscountResult(0.0m, multiplier);\n}",
+    "recommendation": "Flattening with early returns and smaller, well-named checks dramatically reduces complexity and makes unit testing of each condition straightforward."
+  },
+  {
+    "file": "ApocalypticFastFood/ApocalypticFastFood/DiscountRules.cs",
+    "line": 23,
+    "category": "DataTypeOptimization",
+    "problem_summary": "Membership levels are represented as `string` constants (e.g. \"Diamond\"). This is error-prone and invites typos and case-sensitivity issues.",
+    "current_code": "\"Diamond\" => ctx.VisitCount > 100 ? 70.0m : 60.0m,",
+    "suggested_fix": "public enum MembershipLevel { None, Gold, Platinum, Diamond }\n\n// example usage\nswitch (ParseMembershipLevel(ctx.MembershipLevel))\n{\n    case MembershipLevel.Diamond: return ctx.VisitCount > 100 ? 70.0m : 60.0m;\n    case MembershipLevel.Platinum: return 55.0m;\n    case MembershipLevel.Gold: return 50.0m;\n    default: return 45.0m;\n}\n\nprivate static MembershipLevel ParseMembershipLevel(string s) =>\n    Enum.TryParse<MembershipLevel>(s, true, out var m) ? m : MembershipLevel.None;",
+    "recommendation": "An enum centralizes valid membership values, prevents typos, and makes comparisons explicit and case-insensitive when parsing."
+  },
+  {
+    "file": "ApocalypticFastFood/ApocalypticFastFood/DiscountRules.cs",
+    "line": 1,
+    "category": "Readability",
+    "problem_summary": "Many numeric literals (discount amounts and multipliers) are duplicated inline across rules, which lowers readability and makes global tuning error-prone.",
+    "current_code": "return ctx.CustomerType == 2 ? (ctx.Age < 22 ? 25.0m : 15.0m) : 0.0m; // and many other hard-coded literals throughout the file",
+    "suggested_fix": "private static class DiscountConstants\n{\n    public const decimal StudentYoungDiscount = 25.0m;\n    public const decimal StudentAdultDiscount = 15.0m;\n    public const decimal DefaultPromoSave20 = 20.0m;\n    // add other named constants\n}\n\n// usage example:\nreturn ctx.CustomerType == (int)CustomerCategory.Student ? (ctx.Age < 22 ? DiscountConstants.StudentYoungDiscount : DiscountConstants.StudentAdultDiscount) : 0.0m;",
+    "recommendation": "Extracting discount values into named constants improves discoverability and makes bulk changes (e.g. pricing experiments) safer and easier to test."
+  },
+  {
+    "file": "ApocalypticFastFood/ApocalypticFastFood/DiscountManager.cs",
+    "line": 232,
+    "category": "CSharpFeatures",
+    "problem_summary": "Item name conversions use `ToUpperInvariant()` for display while lookups use raw keys; inconsistent normalization can cause lookup/display mismatch.",
+    "current_code": "sb.AppendLine($\"  {qty}x {itemName.ToUpperInvariant()} @ ${price:F2} = ${(price * qty):F2}\");",
+    "suggested_fix": "var displayName = itemName.ToUpperInvariant();\nsb.AppendLine($\"  {qty}x {displayName} @ ${price:F2} = {(price * qty):F2}\");\n// For lookups, ensure keys are normalized when inserted into ItemPrices and when queried (e.g. use ToLowerInvariant())",
+    "recommendation": "Consistently normalize item keys at insertion and lookup (e.g. lower-invariant) so display casing changes do not affect business logic."
+  },
+  {
+    "file": "ApocalypticFastFood/ApocalypticFastFood/DiscountManager.cs",
+    "line": 277,
+    "category": "CSharpFeatures",
+    "problem_summary": "`InMemoryPriceCatalog.GetPrice` treats `null` specially but ignores whitespace and does not normalize keys; unknown items silently return 0.0m which can hide config errors.",
+    "current_code": "public decimal GetPrice(string item)\n{\n    if (item is null) return 0.0m;\n    return _prices.TryGetValue(item, out var p) ? p : 0.0m;\n}",
+    "suggested_fix": "public decimal GetPrice(string item)\n{\n    if (string.IsNullOrWhiteSpace(item)) return 0.0m;\n\n    var key = item.ToLowerInvariant();\n    return _prices.TryGetValue(key, out var p) ? p : 0.0m; // or consider throwing/logging when unknown\n}",
+    "recommendation": "Treat empty/whitespace as invalid input and normalize keys. Optionally log or throw for unknown items to catch configuration mistakes rather than silently returning 0."
+  }
+  ,
+  {
+    "file": "ApocalypticFastFood/ApocalypticFastFood/DiscountRules.cs",
+    "line": 165,
+    "category": "ComplexityReduction",
+    "problem_summary": "`AfternoonWindowDiscount` contains nested conditionals combining customer type, age and loyalty checks which increase cyclomatic complexity and make rules hard to unit-test.",
+    "current_code": "if (ctx.Minute >= 0 && ctx.Minute <= 30)\n        {\n            if (ctx.CustomerType == 4)\n            {\n                if (ctx.Age >= 70)\n                {\n                    if (ctx.HasLoyaltyCard) return ctx.VisitCount > 20 ? 30.0m : 25.0m;\n                    return 20.0m;\n                }\n\n                return 15.0m;\n            }\n\n            return 12.0m;\n        }\n\n        return 8.0m;",
+    "suggested_fix": "private decimal AfternoonWindowDiscount(DiscountManager ctx)\n{\n    if (ctx.Minute < 0 || ctx.Minute > 59) return 8.0m;\n    if (ctx.Minute > 30) return 8.0m;\n\n    if (ctx.CustomerType != (int)CustomerCategory.Senior) return 12.0m;\n\n    if (ctx.Age < 70) return 15.0m;\n\n    if (ctx.HasLoyaltyCard) return ctx.VisitCount > 20 ? 30.0m : 25.0m;\n\n    return 20.0m;\n}",
+    "recommendation": "Use early returns and explicit small-condition checks to flatten nested logic, improving readability and enabling focused unit tests for each branch."
+  },
+  {
+    "file": "ApocalypticFastFood/ApocalypticFastFood/DiscountRules.cs",
+    "line": 206,
+    "category": "ComplexityReduction",
+    "problem_summary": "`RushHourPenalty` contains multiple nested branches for time windows and item counts leading to high cognitive load and duplicated numeric literals.",
+    "current_code": "if (!ctx.IsRushHour) return 0.0m;\n\n        // Midday penalty (12:00-13:59)\n        if (ctx.Hour >= 12 && ctx.Hour <= 13)\n        {\n            if (ctx.IsDriveThru)\n            {\n                if (ctx.ItemCount >= 5)\n                {\n                    if (ctx.CustomerType == 2)\n                    {\n                        if (ctx.MembershipLevel == \"Diamond\")\n                        {\n                            return ctx.VisitCount > 100 ? -2.0m : -5.0m;\n                        }\n\n                        return -8.0m;\n                    }\n\n                    return -12.0m;\n                }\n\n                return -8.0m;\n            }\n\n            return -5.0m;\n        }\n\n        // Evening penalty (18:00-19:59)\n        if (ctx.Hour >= 18 && ctx.Hour <= 19) return -10.0m;\n\n        return 0.0m;",
+    "suggested_fix": "private decimal RushHourPenalty(DiscountManager ctx)\n{\n    if (!ctx.IsRushHour) return 0.0m;\n\n    // Midday penalty (12:00-13:59)\n    if (ctx.Hour >= 12 && ctx.Hour <= 13)\n    {\n        if (!ctx.IsDriveThru) return -5.0m;\n\n        if (ctx.ItemCount < 5) return -8.0m;\n\n        if (ctx.CustomerType != (int)CustomerCategory.VIP) return -12.0m;\n\n        // VIP path\n        if (string.Equals(ctx.MembershipLevel, MembershipLevel.Diamond.ToString(), StringComparison.OrdinalIgnoreCase))\n            return ctx.VisitCount > 100 ? -2.0m : -5.0m;\n\n        return -8.0m;\n    }\n\n    // Evening penalty (18:00-19:59)\n    if (ctx.Hour >= 18 && ctx.Hour <= 19) return -10.0m;\n\n    return 0.0m;\n}",
+    "recommendation": "Refactoring to a sequence of clear guards and normalization of membership comparisons reduces nesting, centralizes numeric constants, and simplifies unit testing."
+  }
+]

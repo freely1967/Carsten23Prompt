@@ -12,11 +12,11 @@ public class PromoCodeRule : IDiscountRule
         switch (ctx.PromoCode)
         {
             case "SAVE10":
-                return ctx.TotalAmount > 50m ? (ctx.CustomerType == 2 ? 15.0m : 10.0m) : 5.0m;
+                return ctx.TotalAmount > 50m ? (ctx.CustomerType == CustomerCategory.VIP ? 15.0m : 10.0m) : 5.0m;
             case "SAVE20":
                 return 20.0m;
             case "VIP50":
-                if (ctx.CustomerType == 2)
+                if (ctx.CustomerType == CustomerCategory.VIP)
                 {
                     return ctx.MembershipLevel switch
                     {
@@ -29,7 +29,7 @@ public class PromoCodeRule : IDiscountRule
 
                 return 10.0m;
             case "STUDENT25":
-                return ctx.CustomerType == 5 ? (ctx.Age < 22 ? 25.0m : 15.0m) : 0.0m;
+                return ctx.CustomerType == CustomerCategory.Student ? (ctx.Age < 22 ? 25.0m : 15.0m) : 0.0m;
             case "FREEFRIES":
                 return ctx.ItemQuantities != null && ctx.ItemQuantities.ContainsKey("fries") ? 3.49m * ctx.ItemQuantities["fries"] : 0.0m;
             default:
@@ -58,7 +58,7 @@ public class VisitCountRule : IDiscountRule
 
     private decimal CalculateHighVisitDiscount(DiscountManager ctx)
     {
-        if (ctx.CustomerType != 2) return 20.0m;
+        if (ctx.CustomerType != CustomerCategory.VIP) return 20.0m;
         if (ctx.MembershipLevel != "Diamond") return 25.0m;
         if (ctx.MonthsSinceMembership <= 24) return 30.0m;
         if (ctx.AverageSpend <= 75m) return 35.0m;
@@ -86,7 +86,7 @@ public class VisitCountRuleV2 : IDiscountRuleV2
 
         if (ctx.VisitCount >= 100)
         {
-            if (ctx.CustomerType == 2)
+            if (ctx.CustomerType == CustomerCategory.VIP)
             {
                 if (ctx.MembershipLevel == "Diamond")
                 {
@@ -167,7 +167,7 @@ public class TimeOfDayRule : IDiscountRule
         // Afternoon window: 14:00-16:59 with finer minute split
         if (ctx.Minute >= 0 && ctx.Minute <= 30)
         {
-            if (ctx.CustomerType == 4)
+            if (ctx.CustomerType == CustomerCategory.Senior)
             {
                 if (ctx.Age >= 70)
                 {
@@ -214,7 +214,7 @@ public class TimeOfDayRule : IDiscountRule
             {
                 if (ctx.ItemCount >= 5)
                 {
-                    if (ctx.CustomerType == 2)
+                    if (ctx.CustomerType == CustomerCategory.VIP)
                     {
                         if (ctx.MembershipLevel == "Diamond")
                         {
@@ -288,7 +288,7 @@ public class BirthdayRule : IDiscountRuleV2
     public DiscountResult CalculateResult(DiscountManager ctx)
     {
         // Clear, tiered birthday rule using early returns for readability
-        if (ctx.CustomerType != 2)
+        if (ctx.CustomerType != CustomerCategory.VIP)
             return new DiscountResult(25.0m, 1.15);
 
         // VIP path
@@ -328,7 +328,7 @@ public class StreakRule : IDiscountRuleV2
         // ctx.StreakDays >= 30
         if (ctx.ConsecutiveVisits < 20) return new DiscountResult(22.0m, 1.0);
 
-        if (ctx.CustomerType != 2) return new DiscountResult(28.0m, 1.0);
+        if (ctx.CustomerType != CustomerCategory.VIP) return new DiscountResult(28.0m, 1.0);
 
         // VIP path
         if (ctx.AverageSpend <= 70) return new DiscountResult(35.0m, 1.0);
@@ -369,7 +369,7 @@ public class PreviousOrderRule : IDiscountRuleV2
         if (ctx.ConsecutiveVisits < 5) return new DiscountResult(10.0m, 1.0);
 
         // ConsecutiveVisits >= 5
-        if (ctx.CustomerType != 2) return new DiscountResult(15.0m, 1.0);
+        if (ctx.CustomerType != CustomerCategory.VIP) return new DiscountResult(15.0m, 1.0);
 
         // VIP customer path
         if (ctx.MembershipLevel != "Diamond" && ctx.MembershipLevel != "Platinum")
@@ -403,7 +403,7 @@ public class ReferralRuleV2 : IDiscountRuleV2
         // Simplify referral tiers with clear boundaries and early returns
         if (ctx.ReferralCount >= 20)
         {
-            if (ctx.CustomerType != 2) return new DiscountResult(22.0m, 1.0);
+            if (ctx.CustomerType != CustomerCategory.VIP) return new DiscountResult(22.0m, 1.0);
             if (ctx.MembershipLevel != "Diamond") return new DiscountResult(28.0m, 1.0);
             if (ctx.MonthsSinceMembership > 12) return new DiscountResult(ctx.AverageSpend > 60 ? 45.0m : 38.0m, 1.0);
             return new DiscountResult(32.0m, 1.0);
